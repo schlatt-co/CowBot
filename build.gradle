@@ -1,0 +1,26 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id 'java'
+    id 'idea'
+}
+
+group 'io.github.jroy'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+dependencies {
+    compile 'net.dv8tion:JDA:3.8.3_462'
+    compile 'com.jagrosh:jda-utilities:2.1.5'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.27.2.1'
+    compileOnly "org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT"
+}
+
