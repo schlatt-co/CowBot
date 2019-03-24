@@ -63,7 +63,7 @@ public class CowBot extends JavaPlugin implements Listener {
   public void onJoin(PlayerJoinEvent event) {
     if (!databaseFactory.isWhitelisted(event.getPlayer().getName())) {
       event.setJoinMessage("");
-      event.getPlayer().kickPlayer("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getPlayer().getName() + "\" in the discord server");
+      event.getPlayer().kickPlayer("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getPlayer().getName() + "\" in the #mc channel on the discord server");
     }
   }
 
