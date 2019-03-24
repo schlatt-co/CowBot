@@ -17,6 +17,10 @@ public class LinkCommand extends CommandBase {
 
   @Override
   protected void executeCommand(CommandEvent e) {
+    if (!e.getTextChannel().getId().equalsIgnoreCase("559192147866419211")) {
+      return;
+    }
+
     if (e.getArgs().isEmpty()) {
       e.reply(invalid);
       return;
