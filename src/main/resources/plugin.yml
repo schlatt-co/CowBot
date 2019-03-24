@@ -1,0 +1,4 @@
+name: CowBot
+author: JRoy
+version: 0.1
+main: io.github.jroy.cowbot.CowBot
