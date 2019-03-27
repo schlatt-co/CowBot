@@ -98,6 +98,13 @@ public class CowBot extends JavaPlugin implements Listener {
     }
   }
 
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onLeave(PlayerQuitEvent event) {
+    if (!databaseFactory.isWhitelisted(event.getPlayer().getName())) {
+      event.setQuitMessage("");
+    }
+  }
+
   private void loadConfig() {
     getConfig().addDefault("discord-token", "");
     getConfig().options().copyDefaults(true);
