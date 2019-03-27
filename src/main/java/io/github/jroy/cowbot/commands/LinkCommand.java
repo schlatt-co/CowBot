@@ -21,6 +21,11 @@ public class LinkCommand extends CommandBase {
       return;
     }
 
+    if (e.getMember().getUser().getId().equalsIgnoreCase("547534994667732994")) {
+      e.reply("fuck you");
+      return;
+    }
+
     if (e.getArgs().isEmpty()) {
       e.reply(invalid);
       return;
