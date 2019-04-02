@@ -1,5 +1,6 @@
 package io.github.jroy.cowbot;
 
+import io.github.jroy.cowbot.commands.BanCommand;
 import io.github.jroy.cowbot.commands.LinkCommand;
 import io.github.jroy.cowbot.commands.base.CommandFactory;
 import io.github.jroy.cowbot.utils.DatabaseFactory;
@@ -43,7 +44,7 @@ public class CowBot extends JavaPlugin implements Listener {
     getServer().getPluginManager().registerEvents(this, this);
 
     CommandFactory commandFactory = new CommandFactory("!", ".");
-    commandFactory.addCommands(new LinkCommand(this));
+    commandFactory.addCommands(new LinkCommand(this), new BanCommand(this));
 
     reloadConfig();
     if (getConfig().getString("discord-token") == null || Objects.requireNonNull(getConfig().getString("discord-token")).length() <= 2) {

@@ -21,8 +21,12 @@ public class LinkCommand extends CommandBase {
       return;
     }
 
-    if (e.getMember().getUser().getId().equalsIgnoreCase("547534994667732994")) {
-      e.reply("fuck you");
+    if (cowBot.databaseFactory.isBanned(e.getMember().getUser().getId())) {
+      try {
+        e.replyError("You are banned from the server for the following reason: " + cowBot.databaseFactory.getBanReason(e.getMember().getUser().getId()));
+      } catch (SQLException ex) {
+        e.replyError("You're banned but I don't care enough to fetch the reason.");
+      }
       return;
     }
 
