@@ -28,6 +28,7 @@ public class DatabaseFactory {
     Class.forName("org.sqlite.JDBC");
     connection = DriverManager.getConnection("jdbc:sqlite:plugins/CowBot/players.db");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS players( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL, discordid text NOT NULL);");
+    connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans( id integer PRIMARY KEY AUTOINCREMENT, discordid text NOT NULL, reason text NOT NULL);");
     Logger.log("Connected to the Database!");
     Bukkit.getScheduler().scheduleSyncRepeatingTask(CowBot.instance, () -> {
       Logger.log("Starting Whitelist Purge...");
@@ -95,5 +96,35 @@ public class DatabaseFactory {
     PreparedStatement statement = connection.prepareStatement("DELETE FROM players WHERE id = ?");
     statement.setInt(1, id);
     statement.executeUpdate();
+  }
+
+  public void banUser(String discordId, String reason) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("INSERT INTO bans(discordid, reason) VALUES(?, ?)");
+    statement.setString(1, discordId);
+    statement.setString(2, reason);
+    statement.executeUpdate();
+  }
+
+  public void pardonUser(String discordId) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("DELETE FROM bans WHERE discordid = ?");
+    statement.setString(1, discordId);
+    statement.executeUpdate();
+  }
+
+  public boolean isBanned(String discordId) {
+    try {
+      PreparedStatement statement = connection.prepareStatement("SELECT id FROM bans WHERE discordid = ?");
+      statement.setString(1, discordId);
+      return statement.executeQuery().next();
+    } catch (SQLException ignored) {}
+    return false;
+  }
+
+  public String getBanReason(String discordId) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("SELECT reason FROM bans WHERE discordid = ?");
+    statement.setString(1, discordId);
+    ResultSet set = statement.executeQuery();
+    set.next();
+    return set.getString("reason");
   }
 }
