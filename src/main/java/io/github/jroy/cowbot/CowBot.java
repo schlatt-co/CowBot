@@ -76,6 +76,7 @@ public class CowBot extends JavaPlugin implements Listener {
       sleeping.add(event.getPlayer());
       if (sleeping.size() >= (event.getPlayer().getWorld().getPlayers().size() / 2)) {
         Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.WHITE + "Advancing to day!");
+        //noinspection ConstantConditions
         Bukkit.getServer().getWorld(event.getPlayer().getWorld().getName()).setTime(1000L);
         event.getPlayer().getWorld().setStorm(false);
         event.getPlayer().getWorld().setThundering(false);
