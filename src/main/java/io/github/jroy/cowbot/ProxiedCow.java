@@ -52,7 +52,7 @@ public class ProxiedCow extends Plugin implements Listener {
       }
 
       try {
-        databaseFactory = new DatabaseFactory(jda);
+        databaseFactory = new DatabaseFactory(jda, getDataFolder());
       } catch (ClassNotFoundException | SQLException e) {
         getLogger().info("[CowBot] [Proxy] Unable to connect to the database, aborting...");
         return;
