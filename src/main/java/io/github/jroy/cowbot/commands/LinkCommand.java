@@ -1,6 +1,6 @@
 package io.github.jroy.cowbot.commands;
 
-import io.github.jroy.cowbot.CowBot;
+import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.base.CommandBase;
 import io.github.jroy.cowbot.commands.base.CommandEvent;
 
@@ -8,9 +8,9 @@ import java.sql.SQLException;
 
 public class LinkCommand extends CommandBase {
 
-  private CowBot cowBot;
+  private ProxiedCow cowBot;
 
-  public LinkCommand(CowBot cowBot) {
+  public LinkCommand(ProxiedCow cowBot) {
     super("link", "<minecraft username>", "Links your minecraft username with your discord account.");
     this.cowBot = cowBot;
   }

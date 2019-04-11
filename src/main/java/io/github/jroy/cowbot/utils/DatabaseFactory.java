@@ -1,13 +1,13 @@
 package io.github.jroy.cowbot.utils;
 
-import io.github.jroy.cowbot.CowBot;
+import io.github.jroy.cowbot.ProxiedCow;
 import net.dv8tion.jda.core.JDA;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class DatabaseFactory {
 
@@ -17,20 +17,19 @@ public class DatabaseFactory {
 
   private List<String> whitelist = new ArrayList<>();
 
-  public DatabaseFactory(JDA jda) throws SQLException, ClassNotFoundException {
+  public DatabaseFactory(JDA jda, File pluginFolder) throws SQLException, ClassNotFoundException {
     Logger.log("Loading Database Factory...");
     this.jda = jda;
-    File dir = new File("plugins/CowBot/");
-    if (!dir.exists()) {
+    if (!pluginFolder.exists()) {
       //noinspection ResultOfMethodCallIgnored
-      dir.mkdir();
+      pluginFolder.mkdir();
     }
     Class.forName("org.sqlite.JDBC");
-    connection = DriverManager.getConnection("jdbc:sqlite:plugins/CowBot/players.db");
+    connection = DriverManager.getConnection("jdbc:sqlite:"+pluginFolder.getAbsolutePath()+"players.db");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS players( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL, discordid text NOT NULL);");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans( id integer PRIMARY KEY AUTOINCREMENT, discordid text NOT NULL, reason text NOT NULL);");
     Logger.log("Connected to the Database!");
-    Bukkit.getScheduler().scheduleSyncRepeatingTask(CowBot.instance, () -> {
+    ProxiedCow.instance.getProxy().getScheduler().schedule(ProxiedCow.instance, () -> {
       Logger.log("Starting Whitelist Purge...");
       try {
         ResultSet set = getUsers();
@@ -49,7 +48,7 @@ public class DatabaseFactory {
       } catch (SQLException e) {
         Logger.log("Error while purging: " + e.getMessage());
       }
-    }, 0, 1728000);
+    }, 0, 1, TimeUnit.HOURS);
     Logger.log("Loaded Database Factory!");
   }
 

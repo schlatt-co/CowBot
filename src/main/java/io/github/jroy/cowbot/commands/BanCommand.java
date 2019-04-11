@@ -1,6 +1,6 @@
 package io.github.jroy.cowbot.commands;
 
-import io.github.jroy.cowbot.CowBot;
+import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.base.CommandBase;
 import io.github.jroy.cowbot.commands.base.CommandEvent;
 
@@ -8,9 +8,9 @@ import java.sql.SQLException;
 
 public class BanCommand extends CommandBase {
 
-  private CowBot cowBot;
+  private ProxiedCow cowBot;
 
-  public BanCommand(CowBot cowBot) {
+  public BanCommand(ProxiedCow cowBot) {
     super("ban", "<id> <reason>", "Bans a user from linking their account.", true);
     this.cowBot = cowBot;
   }
