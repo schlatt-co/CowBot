@@ -25,7 +25,7 @@ public class DatabaseFactory {
       pluginFolder.mkdir();
     }
     Class.forName("org.sqlite.JDBC");
-    connection = DriverManager.getConnection("jdbc:sqlite:"+pluginFolder.getAbsolutePath()+"players.db");
+    connection = DriverManager.getConnection("jdbc:sqlite:"+pluginFolder.getAbsolutePath()+"/players.db");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS players( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL, discordid text NOT NULL);");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans( id integer PRIMARY KEY AUTOINCREMENT, discordid text NOT NULL, reason text NOT NULL);");
     Logger.log("Connected to the Database!");
