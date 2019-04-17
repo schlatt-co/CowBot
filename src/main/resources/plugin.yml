@@ -2,3 +2,7 @@ name: CowBot
 author: JRoy
 version: 0.3
 main: io.github.jroy.cowbot.CowBot
+commands:
+  communism:
+    description: Communism Command
+    usage: /communism

@@ -1,27 +1,69 @@
 package io.github.jroy.cowbot;
 
+import io.github.jroy.cowbot.commands.CommunismCommand;
 import io.github.jroy.cowbot.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class CowBot extends JavaPlugin implements Listener {
 
   private List<Player> sleeping = new ArrayList<>();
+  public HashMap<UUID, Boolean> communists = new HashMap<>();
 
   @Override
   public void onEnable() {
     Logger.log("Loading CowBot...");
     getServer().getPluginManager().registerEvents(this, this);
+    getCommand("communism").setExecutor(new CommunismCommand(this));
+  }
+
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onFirstJoin(PlayerJoinEvent event) {
+    if (!event.getPlayer().hasPlayedBefore()) {
+      communists.put(event.getPlayer().getUniqueId(), false);
+      event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), -123, 77, 19));
+    }
+  }
+
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onLeave(PlayerQuitEvent event) {
+    if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
+      new File("world/playerdata/" + event.getPlayer().getUniqueId().toString() + ".dat").delete();
+    }
+  }
+
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onBlockBreak(BlockBreakEvent event) {
+    if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
+      event.setCancelled(true);
+      event.getPlayer().sendMessage("You must agree to the rules before you can break blocks! Type /communism when you read and agree.");
+    }
+  }
+
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onBlockPlace(BlockPlaceEvent event) {
+    if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
+      event.setCancelled(true);
+      event.getPlayer().sendMessage("You must agree to the rules before you can place blocks! Type /communism when you read and agree.");
+    }
   }
 
   @EventHandler(priority = EventPriority.HIGH)
