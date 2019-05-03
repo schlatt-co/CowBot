@@ -38,14 +38,14 @@ public class LinkCommand extends CommandBase {
     if (cowBot.databaseFactory.isLinked(e.getMember().getUser().getId())) {
       try {
         cowBot.databaseFactory.updateUser(e.getMember().getUser().getId(), e.getSplitArgs()[0]);
-        e.reply("Updated your current Minecraft name!");
+        e.reply("Updated " + e.getMember().getAsMention() + "'s current Minecraft name to " + e.getSplitArgs()[0]);
       } catch (SQLException e1) {
         e.reply("Error while updating your Minecraft name...");
       }
     } else {
       try {
         cowBot.databaseFactory.linkUser(e.getMember().getUser().getId(), e.getSplitArgs()[0]);
-        e.reply("Added you to the whitelist!");
+        e.reply("Added " + e.getMember().getAsMention() + " to the whitelist with the username " + e.getSplitArgs()[0]);
       } catch (SQLException e1) {
         e.reply("Error while adding you to the whitelist...");
       }
