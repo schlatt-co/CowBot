@@ -31,12 +31,14 @@ public class DatabaseFactory {
     Logger.log("Connected to the Database!");
     ProxiedCow.instance.getProxy().getScheduler().schedule(ProxiedCow.instance, () -> {
       Logger.log("Starting Whitelist Purge...");
+      List<String> purged = new ArrayList<>();
       try {
         ResultSet set = getUsers();
         List<String> list = new ArrayList<>();
         int purgeCount = 0;
         while (set.next()) {
           if (this.jda.getGuildById("438337215584796692").getMemberById(set.getString("discordid")) == null) {
+            purged.add(set.getString("mc"));
             deleteUser(set.getInt("id"));
             purgeCount++;
             continue;
@@ -45,6 +47,14 @@ public class DatabaseFactory {
         }
         whitelist = list;
         Logger.log("Purged " + purgeCount + " member(s)!");
+        if (purgeCount > 0) {
+          StringBuilder sb = new StringBuilder().append("What's poppin boys, it's time to get chop some bovine from the sub server:\n");
+          for (String curName : purged) {
+            sb.append(curName).append("\n");
+          }
+          sb.append("Keep giving Schlatt your money or else you'll be on here!");
+          jda.getGuildById("438337215584796692").getTextChannelById("460082214689046538").sendMessage(sb.toString()).queue();
+        }
       } catch (SQLException e) {
         Logger.log("Error while purging: " + e.getMessage());
       }
