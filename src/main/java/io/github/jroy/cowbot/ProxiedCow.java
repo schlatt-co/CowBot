@@ -3,6 +3,7 @@ package io.github.jroy.cowbot;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.commands.BanCommand;
 import io.github.jroy.cowbot.commands.LinkCommand;
+import io.github.jroy.cowbot.commands.ViveCommand;
 import io.github.jroy.cowbot.commands.base.CommandFactory;
 import io.github.jroy.cowbot.utils.DatabaseFactory;
 import net.dv8tion.jda.core.AccountType;
@@ -36,7 +37,7 @@ public class ProxiedCow extends Plugin implements Listener {
     getLogger().info("[CowBot] [Proxy] onEnable - pre");
     if (loadConfig()) {
       CommandFactory commandFactory = new CommandFactory("!", ".");
-      commandFactory.addCommands(new LinkCommand(this), new BanCommand(this));
+      commandFactory.addCommands(new LinkCommand(this), new BanCommand(this), new ViveCommand(this));
 
       getLogger().info("[CowBot] [Proxy] Logging into JDA...");
       JDA jda;
@@ -66,7 +67,17 @@ public class ProxiedCow extends Plugin implements Listener {
   public void onPostLoginEvent(PostLoginEvent event) {
     if (!databaseFactory.isWhitelisted(event.getPlayer().getName())) {
       event.getPlayer().disconnect(new TextComponent("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getPlayer().getName() + "\" in the #mc channel on the discord server"));
+      return;
     }
+    if (event.getPlayer().getPendingConnection().getVersion() <= 404) {
+      if (databaseFactory.isVive(event.getPlayer().getName())) {
+        event.getPlayer().connect(getProxy().getServerInfo("vivecraft"));
+      } else {
+        event.getPlayer().disconnect(new TextComponent("Hey Troglodyte,\nWe updated the server to 1.14!\nSo you can't join with whatever shitty version you're on."));
+      }
+      return;
+    }
+    event.getPlayer().connect(getProxy().getServerInfo("vanilla"));
   }
 
   @SuppressWarnings({"ResultOfMethodCallIgnored", "UnstableApiUsage"})

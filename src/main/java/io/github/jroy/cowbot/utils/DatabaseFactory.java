@@ -28,6 +28,7 @@ public class DatabaseFactory {
     connection = DriverManager.getConnection("jdbc:sqlite:"+pluginFolder.getAbsolutePath()+"/players.db");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS players( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL, discordid text NOT NULL);");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans( id integer PRIMARY KEY AUTOINCREMENT, discordid text NOT NULL, reason text NOT NULL);");
+    connection.createStatement().execute("CREATE TABLE IF NOT EXISTS vives( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL);");
     Logger.log("Connected to the Database!");
     ProxiedCow.instance.getProxy().getScheduler().schedule(ProxiedCow.instance, () -> {
       Logger.log("Starting Whitelist Purge...");
@@ -135,5 +136,26 @@ public class DatabaseFactory {
     ResultSet set = statement.executeQuery();
     set.next();
     return set.getString("reason");
+  }
+
+  public boolean isVive(String mcName) {
+    try {
+      PreparedStatement statement = connection.prepareStatement("SELECT id, mc FROM vives WHERE mc = ?");
+      statement.setString(1, mcName);
+      return statement.executeQuery().next();
+    } catch (SQLException ignored) {}
+    return false;
+  }
+
+  public void linkVive(String mcName) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("INSERT INTO vives(mc) VALUES(?)");
+    statement.setString(1, mcName);
+    statement.executeUpdate();
+  }
+
+  public void deleteVive(String mcName) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("DELETE FROM vives WHERE mc = ?");
+    statement.setString(1, mcName);
+    statement.executeUpdate();
   }
 }
