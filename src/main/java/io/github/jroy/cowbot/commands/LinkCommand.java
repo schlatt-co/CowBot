@@ -22,6 +22,11 @@ public class LinkCommand extends CommandBase {
       return;
     }
 
+    if (e.getMember().getRoles().isEmpty()) {
+      e.replyError("Hey loser, give Schlatt money and MAYBE I'll consider letting you in the server you fucking free-loader commie.");
+      return;
+    }
+
     if (cowBot.databaseFactory.isBanned(e.getMember().getUser().getId())) {
       try {
         e.replyError("You are banned from the server for the following reason: " + cowBot.databaseFactory.getBanReason(e.getMember().getUser().getId()));

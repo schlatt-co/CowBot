@@ -2,6 +2,7 @@ package io.github.jroy.cowbot.utils;
 
 import io.github.jroy.cowbot.ProxiedCow;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Member;
 
 import java.io.File;
 import java.sql.*;
@@ -38,7 +39,8 @@ public class DatabaseFactory {
         List<String> list = new ArrayList<>();
         int purgeCount = 0;
         while (set.next()) {
-          if (this.jda.getGuildById("438337215584796692").getMemberById(set.getString("discordid")) == null) {
+          Member member = this.jda.getGuildById("438337215584796692").getMemberById(set.getString("discordid"));
+          if (member == null || member.getRoles().isEmpty()) {
             purged.add(set.getString("mc"));
             deleteUser(set.getInt("id"));
             purgeCount++;
