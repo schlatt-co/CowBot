@@ -110,6 +110,14 @@ public class DatabaseFactory {
     statement.executeUpdate();
   }
 
+  public String getDiscordIdFromUsername(String mcName) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE mc = ?");
+    statement.setString(1, mcName);
+    ResultSet rs = statement.executeQuery();
+    rs.next();
+    return rs.getString("discordid");
+  }
+
   public String getUsernameFromDiscordId(String discordId) throws SQLException {
     PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE discordid = ?");
     statement.setString(1, discordId);

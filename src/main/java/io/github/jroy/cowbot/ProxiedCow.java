@@ -3,6 +3,7 @@ package io.github.jroy.cowbot;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.commands.BanCommand;
 import io.github.jroy.cowbot.commands.LinkCommand;
+import io.github.jroy.cowbot.commands.TrevorCommand;
 import io.github.jroy.cowbot.commands.ViveCommand;
 import io.github.jroy.cowbot.commands.base.CommandFactory;
 import io.github.jroy.cowbot.utils.DatabaseFactory;
@@ -60,6 +61,7 @@ public class ProxiedCow extends Plugin implements Listener {
       }
 
       getProxy().getPluginManager().registerListener(this, this);
+      getProxy().getPluginManager().registerCommand(this, new TrevorCommand(this, jda));
     }
   }
 
