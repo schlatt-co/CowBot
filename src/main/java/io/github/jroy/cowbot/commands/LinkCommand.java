@@ -3,6 +3,7 @@ package io.github.jroy.cowbot.commands;
 import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.base.CommandBase;
 import io.github.jroy.cowbot.commands.base.CommandEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import java.sql.SQLException;
 
@@ -37,8 +38,10 @@ public class LinkCommand extends CommandBase {
 
     if (cowBot.databaseFactory.isLinked(e.getMember().getUser().getId())) {
       try {
+        String pastName = cowBot.databaseFactory.getUsernameFromDiscordId(e.getMember().getUser().getId());
         cowBot.databaseFactory.updateUser(e.getMember().getUser().getId(), e.getSplitArgs()[0]);
         e.reply("Updated " + e.getMember().getAsMention() + "'s current Minecraft name to " + e.getSplitArgs()[0]);
+        cowBot.getProxy().getPlayer(pastName).disconnect(new TextComponent("Updated your username!"));
       } catch (SQLException e1) {
         e.reply("Error while updating your Minecraft name...");
       }

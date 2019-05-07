@@ -108,6 +108,14 @@ public class DatabaseFactory {
     statement.executeUpdate();
   }
 
+  public String getUsernameFromDiscordId(String discordId) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE discordid = ?");
+    statement.setString(1, discordId);
+    ResultSet rs = statement.executeQuery();
+    rs.next();
+    return rs.getString("mc");
+  }
+
   public void banUser(String discordId, String reason) throws SQLException {
     PreparedStatement statement = connection.prepareStatement("INSERT INTO bans(discordid, reason) VALUES(?, ?)");
     statement.setString(1, discordId);
