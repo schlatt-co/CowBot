@@ -9,7 +9,8 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -69,25 +70,30 @@ public class ProxiedCow extends Plugin implements Listener {
   }
 
   @EventHandler
-  public void onPostLoginEvent(PostLoginEvent event) {
-    if (isLockdown && !lockdownList.contains(event.getPlayer().getName())) {
-      event.getPlayer().disconnect(new TextComponent("Server is in lockdown while we preform some upgrades ;)"));
+  public void onPostLoginEvent(LoginEvent event) {
+    if (isLockdown && !lockdownList.contains(event.getConnection().getName())) {
+      event.setCancelReason(new TextComponent("Server is in lockdown while we preform some upgrades ;)"));
+      event.setCancelled(true);
       return;
     }
 
-    if (!databaseFactory.isWhitelisted(event.getPlayer().getName())) {
-      event.getPlayer().disconnect(new TextComponent("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getPlayer().getName() + "\" in the #mc channel on the discord server"));
-      return;
+    if (!databaseFactory.isWhitelisted(event.getConnection().getName())) {
+      event.setCancelReason(new TextComponent("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getConnection().getName() + "\" in the #mc channel on the discord server"));
+      event.setCancelled(true);
     }
+  }
+
+  @EventHandler
+  public void onServerConnectEvent(ServerConnectEvent event) {
     if (event.getPlayer().getPendingConnection().getVersion() <= 404) {
       if (databaseFactory.isVive(event.getPlayer().getName())) {
-        event.getPlayer().connect(getProxy().getServerInfo("vivecraft"));
+        event.setTarget(getProxy().getServerInfo("vivecraft"));
       } else {
         event.getPlayer().disconnect(new TextComponent("Hey Troglodyte,\nWe updated the server to 1.14!\nSo you can't join with whatever shitty version you're on."));
       }
       return;
     }
-    event.getPlayer().connect(getProxy().getServerInfo("vanilla"));
+    event.setTarget(getProxy().getServerInfo("vanilla"));
   }
 
   @SuppressWarnings({"ResultOfMethodCallIgnored", "UnstableApiUsage"})
