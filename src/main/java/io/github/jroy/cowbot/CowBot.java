@@ -39,14 +39,14 @@ public class CowBot extends JavaPlugin implements Listener {
   public void onFirstJoin(PlayerJoinEvent event) {
     if (!event.getPlayer().hasPlayedBefore()) {
       communists.put(event.getPlayer().getUniqueId(), false);
-      event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), -123, 77, 19));
+      event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 16, 54, -3));
     }
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onLeave(PlayerQuitEvent event) {
     if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
-      new File("world/playerdata/" + event.getPlayer().getUniqueId().toString() + ".dat").delete();
+      new File(new File(Bukkit.getServer().getWorld("world").getWorldFolder(), "playerdata"), event.getPlayer().getUniqueId().toString() + ".dat").delete();
     }
   }
 
