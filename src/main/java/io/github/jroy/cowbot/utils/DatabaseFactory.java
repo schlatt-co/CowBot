@@ -32,6 +32,11 @@ public class DatabaseFactory {
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS vives( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL);");
     Logger.log("Connected to the Database!");
     ProxiedCow.instance.getProxy().getScheduler().schedule(ProxiedCow.instance, () -> {
+      try {
+        jda.awaitReady();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
       Logger.log("Starting Whitelist Purge...");
       List<String> purged = new ArrayList<>();
       try {

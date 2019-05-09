@@ -1,10 +1,7 @@
 package io.github.jroy.cowbot;
 
 import com.google.common.io.ByteStreams;
-import io.github.jroy.cowbot.commands.BanCommand;
-import io.github.jroy.cowbot.commands.LinkCommand;
-import io.github.jroy.cowbot.commands.TrevorCommand;
-import io.github.jroy.cowbot.commands.ViveCommand;
+import io.github.jroy.cowbot.commands.*;
 import io.github.jroy.cowbot.commands.base.CommandFactory;
 import io.github.jroy.cowbot.utils.DatabaseFactory;
 import net.dv8tion.jda.core.AccountType;
@@ -23,18 +20,23 @@ import net.md_5.bungee.event.EventHandler;
 import javax.security.auth.login.LoginException;
 import java.io.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProxiedCow extends Plugin implements Listener {
 
   public static ProxiedCow instance;
-
   private Configuration configuration;
-
   public DatabaseFactory databaseFactory;
+
+  public boolean isLockdown = false;
+  public List<String> lockdownList = new ArrayList<>();
 
   @Override
   public void onEnable() {
     instance = this;
+    lockdownList.add("WheezyGold7931");
+    lockdownList.add("wolfmitchell");
     getLogger().info("[CowBot] [Proxy] onEnable - pre");
     if (loadConfig()) {
       CommandFactory commandFactory = new CommandFactory("!", ".");
@@ -62,11 +64,17 @@ public class ProxiedCow extends Plugin implements Listener {
 
       getProxy().getPluginManager().registerListener(this, this);
       getProxy().getPluginManager().registerCommand(this, new TrevorCommand(this, jda));
+      getProxy().getPluginManager().registerCommand(this, new LockdownCommand(this));
     }
   }
 
   @EventHandler
   public void onPostLoginEvent(PostLoginEvent event) {
+    if (isLockdown && !lockdownList.contains(event.getPlayer().getName())) {
+      event.getPlayer().disconnect(new TextComponent("Server is in lockdown while we preform some upgrades ;)"));
+      return;
+    }
+
     if (!databaseFactory.isWhitelisted(event.getPlayer().getName())) {
       event.getPlayer().disconnect(new TextComponent("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getPlayer().getName() + "\" in the #mc channel on the discord server"));
       return;
