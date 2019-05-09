@@ -1,4 +1,4 @@
 name: CowBot
 author: JRoy
-version: 0.4
+version: 0.5
 main: io.github.jroy.cowbot.ProxiedCow
