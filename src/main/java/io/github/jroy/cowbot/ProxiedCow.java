@@ -85,11 +85,11 @@ public class ProxiedCow extends Plugin implements Listener {
 
   @EventHandler
   public void onServerConnectEvent(ServerConnectEvent event) {
-    if (event.getPlayer().getPendingConnection().getVersion() <= 404) {
+    if (event.getPlayer().getPendingConnection().getVersion() <= 480) {
       if (databaseFactory.isVive(event.getPlayer().getName())) {
         event.setTarget(getProxy().getServerInfo("vivecraft"));
       } else {
-        event.getPlayer().disconnect(new TextComponent("Hey Troglodyte,\nWe updated the server to 1.14!\nSo you can't join with whatever shitty version you're on."));
+        event.getPlayer().disconnect(new TextComponent("Hey Troglodyte,\nWe updated the server to 1.14.1!\nSo you can't join with whatever shitty version you're on."));
       }
       return;
     }
