@@ -85,7 +85,7 @@ public class ProxiedCow extends Plugin implements Listener {
 
   @EventHandler
   public void onServerConnectEvent(ServerConnectEvent event) {
-    if (event.getPlayer().getPendingConnection().getVersion() <= 480) {
+    if (event.getPlayer().getPendingConnection().getVersion() <= 479) {
       if (databaseFactory.isVive(event.getPlayer().getName())) {
         event.setTarget(getProxy().getServerInfo("vivecraft"));
       } else {
