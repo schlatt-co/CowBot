@@ -56,11 +56,11 @@ public class DatabaseFactory {
         whitelist = list;
         Logger.log("Purged " + purgeCount + " member(s)!");
         if (purgeCount > 0) {
-          StringBuilder sb = new StringBuilder().append("What's poppin boys, it's time to get chop some bovine from the sub server:\n");
+          StringBuilder sb = new StringBuilder().append("What's poppin boys, it's time to chop some bovine from the sub server:\n\n");
           for (String curName : purged) {
-            sb.append(curName).append("\n");
+            sb.append("**").append(curName).append("**\n");
           }
-          sb.append("Keep giving Schlatt your money or else you'll be on here!");
+          sb.append("\nKeep giving Schlatt your money or else you'll be on here!");
           jda.getGuildById("438337215584796692").getTextChannelById("460082214689046538").sendMessage(sb.toString()).queue();
         }
       } catch (SQLException e) {
