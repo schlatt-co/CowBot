@@ -66,6 +66,7 @@ public class ProxiedCow extends Plugin implements Listener {
       getProxy().getPluginManager().registerListener(this, this);
       getProxy().getPluginManager().registerCommand(this, new TrevorCommand(this, jda));
       getProxy().getPluginManager().registerCommand(this, new LockdownCommand(this));
+      getProxy().getPluginManager().registerCommand(this, new StopCommand());
     }
   }
 
