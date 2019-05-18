@@ -2,10 +2,7 @@ package io.github.jroy.cowbot;
 
 import io.github.jroy.cowbot.commands.CommunismCommand;
 import io.github.jroy.cowbot.utils.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -81,6 +78,8 @@ public class CowBot extends JavaPlugin implements Listener {
   public void onSleep(PlayerBedEnterEvent event) {
     if (event.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.OK) {
       sleeping.add(event.getPlayer());
+      event.getPlayer().setStatistic(Statistic.TIME_SINCE_REST, 0);
+      Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.WHITE + " has started sleeping! " + ChatColor.YELLOW + ((event.getPlayer().getWorld().getPlayers().size() / 2) - sleeping.size()) + ChatColor.WHITE + " more player(s) need to sleep in order to advance to day!");
       if (sleeping.size() >= (event.getPlayer().getWorld().getPlayers().size() / 2)) {
         Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.WHITE + "Advancing to day!");
         //noinspection ConstantConditions
@@ -88,8 +87,6 @@ public class CowBot extends JavaPlugin implements Listener {
         event.getPlayer().getWorld().setStorm(false);
         event.getPlayer().getWorld().setThundering(false);
         sleeping.clear();
-      } else {
-        Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.WHITE + " has started sleeping! " + ChatColor.YELLOW + ((event.getPlayer().getWorld().getPlayers().size() / 2) - sleeping.size()) + ChatColor.WHITE + " more player(s) need to sleep in order to advance to day!");
       }
     }
   }
