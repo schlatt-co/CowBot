@@ -21,7 +21,7 @@ dependencies {
     compile 'com.jagrosh:jda-utilities:2.1.5'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.27.2.1'
-    compileOnly "org.spigotmc:spigot-api:1.14-R0.1-SNAPSHOT"
+    compileOnly "org.spigotmc:spigot-api:1.14.2-R0.1-SNAPSHOT"
     compileOnly "net.md-5:bungeecord-api:1.14-SNAPSHOT"
 }
 
