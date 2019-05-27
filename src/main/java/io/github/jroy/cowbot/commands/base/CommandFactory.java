@@ -19,6 +19,7 @@ public class CommandFactory {
     clientBuilder.setPrefix(prefix);
     clientBuilder.setAlternativePrefix(alternativePrefix);
     clientBuilder.setOwnerId("194473148161327104");
+    clientBuilder.setCoOwnerIds("102546170877853696");
     clientBuilder.useHelpBuilder(false);
   }
 
