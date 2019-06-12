@@ -103,7 +103,7 @@ public class ProxiedCow extends Plugin implements Listener {
         String discordId = databaseFactory.getDiscordIdFromUsername(username);
         Member member = jda.getGuildById("438337215584796692").getMemberById(discordId);
         if (member != null) {
-          ChatEnum topRole = ChatEnum.UNKNOWN;
+          ChatEnum topRole = null;
           // R:#Content(581910051766272036),
           // R:The Only Montana Men(556676267357765652),
           // R:Old Father(509400860132900884),
@@ -131,26 +131,27 @@ public class ProxiedCow extends Plugin implements Listener {
             switch (role.getId()) {
               case "581340753708449793":
               case "474574079362596864": {
-                topRole = ChatEnum.UNKNOWN;
+                topRole = checkAndSet(topRole, ChatEnum.UNKNOWN);
+                break;
               }
               case "574958723911385098":
               case "556676267357765652": {
-                topRole = ChatEnum.MOD;
+                topRole = checkAndSet(topRole, ChatEnum.MOD);
                 break;
               }
               case "581910051766272036": {
-                topRole = ChatEnum.CONTENT;
+                topRole = checkAndSet(topRole, ChatEnum.CONTENT);
                 break;
               }
               case "509400860132900884":
               case "509400824640700436":
               case "509400795750465596": {
-                topRole = ChatEnum.PATREON;
+                topRole = checkAndSet(topRole, ChatEnum.PATREON);
                 break;
               }
               case "469920113655808000":
               case "461225008887365632": {
-                topRole = ChatEnum.TWITCH;
+                topRole = checkAndSet(topRole, ChatEnum.TWITCH);
                 break;
               }
               default: {
@@ -158,12 +159,22 @@ public class ProxiedCow extends Plugin implements Listener {
               }
             }
           }
+          if (topRole == null) {
+            topRole = ChatEnum.UNKNOWN;
+          }
           sendMessage(username + ":" + topRole.name());
         }
       }
     } catch (SQLException e) {
       e.printStackTrace();
     }
+  }
+
+  private ChatEnum checkAndSet(ChatEnum current, ChatEnum change) {
+    if (current != null && current.getPower() > change.getPower()) {
+      return current;
+    }
+    return change;
   }
 
   private void sendMessage(String message) {
