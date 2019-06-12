@@ -1,6 +1,10 @@
 package io.github.jroy.cowbot;
 
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.commands.CommunismCommand;
+import io.github.jroy.cowbot.utils.ChatEnum;
 import io.github.jroy.cowbot.utils.Logger;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -13,27 +17,78 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
 
-public class CowBot extends JavaPlugin implements Listener {
+public class CowBot extends JavaPlugin implements Listener, PluginMessageListener {
+
+  private Map<String, ChatEnum> chatEnumCache = new HashMap<>();
 
   private List<Player> sleeping = new ArrayList<>();
   public HashMap<UUID, Boolean> communists = new HashMap<>();
+  private static CowBot instance;
 
   @Override
   public void onEnable() {
     Logger.log("Loading CowBot...");
+    instance = this;
     getServer().getPluginManager().registerEvents(this, this);
     getCommand("communism").setExecutor(new CommunismCommand(this));
+    getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:main");
+    getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
+  }
+
+  @Override
+  public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
+    if (channel.equalsIgnoreCase("trevor:main")) {
+      ByteArrayDataInput in = ByteStreams.newDataInput(message);
+      if (in.readUTF().equalsIgnoreCase("trevorreturn")) {
+        String[] input = in.readUTF().split(":");
+        chatEnumCache.put(input[0], ChatEnum.valueOf(input[1]));
+      }
+    }
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
-  public void onFirstJoin(PlayerJoinEvent event) {
+  public void onChat(AsyncPlayerChatEvent event) {
+    String prefix = "";
+    if (event.getPlayer().hasPermission("trevor.admin")) {
+      prefix = ChatColor.GRAY + "[" + ChatColor.RED + "Admin" + ChatColor.GRAY + "] ";
+    } else if (event.getPlayer().hasPermission("trevor.mod")) {
+      prefix = ChatColor.GRAY + "[" + ChatColor.GREEN + "Mod" + ChatColor.GRAY + "] ";
+    } else if (event.getPlayer().hasPermission("trevor.twitch")) {
+      prefix = ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.GRAY + "] ";
+    } else if (event.getPlayer().hasPermission("trevor.content")) {
+      prefix = ChatColor.GRAY + "[" + ChatColor.YELLOW + "Content" + ChatColor.GRAY + "] ";
+    } else if (event.getPlayer().hasPermission("trevor.gay")) {
+      prefix = ChatColor.RED + "[" + ChatColor.GOLD + "G" + ChatColor.YELLOW + "a" + ChatColor.GREEN + "y" + ChatColor.LIGHT_PURPLE + "] ";
+    }
+
+    ChatEnum chatEnum = chatEnumCache.getOrDefault(event.getPlayer().getName(), ChatEnum.UNKNOWN);
+    if (chatEnum != null && chatEnum != ChatEnum.UNKNOWN) {
+      event.setFormat(prefix + ChatColor.GRAY + "<" + chatEnum.getChatColor() + ChatColor.stripColor(event.getPlayer().getDisplayName()) + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage());
+      return;
+    }
+    event.setFormat(prefix + ChatColor.GRAY + "<" + event.getPlayer().getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage());
+  }
+
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onJoin(PlayerJoinEvent event) {
     if (!event.getPlayer().hasPlayedBefore()) {
       communists.put(event.getPlayer().getUniqueId(), false);
       event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 16, 54, -3, -90, 0));
+    }
+    if (!chatEnumCache.containsKey(event.getPlayer().getName())) {
+      chatEnumCache.put(event.getPlayer().getName(), ChatEnum.UNKNOWN);
+      Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("trevorrequest");
+        out.writeUTF(event.getPlayer().getName());
+        event.getPlayer().sendPluginMessage(CowBot.instance, "trevor:main", out.toByteArray());
+      }, 30);
     }
   }
 
