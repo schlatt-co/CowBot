@@ -12,9 +12,12 @@ import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -28,6 +31,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ProxiedCow extends Plugin implements Listener {
 
@@ -38,6 +42,11 @@ public class ProxiedCow extends Plugin implements Listener {
 
   public boolean isLockdown = false;
   public List<String> lockdownList = new ArrayList<>();
+
+  private String targetVersion = "1.14.2";
+  private int targetProtocol = 485;
+
+  public static String serverMotd = "&ajschlatt twitch subscriber server\n&bsubscribe with twitch prime!";
 
   @Override
   public void onEnable() {
@@ -191,15 +200,24 @@ public class ProxiedCow extends Plugin implements Listener {
 
   @EventHandler
   public void onServerConnectEvent(ServerConnectEvent event) {
-    if (event.getPlayer().getPendingConnection().getVersion() <= 484) {
+    if (event.getPlayer().getPendingConnection().getVersion() <= targetProtocol - 1) {
       if (databaseFactory.isVive(event.getPlayer().getName())) {
         event.setTarget(getProxy().getServerInfo("vivecraft"));
       } else {
-        event.getPlayer().disconnect(new TextComponent("Hey Troglodyte,\nWe updated the server to 1.14.2!\nSo you can't join with whatever shitty version you're on."));
+        event.getPlayer().disconnect(new TextComponent("Hey Troglodyte,\nWe updated the server to " + targetVersion + "!\nSo you can't join with whatever shitty version you're on."));
       }
       return;
     }
     event.setTarget(getProxy().getServerInfo("vanilla"));
+  }
+
+  @EventHandler
+  public void onServerPing(ProxyPingEvent event) {
+    ServerPing ping = new ServerPing();
+    ping.setDescriptionComponent(new TextComponent(ChatColor.translateAlternateColorCodes('&', serverMotd)));
+    ping.setVersion(new ServerPing.Protocol(targetVersion, targetProtocol));
+    ping.setPlayers(new ServerPing.Players(getProxy().getOnlineCount() + 1, getProxy().getOnlineCount(), new ServerPing.PlayerInfo[]{new ServerPing.PlayerInfo("jschlatt", UUID.fromString("4f16bc54-a296-40ea-bb51-ba6b04ad42c1"))}));
+    event.setResponse(ping);
   }
 
   @SuppressWarnings({"ResultOfMethodCallIgnored", "UnstableApiUsage"})

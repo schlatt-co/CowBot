@@ -45,7 +45,15 @@ public class TrevorCommand extends Command {
             sender.sendMessage(new ComponentBuilder("Error while fetching user data: " + e.getMessage()).color(ChatColor.RED).create());
             e.printStackTrace();
           }
-
+          break;
+        }
+        case "motd": {
+          StringBuilder motdBuilder = new StringBuilder();
+          for (String arg : args) {
+            motdBuilder.append(arg).append(" ");
+          }
+          ProxiedCow.serverMotd = motdBuilder.toString().replaceFirst("motd ", "").replace("\\n", "\n");
+          sender.sendMessage(new TextComponent("Updated MOTD!"));
           break;
         }
         default: {

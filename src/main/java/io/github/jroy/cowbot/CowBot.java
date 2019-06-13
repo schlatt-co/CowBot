@@ -54,6 +54,10 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onChat(AsyncPlayerChatEvent event) {
+    if (event.getPlayer().hasPermission("trevor.admin") && event.getMessage().equalsIgnoreCase("hey trevor can you purge the normie cache")) {
+      chatEnumCache.clear();
+      getServer().getScheduler().runTaskLaterAsynchronously(this, () -> getServer().broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.WHITE + "sure dad :)"), 10);
+    }
     String prefix = "";
     if (event.getPlayer().hasPermission("trevor.admin")) {
       prefix = ChatColor.GRAY + "[" + ChatColor.RED + "Admin" + ChatColor.GRAY + "] ";
