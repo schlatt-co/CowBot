@@ -59,6 +59,7 @@ public class DatabaseFactory {
           StringBuilder sb = new StringBuilder().append("What's poppin boys, it's time to chop some bovine from the sub server:\n\n");
           for (String curName : purged) {
             sb.append("**").append(curName).append("**\n");
+            new Thread(() -> ATLauncherUtils.removePlayer(curName)).start();
           }
           sb.append("\nKeep giving Schlatt your money or else you'll be on here!");
           jda.getGuildById("438337215584796692").getTextChannelById("460082214689046538").sendMessage(sb.toString()).queue();

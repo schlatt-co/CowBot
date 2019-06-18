@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.commands.CommunismCommand;
+import io.github.jroy.cowbot.commands.ServerShutdownCommand;
 import io.github.jroy.cowbot.utils.ChatEnum;
 import io.github.jroy.cowbot.utils.Logger;
 import org.bukkit.*;
@@ -29,7 +30,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
 
   private List<Player> sleeping = new ArrayList<>();
   public HashMap<UUID, Boolean> communists = new HashMap<>();
-  private static CowBot instance;
+  public static CowBot instance;
 
   @Override
   public void onEnable() {
@@ -37,8 +38,14 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     instance = this;
     getServer().getPluginManager().registerEvents(this, this);
     getCommand("communism").setExecutor(new CommunismCommand(this));
+    getCommand("autorestart").setExecutor(new ServerShutdownCommand());
+    getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:main");
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
+    ByteArrayDataOutput out1 = ByteStreams.newDataOutput();
+    out1.writeUTF("target");
+    out1.writeUTF("holding");
+    getServer().sendPluginMessage(CowBot.instance, "trevor:main", out1.toByteArray());
   }
 
   @Override
@@ -85,7 +92,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
       communists.put(event.getPlayer().getUniqueId(), false);
       event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 16, 54, -3, -90, 0));
     }
-    if (!chatEnumCache.containsKey(event.getPlayer().getName())) {
+    if (!chatEnumCache.containsKey(event.getPlayer().getName()) || chatEnumCache.get(event.getPlayer().getName()).equals(ChatEnum.UNKNOWN)) {
       chatEnumCache.put(event.getPlayer().getName(), ChatEnum.UNKNOWN);
       Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();

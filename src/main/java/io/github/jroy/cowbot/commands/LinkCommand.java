@@ -3,6 +3,7 @@ package io.github.jroy.cowbot.commands;
 import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.base.CommandBase;
 import io.github.jroy.cowbot.commands.base.CommandEvent;
+import io.github.jroy.cowbot.utils.ATLauncherUtils;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.sql.SQLException;
@@ -47,6 +48,8 @@ public class LinkCommand extends CommandBase {
         cowBot.databaseFactory.updateUser(e.getMember().getUser().getId(), e.getSplitArgs()[0]);
         e.reply("Updated " + e.getMember().getAsMention() + "'s current Minecraft name to " + e.getSplitArgs()[0]);
         cowBot.getProxy().getPlayer(pastName).disconnect(new TextComponent("Updated your username!"));
+        new Thread(() -> ATLauncherUtils.addPlayer(e.getSplitArgs()[0])).start();
+        new Thread(() -> ATLauncherUtils.removePlayer(pastName)).start();
       } catch (SQLException e1) {
         e.reply("Error while updating your Minecraft name...");
       }
@@ -54,6 +57,7 @@ public class LinkCommand extends CommandBase {
       try {
         cowBot.databaseFactory.linkUser(e.getMember().getUser().getId(), e.getSplitArgs()[0]);
         e.reply("Added " + e.getMember().getAsMention() + " to the whitelist with the username " + e.getSplitArgs()[0]);
+        new Thread(() -> ATLauncherUtils.addPlayer(e.getSplitArgs()[0])).start();
       } catch (SQLException e1) {
         e.reply("Error while adding you to the whitelist...");
       }

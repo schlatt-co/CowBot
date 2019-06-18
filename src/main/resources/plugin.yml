@@ -7,3 +7,6 @@ commands:
   communism:
     description: Communism Command
     usage: /communism
+  autorestart:
+    description: RESTART TIME
+    usage: /autorestart

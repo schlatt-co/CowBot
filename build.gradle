@@ -19,6 +19,7 @@ repositories {
 dependencies {
     compile 'net.dv8tion:JDA:3.8.3_462'
     compile 'com.jagrosh:jda-utilities:2.1.5'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.9'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.27.2.1'
     compileOnly "org.spigotmc:spigot-api:1.14.2-R0.1-SNAPSHOT"

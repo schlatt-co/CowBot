@@ -37,7 +37,7 @@ public class ProxiedCow extends Plugin implements Listener {
 
   public static ProxiedCow instance;
   private JDA jda;
-  private Configuration configuration;
+  public static Configuration configuration;
   public DatabaseFactory databaseFactory;
 
   public boolean isLockdown = false;
@@ -45,6 +45,7 @@ public class ProxiedCow extends Plugin implements Listener {
 
   private String targetVersion = "1.14.2";
   private int targetProtocol = 485;
+  private String targetServer = "vanilla";
 
   public static String serverMotd = "&ajschlatt twitch subscriber server\n&bsubscribe with twitch prime!";
 
@@ -107,7 +108,8 @@ public class ProxiedCow extends Plugin implements Listener {
 
     ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
     try {
-      if (in.readUTF().equalsIgnoreCase("trevorrequest")) {
+      String subchannel = in.readUTF();
+      if (subchannel.equalsIgnoreCase("trevorrequest")) {
         String username = in.readUTF();
         String discordId = databaseFactory.getDiscordIdFromUsername(username);
         Member member = jda.getGuildById("438337215584796692").getMemberById(discordId);
@@ -158,6 +160,12 @@ public class ProxiedCow extends Plugin implements Listener {
                 topRole = checkAndSet(topRole, ChatEnum.PATREON);
                 break;
               }
+              case "582653648891281409":
+              case "525473755712192552":
+              case "479782883633135647": {
+                topRole = checkAndSet(topRole, ChatEnum.MERCH);
+                break;
+              }
               case "469920113655808000":
               case "461225008887365632": {
                 topRole = checkAndSet(topRole, ChatEnum.TWITCH);
@@ -173,6 +181,8 @@ public class ProxiedCow extends Plugin implements Listener {
           }
           sendMessage(username + ":" + topRole.name());
         }
+      } else if (subchannel.equalsIgnoreCase("target")) {
+        targetServer = in.readUTF();
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -208,7 +218,7 @@ public class ProxiedCow extends Plugin implements Listener {
       }
       return;
     }
-    event.setTarget(getProxy().getServerInfo("vanilla"));
+    event.setTarget(getProxy().getServerInfo(targetServer));
   }
 
   @EventHandler
