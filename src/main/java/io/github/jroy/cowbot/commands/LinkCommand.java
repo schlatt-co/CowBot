@@ -48,8 +48,8 @@ public class LinkCommand extends CommandBase {
         cowBot.databaseFactory.updateUser(e.getMember().getUser().getId(), e.getSplitArgs()[0]);
         e.reply("Updated " + e.getMember().getAsMention() + "'s current Minecraft name to " + e.getSplitArgs()[0]);
         cowBot.getProxy().getPlayer(pastName).disconnect(new TextComponent("Updated your username!"));
+        ATLauncherUtils.removePlayer(pastName);
         new Thread(() -> ATLauncherUtils.addPlayer(e.getSplitArgs()[0])).start();
-        new Thread(() -> ATLauncherUtils.removePlayer(pastName)).start();
       } catch (SQLException e1) {
         e.reply("Error while updating your Minecraft name...");
       }
