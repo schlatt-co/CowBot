@@ -57,7 +57,7 @@ public class ProxiedCow extends Plugin implements Listener {
     getLogger().info("[CowBot] [Proxy] onEnable - pre");
     if (loadConfig()) {
       CommandFactory commandFactory = new CommandFactory("!", ".");
-      commandFactory.addCommands(new LinkCommand(this), new BanCommand(this), new ViveCommand(this));
+      commandFactory.addCommands(new LinkCommand(this), new BanCommand(this), new ViveCommand(this), new NameCommand(this));
 
       getLogger().info("[CowBot] [Proxy] Logging into JDA...");
       try {
