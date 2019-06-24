@@ -47,7 +47,7 @@ public class ProxiedCow extends Plugin implements Listener {
   private int targetProtocol = 485;
   private String targetServer = "vanilla";
 
-  public static String serverMotd = "&ajschlatt twitch subscriber server\n&bsubscribe with twitch prime!";
+  public static String serverMotd = "&ajschlatt twitch subscriber server\n&bsubscribe with &5twitch prime&b!";
 
   @Override
   public void onEnable() {
@@ -97,6 +97,18 @@ public class ProxiedCow extends Plugin implements Listener {
     if (!databaseFactory.isWhitelisted(event.getConnection().getName())) {
       event.setCancelReason(new TextComponent("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getConnection().getName() + "\" in the #mc channel on the discord server"));
       event.setCancelled(true);
+    }
+    try {
+      databaseFactory.getDiscordIdFromUsername(event.getConnection().getName());
+    } catch (SQLException e) {
+      //For some reason, their discordid isn't linked
+      event.setCancelReason(new TextComponent("Your profile is corrupted!\nPlease re-link your discord account so I can properly segregate you.\n-Trevor"));
+      event.setCancelled(true);
+      try {
+        databaseFactory.deleteUser(databaseFactory.getIdFromUsername(event.getConnection().getName()));
+      } catch (SQLException ex) {
+        ex.printStackTrace();
+      }
     }
   }
 
