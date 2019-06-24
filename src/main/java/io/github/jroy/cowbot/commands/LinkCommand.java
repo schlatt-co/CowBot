@@ -47,7 +47,9 @@ public class LinkCommand extends CommandBase {
         String pastName = cowBot.databaseFactory.getUsernameFromDiscordId(e.getMember().getUser().getId());
         cowBot.databaseFactory.updateUser(e.getMember().getUser().getId(), e.getSplitArgs()[0]);
         e.reply("Updated " + e.getMember().getAsMention() + "'s current Minecraft name to " + e.getSplitArgs()[0]);
-        cowBot.getProxy().getPlayer(pastName).disconnect(new TextComponent("Updated your username!"));
+        if (cowBot.getProxy().getPlayer(pastName) != null) {
+          cowBot.getProxy().getPlayer(pastName).disconnect(new TextComponent("Updated your username!"));
+        }
         ATLauncherUtils.removePlayer(pastName);
         new Thread(() -> ATLauncherUtils.addPlayer(e.getSplitArgs()[0])).start();
       } catch (SQLException e1) {
