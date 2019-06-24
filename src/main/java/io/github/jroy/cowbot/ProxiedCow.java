@@ -43,8 +43,8 @@ public class ProxiedCow extends Plugin implements Listener {
   public boolean isLockdown = false;
   public List<String> lockdownList = new ArrayList<>();
 
-  private String targetVersion = "1.14.2";
-  private int targetProtocol = 485;
+  private String targetVersion = "1.14.3";
+  private int targetProtocol = 490;
   private String targetServer = "vanilla";
 
   public static String serverMotd = "&ajschlatt twitch subscriber server\n&bsubscribe with &5twitch prime&b!";
