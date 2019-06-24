@@ -77,12 +77,10 @@ public class DatabaseFactory {
 
   public boolean isWhitelisted(String mcName) {
     try {
-      ResultSet set = getUsers();
-      while (set.next()) {
-        if (set.getString("mc").equalsIgnoreCase(mcName)) {
-          return true;
-        }
-      }
+      PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE mc = ? COLLATE NOCASE");
+      statement.setString(1, mcName);
+      ResultSet rs = statement.executeQuery();
+      return rs.next();
     } catch (SQLException ignored) {}
     return false;
   }
@@ -115,25 +113,22 @@ public class DatabaseFactory {
     statement.setInt(1, id);
     statement.executeUpdate();
   }
+  public void deleteUser(String mcName) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("DELETE FROM players WHERE mc = ? COLLATE NOCASE");
+    statement.setString(1, mcName);
+    statement.executeUpdate();
+  }
 
   public String getDiscordIdFromUsername(String mcName) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE mc = ?");
+    PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE mc = ? COLLATE NOCASE");
     statement.setString(1, mcName);
     ResultSet rs = statement.executeQuery();
     rs.next();
     return rs.getString("discordid");
   }
 
-  public int getIdFromUsername(String mcName) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE mc = ?");
-    statement.setString(1, mcName);
-    ResultSet rs = statement.executeQuery();
-    rs.next();
-    return rs.getInt("id");
-  }
-
   public String getUsernameFromDiscordId(String discordId) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE discordid = ?");
+    PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE discordid = ? COLLATE NOCASE");
     statement.setString(1, discordId);
     ResultSet rs = statement.executeQuery();
     rs.next();
@@ -155,7 +150,7 @@ public class DatabaseFactory {
 
   public boolean isBanned(String discordId) {
     try {
-      PreparedStatement statement = connection.prepareStatement("SELECT id FROM bans WHERE discordid = ?");
+      PreparedStatement statement = connection.prepareStatement("SELECT id FROM bans WHERE discordid = ? COLLATE NOCASE");
       statement.setString(1, discordId);
       return statement.executeQuery().next();
     } catch (SQLException ignored) {}
@@ -163,7 +158,7 @@ public class DatabaseFactory {
   }
 
   public String getBanReason(String discordId) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement("SELECT reason FROM bans WHERE discordid = ?");
+    PreparedStatement statement = connection.prepareStatement("SELECT reason FROM bans WHERE discordid = ? COLLATE NOCASE");
     statement.setString(1, discordId);
     ResultSet set = statement.executeQuery();
     set.next();
@@ -172,7 +167,7 @@ public class DatabaseFactory {
 
   public boolean isVive(String mcName) {
     try {
-      PreparedStatement statement = connection.prepareStatement("SELECT id, mc FROM vives WHERE mc = ?");
+      PreparedStatement statement = connection.prepareStatement("SELECT id, mc FROM vives WHERE mc = ? COLLATE NOCASE");
       statement.setString(1, mcName);
       return statement.executeQuery().next();
     } catch (SQLException ignored) {}

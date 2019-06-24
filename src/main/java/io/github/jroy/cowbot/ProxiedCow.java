@@ -105,7 +105,7 @@ public class ProxiedCow extends Plugin implements Listener {
       event.setCancelReason(new TextComponent("Your profile is corrupted!\nPlease re-link your discord account so I can properly segregate you.\n-Trevor"));
       event.setCancelled(true);
       try {
-        databaseFactory.deleteUser(databaseFactory.getIdFromUsername(event.getConnection().getName()));
+        databaseFactory.deleteUser(event.getConnection().getName());
       } catch (SQLException ex) {
         ex.printStackTrace();
       }
