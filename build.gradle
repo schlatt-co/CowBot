@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.8.3_462'
+    compile 'net.dv8tion:JDA:3.8.3_463'
     compile 'com.jagrosh:jda-utilities:2.1.5'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.9'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'

@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class ProxiedCow extends Plugin implements Listener {
 
@@ -56,21 +57,31 @@ public class ProxiedCow extends Plugin implements Listener {
     lockdownList.add("wolfmitchell");
     getLogger().info("[CowBot] [Proxy] onEnable - pre");
     if (loadConfig()) {
-      CommandFactory commandFactory = new CommandFactory("!", ".");
-      commandFactory.addCommands(new LinkCommand(this), new BanCommand(this), new ViveCommand(this), new NameCommand(this));
-
       getLogger().info("[CowBot] [Proxy] Logging into JDA...");
       try {
-        jda = new JDABuilder(AccountType.BOT)
-            .setToken(configuration.getString("discord-token"))
-            .setStatus(OnlineStatus.DO_NOT_DISTURB)
-            .addEventListener(commandFactory.build())
-            .build();
-        jda.awaitReady();
+        jdaLogin();
       } catch (LoginException | InterruptedException e) {
-        getLogger().info("[CowBot] [Proxy] JDA failed to login, shutting down.");
-        return;
+        e.printStackTrace();
       }
+
+      getProxy().getScheduler().schedule(this, () -> {
+        if (jda == null) {
+          try {
+            jdaLogin();
+          } catch (LoginException | InterruptedException e) {
+            getLogger().info("[CowBot] [Proxy] JDA failed to login, shutting down.");
+            return;
+          }
+          return;
+        }
+        if (jda.getRegisteredListeners().size() == 0) {
+          try {
+            jdaLogin();
+          } catch (LoginException | InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+      }, 5, TimeUnit.MINUTES);
 
       try {
         databaseFactory = new DatabaseFactory(jda, getDataFolder());
@@ -85,6 +96,17 @@ public class ProxiedCow extends Plugin implements Listener {
       getProxy().getPluginManager().registerCommand(this, new StopCommand());
       getProxy().registerChannel("trevor:main");
     }
+  }
+
+  private void jdaLogin() throws LoginException, InterruptedException {
+    CommandFactory commandFactory = new CommandFactory("!", ".");
+    commandFactory.addCommands(new LinkCommand(this), new BanCommand(this), new ViveCommand(this), new NameCommand(this));
+    jda = new JDABuilder(AccountType.BOT)
+        .setToken(configuration.getString("discord-token"))
+        .setStatus(OnlineStatus.DO_NOT_DISTURB)
+        .addEventListener(commandFactory.build())
+        .build();
+    jda.awaitReady();
   }
 
   @EventHandler
