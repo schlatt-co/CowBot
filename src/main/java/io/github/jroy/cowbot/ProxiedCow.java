@@ -66,7 +66,8 @@ public class ProxiedCow extends Plugin implements Listener {
             .setStatus(OnlineStatus.DO_NOT_DISTURB)
             .addEventListener(commandFactory.build())
             .build();
-      } catch (LoginException e) {
+        jda.awaitReady();
+      } catch (LoginException | InterruptedException e) {
         getLogger().info("[CowBot] [Proxy] JDA failed to login, shutting down.");
         return;
       }
@@ -263,5 +264,9 @@ public class ProxiedCow extends Plugin implements Listener {
       e.printStackTrace();
       return false;
     }
+  }
+
+  public JDA getJda() {
+    return jda;
   }
 }
