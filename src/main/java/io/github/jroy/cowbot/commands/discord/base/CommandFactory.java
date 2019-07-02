@@ -1,8 +1,9 @@
-package io.github.jroy.cowbot.commands.base;
+package io.github.jroy.cowbot.commands.discord.base;
 
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import io.github.jroy.cowbot.utils.Logger;
+import io.github.jroy.cowbot.utils.Constants;
+import net.dv8tion.jda.api.entities.Activity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,22 +15,21 @@ public class CommandFactory {
   private Map<String, CommandBase> registeredCommands = new HashMap<>();
 
   public CommandFactory(String prefix, String alternativePrefix) {
-    Logger.log("Loading Command Factory...");
     clientBuilder = new CommandClientBuilder();
     clientBuilder.setPrefix(prefix);
     clientBuilder.setAlternativePrefix(alternativePrefix);
-    clientBuilder.setOwnerId("194473148161327104");
-    clientBuilder.setCoOwnerIds("102546170877853696", "227600936061763604");
+    clientBuilder.setOwnerId(Constants.OWNER_ID);
+    clientBuilder.setCoOwnerIds(Constants.CO_OWNER_IDS);
     clientBuilder.useHelpBuilder(false);
+    clientBuilder.setActivity(Activity.streaming("your bytes", "https://www.twitch.tv/jschlatt"));
   }
 
-  public void addCommands(CommandBase... commands) {
-    Logger.log("Adding Commands...");
+  public CommandFactory addCommands(CommandBase... commands) {
     clientBuilder.addCommands(commands);
     for (CommandBase base : commands) {
       registeredCommands.put(base.getName(), base);
     }
-    Logger.log("Added " + commands.length + " Commands!");
+    return this;
   }
 
   public CommandClient build() {

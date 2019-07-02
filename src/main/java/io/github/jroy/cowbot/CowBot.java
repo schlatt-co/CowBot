@@ -3,11 +3,13 @@ package io.github.jroy.cowbot;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import io.github.jroy.cowbot.commands.CommunismCommand;
-import io.github.jroy.cowbot.commands.ServerShutdownCommand;
+import io.github.jroy.cowbot.commands.spigot.CommunismCommand;
 import io.github.jroy.cowbot.utils.ChatEnum;
-import io.github.jroy.cowbot.utils.Logger;
-import org.bukkit.*;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,24 +32,24 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
 
   private List<Player> sleeping = new ArrayList<>();
   public HashMap<UUID, Boolean> communists = new HashMap<>();
-  public static CowBot instance;
+
+  @Override
+  public void onLoad() {
+    log("Hello <3 -Trevor");
+  }
 
   @Override
   public void onEnable() {
-    Logger.log("Loading CowBot...");
-    instance = this;
+    log("Running onEnable flow...");
     getServer().getPluginManager().registerEvents(this, this);
+    //noinspection ConstantConditions
     getCommand("communism").setExecutor(new CommunismCommand(this));
-    getCommand("autorestart").setExecutor(new ServerShutdownCommand());
     getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:main");
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
-    ByteArrayDataOutput out1 = ByteStreams.newDataOutput();
-    out1.writeUTF("target");
-    out1.writeUTF("holding");
-    getServer().sendPluginMessage(CowBot.instance, "trevor:main", out1.toByteArray());
   }
 
+  @SuppressWarnings("UnstableApiUsage")
   @Override
   public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
     if (channel.equalsIgnoreCase("trevor:main")) {
@@ -86,6 +88,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     event.setFormat(prefix + ChatColor.GRAY + "<" + event.getPlayer().getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage());
   }
 
+  @SuppressWarnings("UnstableApiUsage")
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onJoin(PlayerJoinEvent event) {
     if (!event.getPlayer().hasPlayedBefore()) {
@@ -98,7 +101,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("trevorrequest");
         out.writeUTF(event.getPlayer().getName());
-        event.getPlayer().sendPluginMessage(CowBot.instance, "trevor:main", out.toByteArray());
+        event.getPlayer().sendPluginMessage(this, "trevor:main", out.toByteArray());
       }, 30);
     }
   }
@@ -106,6 +109,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onLeave(PlayerQuitEvent event) {
     if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
+      //noinspection ConstantConditions
       new File(new File(Bukkit.getServer().getWorld("world").getWorldFolder(), "playerdata"), event.getPlayer().getUniqueId().toString() + ".dat").delete();
     }
   }
@@ -160,5 +164,9 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   @EventHandler(priority = EventPriority.HIGH)
   public void onUnSleep(PlayerBedLeaveEvent event) {
     sleeping.remove(event.getPlayer());
+  }
+
+  private void log(String message) {
+    getLogger().info("[SPIGOT] " + message);
   }
 }

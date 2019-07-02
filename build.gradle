@@ -17,12 +17,12 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.8.3_463'
-    compile 'com.jagrosh:jda-utilities:2.1.5'
+    compile 'net.dv8tion:JDA:4.BETA.0_18'
+    compile 'com.github.JDA-Applications:JDA-Utilities:68b014d5bb'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.9'
-    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.27.2.1'
-    compileOnly "org.spigotmc:spigot-api:1.14.2-R0.1-SNAPSHOT"
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.16'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.28.0'
+    compileOnly "org.spigotmc:spigot-api:1.14.3-R0.1-SNAPSHOT"
     compileOnly "net.md-5:bungeecord-api:1.14-SNAPSHOT"
 }
 

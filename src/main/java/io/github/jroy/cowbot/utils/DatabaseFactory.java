@@ -1,80 +1,71 @@
 package io.github.jroy.cowbot.utils;
 
 import io.github.jroy.cowbot.ProxiedCow;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.entities.Member;
 
-import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class DatabaseFactory {
 
-  private JDA jda;
+  private ProxiedCow cow;
 
   private Connection connection;
 
-  private List<String> whitelist = new ArrayList<>();
+  public DatabaseFactory(ProxiedCow cow) throws SQLException, ClassNotFoundException {
+    this.cow = cow;
+    cow.log("Connecting to database...");
+    connect();
+  }
 
-  public DatabaseFactory(JDA jda, File pluginFolder) throws SQLException, ClassNotFoundException {
-    Logger.log("Loading Database Factory...");
-    this.jda = jda;
-    if (!pluginFolder.exists()) {
-      //noinspection ResultOfMethodCallIgnored
-      pluginFolder.mkdir();
-    }
+  @SuppressWarnings("ConstantConditions")
+  private void connect() throws ClassNotFoundException, SQLException {
+    if (!cow.getDataFolder().exists()) cow.getDataFolder().mkdir();
+
     Class.forName("org.sqlite.JDBC");
-    connection = DriverManager.getConnection("jdbc:sqlite:"+pluginFolder.getAbsolutePath()+"/players.db");
+    connection = DriverManager.getConnection("jdbc:sqlite:" + cow.getDataFolder().getAbsolutePath() + "/players.db");
+    cow.log("Connected to database!");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS players( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL, discordid text NOT NULL);");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans( id integer PRIMARY KEY AUTOINCREMENT, discordid text NOT NULL, reason text NOT NULL);");
     connection.createStatement().execute("CREATE TABLE IF NOT EXISTS vives( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL);");
-    Logger.log("Connected to the Database!");
-    ProxiedCow.instance.getProxy().getScheduler().schedule(ProxiedCow.instance, () -> {
+    cow.log("Database tables initialized!");
+    cow.getProxy().getScheduler().schedule(cow, () -> {
+      cow.log("Auditing server whitelist...");
+      List<String> purgedUsers = new ArrayList<>();
       try {
-        jda.awaitReady();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-      Logger.log("Starting Whitelist Purge...");
-      List<String> purged = new ArrayList<>();
-      try {
-        ResultSet set = getUsers();
-        List<String> list = new ArrayList<>();
-        int purgeCount = 0;
-        while (set.next()) {
-          Member member = this.jda.getGuildById("438337215584796692").getMemberById(set.getString("discordid"));
+        ResultSet whitelistSet = getUsers();
+        while (whitelistSet.next()) {
+          Member member = cow.getJda().getGuildById(Constants.GUILD_ID).getMemberById(whitelistSet.getString("discordid"));
           if (member == null || member.getRoles().isEmpty()) {
-            purged.add(set.getString("mc"));
-            deleteUser(set.getInt("id"));
-            purgeCount++;
-            continue;
+            purgedUsers.add(whitelistSet.getString("mc"));
+            deleteUser(whitelistSet.getInt("id"));
           }
-          list.add(set.getString("mc"));
         }
-        whitelist = list;
-        Logger.log("Purged " + purgeCount + " member(s)!");
-        if (purgeCount > 0) {
-          StringBuilder sb = new StringBuilder().append("What's poppin boys, it's time to chop some bovine from the sub server:\n\n");
-          for (String curName : purged) {
+        cow.log("Purged " + purgedUsers.size() + " user(s) from the whitelist!");
+        if (purgedUsers.size() > 0) {
+          StringBuilder sb = new StringBuilder("What's poppin boys, it's time to chop some bovine from the sub server:\n\n");
+          for (String curName : purgedUsers) {
             sb.append("**").append(curName).append("**\n");
             new Thread(() -> ATLauncherUtils.removePlayer(curName)).start();
           }
-          sb.append("\nKeep giving Schlatt your money or else you'll be on here!");
-          jda.getGuildById("438337215584796692").getTextChannelById("460082214689046538").sendMessage(sb.toString()).queue();
+          sb.append("\nKeep giving Schlatt your money or face the consequences...");
+          cow.getJda().getGuildById(Constants.GUILD_ID).getTextChannelById(Constants.LOG_CHANNEL_ID).sendMessage(sb.toString()).queue();
         }
       } catch (SQLException e) {
-        Logger.log("Error while purging: " + e.getMessage());
+        cow.getLogger().log(Level.SEVERE, "[Proxy] Error while executing whitelist purge", e);
       }
     }, 0, 1, TimeUnit.HOURS);
-    Logger.log("Loaded Database Factory!");
+    cow.log("Database purger successfully registered!");
   }
 
-  public ResultSet getUsers() throws SQLException {
+  private ResultSet getUsers() throws SQLException {
     return connection.createStatement().executeQuery("SELECT id, mc, discordid FROM players");
   }
 
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public boolean isWhitelisted(String mcName) {
     try {
       PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE mc = ? COLLATE NOCASE");
@@ -108,7 +99,7 @@ public class DatabaseFactory {
     statement.executeUpdate();
   }
 
-  public void deleteUser(int id) throws SQLException {
+  private void deleteUser(int id) throws SQLException {
     PreparedStatement statement = connection.prepareStatement("DELETE FROM players WHERE id = ?");
     statement.setInt(1, id);
     statement.executeUpdate();
@@ -163,26 +154,5 @@ public class DatabaseFactory {
     ResultSet set = statement.executeQuery();
     set.next();
     return set.getString("reason");
-  }
-
-  public boolean isVive(String mcName) {
-    try {
-      PreparedStatement statement = connection.prepareStatement("SELECT id, mc FROM vives WHERE mc = ? COLLATE NOCASE");
-      statement.setString(1, mcName);
-      return statement.executeQuery().next();
-    } catch (SQLException ignored) {}
-    return false;
-  }
-
-  public void linkVive(String mcName) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement("INSERT INTO vives(mc) VALUES(?)");
-    statement.setString(1, mcName);
-    statement.executeUpdate();
-  }
-
-  public void deleteVive(String mcName) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement("DELETE FROM vives WHERE mc = ?");
-    statement.setString(1, mcName);
-    statement.executeUpdate();
   }
 }

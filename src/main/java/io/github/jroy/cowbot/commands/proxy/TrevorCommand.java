@@ -1,8 +1,7 @@
-package io.github.jroy.cowbot.commands;
+package io.github.jroy.cowbot.commands.proxy;
 
 import io.github.jroy.cowbot.ProxiedCow;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.User;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -13,13 +12,11 @@ import java.sql.SQLException;
 
 public class TrevorCommand extends Command {
 
-  private ProxiedCow cowBot;
-  private JDA jda;
+  private ProxiedCow cow;
 
-  public TrevorCommand(ProxiedCow cowBot, JDA jda) {
+  public TrevorCommand(ProxiedCow cow) {
     super("trevor");
-    this.cowBot = cowBot;
-    this.jda = jda;
+    this.cow = cow;
   }
 
   @Override
@@ -32,16 +29,17 @@ public class TrevorCommand extends Command {
 
       switch (args[0].toLowerCase()) {
         case "whois": {
-          if (!cowBot.databaseFactory.isWhitelisted(args[1])) {
+          if (!cow.getDatabaseFactory().isWhitelisted(args[1])) {
             sender.sendMessage(new ComponentBuilder("Unknown Player!").color(ChatColor.RED).create());
             return;
           }
 
           try {
-            String discordId = cowBot.databaseFactory.getDiscordIdFromUsername(args[1]);
-            User user = jda.getUserById(discordId);
+            String discordId = cow.getDatabaseFactory().getDiscordIdFromUsername(args[1]);
+            User user = cow.getJda().getUserById(discordId);
+            assert user != null;
             sender.sendMessage(new TextComponent(ChatColor.YELLOW + "Target User is " + ChatColor.GOLD + "@" + user.getName() + "#" + user.getDiscriminator() + ChatColor.YELLOW + " with user id " + ChatColor.GOLD + user.getId()));
-          } catch (SQLException e) {
+          } catch (Exception e) {
             sender.sendMessage(new ComponentBuilder("Error while fetching user data: " + e.getMessage()).color(ChatColor.RED).create());
             e.printStackTrace();
           }

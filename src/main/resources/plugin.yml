@@ -1,12 +1,9 @@
 name: CowBot
 author: JRoy
-version: 0.6
+version: 1.0
 api-version: 1.14
 main: io.github.jroy.cowbot.CowBot
 commands:
   communism:
     description: Communism Command
     usage: /communism
-  autorestart:
-    description: RESTART TIME
-    usage: /autorestart
