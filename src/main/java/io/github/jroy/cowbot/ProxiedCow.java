@@ -3,6 +3,7 @@ package io.github.jroy.cowbot;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.commands.discord.BanCommand;
+import io.github.jroy.cowbot.commands.discord.EvalCommand;
 import io.github.jroy.cowbot.commands.discord.LinkCommand;
 import io.github.jroy.cowbot.commands.discord.NameCommand;
 import io.github.jroy.cowbot.commands.discord.base.CommandFactory;
@@ -78,7 +79,8 @@ public class ProxiedCow extends Plugin implements Listener {
           .addEventListeners(new CommandFactory("!", ".").addCommands(
               new LinkCommand(this),
               new BanCommand(this),
-              new NameCommand(this)
+              new NameCommand(this),
+              new EvalCommand(this)
           ).build())
           .build().awaitReady();
       log("Logged into JDA!");
