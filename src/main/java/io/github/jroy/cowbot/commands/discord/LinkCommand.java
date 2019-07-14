@@ -8,6 +8,8 @@ import io.github.jroy.cowbot.utils.Constants;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.sql.SQLException;
+import java.time.Instant;
+import java.util.Objects;
 
 public class LinkCommand extends CommandBase {
 
@@ -21,6 +23,13 @@ public class LinkCommand extends CommandBase {
   @Override
   protected void executeCommand(CommandEvent e) {
     if (!e.getTextChannel().getId().equalsIgnoreCase(Constants.MC_CHANNEL_ID)) {
+      return;
+    }
+
+    if ((Instant.now().getEpochSecond() - e.getMember().getTimeCreated().toEpochSecond()) <= 432000) {
+      e.replyError("To prevent abuse, your linkage request was blocked. Please try again in a few days.");
+      Objects.requireNonNull(e.getGuild().getMemberById(Constants.OWNER_ID)).getUser().openPrivateChannel().queue(
+          privateChannel -> privateChannel.sendMessage("New User Warning: " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator()).queue());
       return;
     }
 
@@ -63,7 +72,7 @@ public class LinkCommand extends CommandBase {
     }
     try {
       cow.getDatabaseFactory().linkUser(userId, e.getSplitArgs()[0]);
-      e.reply("Added " + e.getMember().getAsMention() + " to thw whitelist with the username " + e.getSplitArgs()[0]);
+      e.reply("Added " + e.getMember().getAsMention() + " to the whitelist with the username " + e.getSplitArgs()[0]);
       new Thread(addAtlPlayer).start();
     } catch (SQLException ex) {
       e.replyError("Error white linking your Minecraft name: " + ex.getMessage());
