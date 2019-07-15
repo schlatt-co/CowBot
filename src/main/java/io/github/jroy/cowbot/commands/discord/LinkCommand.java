@@ -9,7 +9,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.Objects;
 
 public class LinkCommand extends CommandBase {
 
@@ -28,8 +27,8 @@ public class LinkCommand extends CommandBase {
 
     if ((Instant.now().getEpochSecond() - e.getMember().getTimeCreated().toEpochSecond()) <= 432000) {
       e.replyError("To prevent abuse, your linkage request was blocked. Please try again in a few days.");
-      Objects.requireNonNull(e.getGuild().getMemberById(Constants.OWNER_ID)).getUser().openPrivateChannel().queue(
-          privateChannel -> privateChannel.sendMessage("New User Warning: " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator()).queue());
+      //noinspection ConstantConditions
+      e.getGuild().getTextChannelById(Constants.SHOUT_CHANNEL_ID).sendMessage("New User Warning: " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator()).queue();
       return;
     }
 

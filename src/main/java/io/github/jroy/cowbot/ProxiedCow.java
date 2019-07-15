@@ -11,6 +11,7 @@ import io.github.jroy.cowbot.commands.proxy.LockdownCommand;
 import io.github.jroy.cowbot.commands.proxy.StopCommand;
 import io.github.jroy.cowbot.commands.proxy.TrevorCommand;
 import io.github.jroy.cowbot.utils.ChatEnum;
+import io.github.jroy.cowbot.utils.Constants;
 import io.github.jroy.cowbot.utils.DatabaseFactory;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
@@ -217,7 +218,7 @@ public class ProxiedCow extends Plugin implements Listener {
     ServerPing ping = new ServerPing();
     ping.setDescriptionComponent(new TextComponent(ChatColor.translateAlternateColorCodes('&', serverMotd)));
     ping.setVersion(new ServerPing.Protocol(targetVersion, targetProtocol));
-    ping.setPlayers(new ServerPing.Players(getProxy().getOnlineCount() + 1, getProxy().getOnlineCount(), new ServerPing.PlayerInfo[]{new ServerPing.PlayerInfo("jschlatt", UUID.fromString("4f16bc54-a296-40ea-bb51-ba6b04ad42c1"))}));
+    ping.setPlayers(new ServerPing.Players(getProxy().getOnlineCount() + 1, getProxy().getOnlineCount(), new ServerPing.PlayerInfo[]{new ServerPing.PlayerInfo("jschlatt", UUID.fromString(Constants.JSCHALTT_UUID))}));
     event.setResponse(ping);
   }
 
