@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.commands.spigot.CommunismCommand;
+import io.github.jroy.cowbot.commands.spigot.ServerCommand;
 import io.github.jroy.cowbot.utils.ChatEnum;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -38,12 +39,13 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     log("Hello <3 -Trevor");
   }
 
+  @SuppressWarnings("ConstantConditions")
   @Override
   public void onEnable() {
     log("Running onEnable flow...");
     getServer().getPluginManager().registerEvents(this, this);
-    //noinspection ConstantConditions
     getCommand("communism").setExecutor(new CommunismCommand(this));
+    getCommand("fuckbungee").setExecutor(new ServerCommand(this));
     getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:main");
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
@@ -59,6 +61,15 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         chatEnumCache.put(input[0], ChatEnum.valueOf(input[1]));
       }
     }
+  }
+
+  @SuppressWarnings("UnstableApiUsage")
+  public void sendToServer(Player player, String server) {
+    ByteArrayDataOutput out = ByteStreams.newDataOutput();
+    out.writeUTF("ConnectOther");
+    out.writeUTF(player.getName());
+    out.writeUTF(server);
+    player.sendPluginMessage(this, "BungeeCord", out.toByteArray());
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
