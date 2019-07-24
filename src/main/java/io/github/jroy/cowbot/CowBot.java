@@ -1,11 +1,15 @@
 package io.github.jroy.cowbot;
 
+import club.minnced.discord.webhook.WebhookClient;
+import club.minnced.discord.webhook.WebhookClientBuilder;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.commands.spigot.CommunismCommand;
 import io.github.jroy.cowbot.commands.spigot.ServerCommand;
 import io.github.jroy.cowbot.utils.ChatEnum;
+import io.github.jroy.cowbot.utils.ConsoleInterceptor;
+import io.github.jroy.cowbot.utils.FakeCommandSender;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,6 +38,9 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   private List<Player> sleeping = new ArrayList<>();
   public HashMap<UUID, Boolean> communists = new HashMap<>();
 
+  private WebhookClient webhookClient;
+  private WebhookClient consoleWebhookClient;
+
   @Override
   public void onLoad() {
     log("Hello <3 -Trevor");
@@ -43,12 +50,24 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   @Override
   public void onEnable() {
     log("Running onEnable flow...");
+    loadConfig();
     getServer().getPluginManager().registerEvents(this, this);
     getCommand("communism").setExecutor(new CommunismCommand(this));
     getCommand("fuckbungee").setExecutor(new ServerCommand(this));
     getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:main");
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
+    getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:discord", this);
+    log("Connecting to webhooks...");
+    webhookClient = new WebhookClientBuilder(getConfig().getString("webhookUrl")).setDaemon(true).build();
+    webhookClient.send(":white_check_mark: Server has started");
+    consoleWebhookClient = new WebhookClientBuilder(getConfig().getString("consoleUrl")).setDaemon(true).build();
+    new ConsoleInterceptor(this);
+  }
+
+  @Override
+  public void onDisable() {
+    webhookClient.send(":octagonal_sign: Server has stopped");
   }
 
   @SuppressWarnings("UnstableApiUsage")
@@ -59,6 +78,15 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
       if (in.readUTF().equalsIgnoreCase("trevorreturn")) {
         String[] input = in.readUTF().split(":");
         chatEnumCache.put(input[0], ChatEnum.valueOf(input[1]));
+      }
+    } else if (channel.equalsIgnoreCase("trevor:discord")) {
+      ByteArrayDataInput in = ByteStreams.newDataInput(message);
+      String subchannel = in.readUTF();
+      if (subchannel.equalsIgnoreCase("chat")) {
+        String content = in.readUTF();
+        getServer().broadcastMessage(ChatColor.AQUA + "[Trevorcord] " + ChatColor.YELLOW + content.split(":")[0] + ChatColor.AQUA + " >> " + ChatColor.WHITE + content.replaceFirst("(?:\\S(?: +)?)+:", ""));
+      } else if (subchannel.equalsIgnoreCase("cmd")) {
+        getServer().dispatchCommand(new FakeCommandSender(this, getServer().getConsoleSender()), in.readUTF());
       }
     }
   }
@@ -93,10 +121,12 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
 
     ChatEnum chatEnum = chatEnumCache.getOrDefault(event.getPlayer().getName(), ChatEnum.UNKNOWN);
     if (chatEnum != null && chatEnum != ChatEnum.UNKNOWN) {
-      event.setFormat(prefix + ChatColor.GRAY + "<" + chatEnum.getChatColor() + ChatColor.stripColor(event.getPlayer().getDisplayName()) + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage());
+      event.setFormat(prefix + ChatColor.GRAY + "<" + chatEnum.getChatColor() + ChatColor.stripColor(event.getPlayer().getDisplayName()) + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
+      webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
       return;
     }
-    event.setFormat(prefix + ChatColor.GRAY + "<" + event.getPlayer().getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage());
+    event.setFormat(prefix + ChatColor.GRAY + "<" + event.getPlayer().getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
+    webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
   }
 
   @SuppressWarnings("UnstableApiUsage")
@@ -175,6 +205,21 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   @EventHandler(priority = EventPriority.HIGH)
   public void onUnSleep(PlayerBedLeaveEvent event) {
     sleeping.remove(event.getPlayer());
+  }
+
+  private void loadConfig() {
+    getConfig().addDefault("webhookUrl", "url");
+    getConfig().addDefault("consoleUrl", "url");
+    getConfig().options().copyDefaults(true);
+    saveConfig();
+  }
+
+  public WebhookClient getWebhookClient() {
+    return webhookClient;
+  }
+
+  public WebhookClient getConsoleWebhookClient() {
+    return consoleWebhookClient;
   }
 
   private void log(String message) {

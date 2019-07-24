@@ -1,6 +1,7 @@
 package io.github.jroy.cowbot.commands.discord.base;
 
 import com.jagrosh.jdautilities.command.Command;
+import io.github.jroy.cowbot.utils.Constants;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,6 +52,7 @@ public abstract class CommandBase extends Command {
    *
    * @param disabled Disabled state.
    */
+  @SuppressWarnings("WeakerAccess")
   public void setDisabled(boolean disabled) {
     this.disabled = disabled;
   }
@@ -68,7 +70,7 @@ public abstract class CommandBase extends Command {
   protected final void execute(com.jagrosh.jdautilities.command.CommandEvent event) {
     Member member = event.getMember();
 
-    if (disabled) {
+    if (disabled && !event.getGuild().getId().equalsIgnoreCase(Constants.GUILD_ID)) {
       event.getMessage().addReaction("❌").queue();
       return;
     }

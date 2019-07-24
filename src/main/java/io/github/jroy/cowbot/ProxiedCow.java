@@ -19,6 +19,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -33,6 +36,7 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 
+import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.io.*;
 import java.sql.SQLException;
@@ -42,7 +46,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class ProxiedCow extends Plugin implements Listener {
+public class ProxiedCow extends Plugin implements Listener, EventListener {
 
   public static Configuration configuration;
 
@@ -82,7 +86,7 @@ public class ProxiedCow extends Plugin implements Listener {
               new BanCommand(this),
               new NameCommand(this),
               new EvalCommand(this)
-          ).build())
+          ).build(), this)
           .build().awaitReady();
       log("Logged into JDA!");
     } catch (InterruptedException | LoginException e) {
@@ -106,6 +110,7 @@ public class ProxiedCow extends Plugin implements Listener {
     getProxy().getPluginManager().registerCommand(this, new LockdownCommand(this));
     getProxy().getPluginManager().registerCommand(this, new StopCommand(this));
     getProxy().registerChannel("trevor:main");
+    getProxy().registerChannel("trevor:discord");
   }
 
   @EventHandler
@@ -158,7 +163,7 @@ public class ProxiedCow extends Plugin implements Listener {
       if (subchannel.equalsIgnoreCase("trevorrequest")) {
         String username = in.readUTF();
         String discordId = databaseFactory.getDiscordIdFromUsername(username);
-        @SuppressWarnings("ConstantConditions") Member member = jda.getGuildById("438337215584796692").getMemberById(discordId);
+        @SuppressWarnings("ConstantConditions") Member member = jda.getGuildById(Constants.GUILD_ID).getMemberById(discordId);
         if (member != null) {
           ChatEnum topRole = null;
           for (Role role : member.getRoles()) {
@@ -202,7 +207,7 @@ public class ProxiedCow extends Plugin implements Listener {
           if (topRole == null) {
             topRole = ChatEnum.UNKNOWN;
           }
-          sendMessage(username + ":" + topRole.name());
+          sendMessage("trevor:main", "trevorreturn", username + ":" + topRole.name());
         }
       } else if (subchannel.equalsIgnoreCase("target")) {
         targetServer = in.readUTF();
@@ -229,16 +234,16 @@ public class ProxiedCow extends Plugin implements Listener {
     return change;
   }
 
-  private void sendMessage(String message) {
+  private void sendMessage(String channel, String subchannel, String message) {
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     DataOutputStream out = new DataOutputStream(stream);
     try {
-      out.writeUTF("trevorreturn");
+      out.writeUTF(subchannel);
       out.writeUTF(message);
     } catch (IOException e) {
       e.printStackTrace();
     }
-    getProxy().getServerInfo("vanilla").sendData("trevor:main", stream.toByteArray());
+    getProxy().getServerInfo(targetServer).sendData(channel, stream.toByteArray());
   }
 
   @SuppressWarnings("UnstableApiUsage")
@@ -294,5 +299,19 @@ public class ProxiedCow extends Plugin implements Listener {
 
   public List<String> getLockdownList() {
     return lockdownList;
+  }
+
+  @Override
+  public void onEvent(@Nonnull GenericEvent event) {
+    if (event instanceof GuildMessageReceivedEvent) {
+      GuildMessageReceivedEvent e = (GuildMessageReceivedEvent) event;
+      if (e.getChannel().getId().equalsIgnoreCase(Constants.CHAT_CHANNEL_ID) && !e.getAuthor().isBot() && !e.isWebhookMessage()) {
+        if (e.getMessage().getContentRaw().startsWith("!c ")) {
+          sendMessage("trevor:discord", "cmd", e.getMessage().getContentRaw().replaceFirst("!c ", ""));
+          return;
+        }
+        sendMessage("trevor:discord", "chat", (e.getMember() == null ? e.getAuthor().getName() : e.getMember().getEffectiveName()) + ":" + e.getMessage().getContentDisplay());
+      }
+    }
   }
 }

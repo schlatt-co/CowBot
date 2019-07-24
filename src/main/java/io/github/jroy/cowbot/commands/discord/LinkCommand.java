@@ -17,6 +17,7 @@ public class LinkCommand extends CommandBase {
   public LinkCommand(ProxiedCow cow) {
     super("link", "<minecraft username>", "Links your minecraft username with your discord account.");
     this.cow = cow;
+    setDisabled(true);
   }
 
   @Override

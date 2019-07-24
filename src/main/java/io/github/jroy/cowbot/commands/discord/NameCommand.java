@@ -14,6 +14,7 @@ public class NameCommand extends CommandBase {
   public NameCommand(ProxiedCow cow) {
     super("mcname", "<user mention>", "Gets the mc name of a discord user.", true);
     this.cow = cow;
+    setDisabled(true);
   }
 
   @Override
