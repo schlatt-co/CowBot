@@ -125,11 +125,15 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     ChatEnum chatEnum = chatEnumCache.getOrDefault(event.getPlayer().getName(), ChatEnum.UNKNOWN);
     if (chatEnum != null && chatEnum != ChatEnum.UNKNOWN) {
       event.setFormat(prefix + ChatColor.GRAY + "<" + chatEnum.getChatColor() + ChatColor.stripColor(event.getPlayer().getDisplayName()) + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
-      webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
+      if (Bukkit.getWorld("world") != null) {
+        webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
+      }
       return;
     }
     event.setFormat(prefix + ChatColor.GRAY + "<" + event.getPlayer().getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
-    webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
+    if (Bukkit.getWorld("world") != null) {
+      webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
+    }
   }
 
   @SuppressWarnings("UnstableApiUsage")
