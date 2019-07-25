@@ -147,7 +147,9 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
       event.getPlayer().disconnect(new TextComponent("Hey Troglodyte,\nWe updated the server to " + targetVersion + "!\nSo you can't join with whatever shitty version you're on."));
       return;
     }
-    event.setTarget(getProxy().getServerInfo(targetServer));
+    if (event.getReason().equals(ServerConnectEvent.Reason.JOIN_PROXY)) {
+      event.setTarget(getProxy().getServerInfo(targetServer));
+    }
   }
 
   @SuppressWarnings("UnstableApiUsage")
