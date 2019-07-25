@@ -11,17 +11,18 @@ import io.github.jroy.cowbot.utils.ChatEnum;
 import io.github.jroy.cowbot.utils.ConsoleInterceptor;
 import io.github.jroy.cowbot.utils.FakeCommandSender;
 import net.md_5.bungee.api.ChatColor;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Statistic;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -31,6 +32,8 @@ import java.io.File;
 import java.util.*;
 
 public class CowBot extends JavaPlugin implements Listener, PluginMessageListener {
+
+  private boolean isVanilla = true;
 
   private Map<String, ChatEnum> chatEnumCache = new HashMap<>();
 
@@ -49,21 +52,22 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   @Override
   public void onEnable() {
     log("Running onEnable flow...");
+    isVanilla = Bukkit.getWorld("world") != null;
     getServer().getPluginManager().registerEvents(this, this);
     getCommand("fuckbungee").setExecutor(new ServerCommand(this));
     getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:main");
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:discord", this);
-    if (Bukkit.getWorld("world") != null) {
+    if (isVanilla) {
       getCommand("communism").setExecutor(new CommunismCommand(this));
-      log("Connecting to webhooks...");
-      loadConfig();
-      webhookClient = new WebhookClientBuilder(getConfig().getString("webhookUrl")).setDaemon(true).build();
-      webhookClient.send(":white_check_mark: Server has started");
-      consoleWebhookClient = new WebhookClientBuilder(getConfig().getString("consoleUrl")).setDaemon(true).build();
-      new ConsoleInterceptor(this);
     }
+    log("Connecting to webhooks...");
+    loadConfig();
+    webhookClient = new WebhookClientBuilder(getConfig().getString("webhookUrl")).setDaemon(true).build();
+    webhookClient.send(":white_check_mark: Server has started");
+    consoleWebhookClient = new WebhookClientBuilder(getConfig().getString("consoleUrl")).setDaemon(true).build();
+    new ConsoleInterceptor(this);
   }
 
   @Override
@@ -125,21 +129,17 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     ChatEnum chatEnum = chatEnumCache.getOrDefault(event.getPlayer().getName(), ChatEnum.UNKNOWN);
     if (chatEnum != null && chatEnum != ChatEnum.UNKNOWN) {
       event.setFormat(prefix + ChatColor.GRAY + "<" + chatEnum.getChatColor() + ChatColor.stripColor(event.getPlayer().getDisplayName()) + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
-      if (Bukkit.getWorld("world") != null) {
-        webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
-      }
+      webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
       return;
     }
     event.setFormat(prefix + ChatColor.GRAY + "<" + event.getPlayer().getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
-    if (Bukkit.getWorld("world") != null) {
-      webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
-    }
+    webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
   }
 
   @SuppressWarnings("UnstableApiUsage")
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onJoin(PlayerJoinEvent event) {
-    if (Bukkit.getWorld("world") != null) {
+    if (isVanilla) {
       if (!event.getPlayer().hasPlayedBefore()) {
         communists.put(event.getPlayer().getUniqueId(), false);
         event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 16, 54, -3, -90, 0));
@@ -149,16 +149,16 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
       chatEnumCache.put(event.getPlayer().getName(), ChatEnum.UNKNOWN);
       Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("trevorrequest");
+        out.writeUTF("trevorrequest|" + (isVanilla ? "vanilla" : "farm"));
         out.writeUTF(event.getPlayer().getName());
         event.getPlayer().sendPluginMessage(this, "trevor:main", out.toByteArray());
       }, 30);
     }
   }
 
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onLeave(PlayerQuitEvent event) {
-    if (Bukkit.getWorld("world") != null) {
+    if (isVanilla) {
       if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
         //noinspection ConstantConditions
         new File(new File(Bukkit.getServer().getWorld("world").getWorldFolder(), "playerdata"), event.getPlayer().getUniqueId().toString() + ".dat").delete();
@@ -177,7 +177,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onBlockBreak(BlockBreakEvent event) {
-    if (Bukkit.getWorld("world") != null) {
+    if (isVanilla) {
       if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
         event.setCancelled(true);
         event.getPlayer().sendMessage("You must agree to the rules before you can break blocks! Type /communism when you read and agree.");
@@ -187,7 +187,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onBlockPlace(BlockPlaceEvent event) {
-    if (Bukkit.getWorld("world") != null) {
+    if (isVanilla) {
       if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
         event.setCancelled(true);
         event.getPlayer().sendMessage("You must agree to the rules before you can place blocks! Type /communism when you read and agree.");
@@ -195,9 +195,9 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     }
   }
 
-  @EventHandler(priority = EventPriority.HIGH)
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onSleep(PlayerBedEnterEvent event) {
-    if (Bukkit.getWorld("world") != null) {
+    if (isVanilla) {
       if (event.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.OK) {
         sleeping.add(event.getPlayer());
         event.getPlayer().setStatistic(Statistic.TIME_SINCE_REST, 0);
@@ -214,9 +214,9 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     }
   }
 
-  @EventHandler(priority = EventPriority.HIGH)
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onUnSleep(PlayerBedLeaveEvent event) {
-    if (Bukkit.getWorld("world") != null) {
+    if (isVanilla) {
       sleeping.remove(event.getPlayer());
     }
   }

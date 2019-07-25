@@ -161,8 +161,9 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
 
     ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
     try {
-      String subchannel = in.readUTF();
-      if (subchannel.equalsIgnoreCase("trevorrequest")) {
+      String[] subchannel = in.readUTF().split("\\|");
+      if (subchannel[0].equalsIgnoreCase("trevorrequest")) {
+        String returnServer = subchannel[1];
         String username = in.readUTF();
         String discordId = databaseFactory.getDiscordIdFromUsername(username);
         @SuppressWarnings("ConstantConditions") Member member = jda.getGuildById(Constants.GUILD_ID).getMemberById(discordId);
@@ -209,9 +210,9 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
           if (topRole == null) {
             topRole = ChatEnum.UNKNOWN;
           }
-          sendMessage("trevor:main", "trevorreturn", username + ":" + topRole.name());
+          sendMessage("trevor:main", "trevorreturn", username + ":" + topRole.name(), returnServer);
         }
-      } else if (subchannel.equalsIgnoreCase("target")) {
+      } else if (subchannel[0].equalsIgnoreCase("target")) {
         targetServer = in.readUTF();
       }
     } catch (SQLException e) {
@@ -220,8 +221,7 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
   }
 
   @EventHandler
-  public void onServerPing(
-      ProxyPingEvent event) {
+  public void onServerPing(ProxyPingEvent event) {
     ServerPing ping = new ServerPing();
     ping.setDescriptionComponent(new TextComponent(ChatColor.translateAlternateColorCodes('&', serverMotd)));
     ping.setVersion(new ServerPing.Protocol(targetVersion, targetProtocol));
@@ -236,7 +236,7 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
     return change;
   }
 
-  private void sendMessage(String channel, String subchannel, String message) {
+  private void sendMessage(String channel, String subchannel, String message, String server) {
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     DataOutputStream out = new DataOutputStream(stream);
     try {
@@ -245,7 +245,7 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    getProxy().getServerInfo(targetServer).sendData(channel, stream.toByteArray());
+    getProxy().getServerInfo(server).sendData(channel, stream.toByteArray());
   }
 
   @SuppressWarnings("UnstableApiUsage")
@@ -307,12 +307,13 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
   public void onEvent(@Nonnull GenericEvent event) {
     if (event instanceof GuildMessageReceivedEvent) {
       GuildMessageReceivedEvent e = (GuildMessageReceivedEvent) event;
-      if (e.getChannel().getId().equalsIgnoreCase(Constants.CHAT_CHANNEL_ID) && !e.getAuthor().isBot() && !e.isWebhookMessage()) {
+      if ((e.getChannel().getId().equalsIgnoreCase(Constants.VANILLA_CHAT_CHANNEL_ID) || e.getChannel().getId().equalsIgnoreCase(Constants.FARM_CHAT_CHANNEL_ID)) && !e.getAuthor().isBot() && !e.isWebhookMessage()) {
+        String target = (e.getChannel().getId().equalsIgnoreCase(Constants.VANILLA_CHAT_CHANNEL_ID) ? "vanilla" : "farm");
         if (e.getMessage().getContentRaw().startsWith("!c ")) {
-          sendMessage("trevor:discord", "cmd", e.getMessage().getContentRaw().replaceFirst("!c ", ""));
+          sendMessage("trevor:discord", "cmd", e.getMessage().getContentRaw().replaceFirst("!c ", ""), target);
           return;
         }
-        sendMessage("trevor:discord", "chat", (e.getMember() == null ? e.getAuthor().getName() : e.getMember().getEffectiveName()) + ":" + e.getMessage().getContentDisplay());
+        sendMessage("trevor:discord", "chat", (e.getMember() == null ? e.getAuthor().getName() : e.getMember().getEffectiveName()) + ":" + e.getMessage().getContentDisplay(), target);
       }
     }
   }
