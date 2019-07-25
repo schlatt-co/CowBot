@@ -154,6 +154,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         event.getPlayer().sendPluginMessage(this, "trevor:main", out.toByteArray());
       }, 30);
     }
+    webhookClient.send(":heavy_plus_sign: **" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + " has joined the server" + (event.getPlayer().hasPlayedBefore() ? "!" : " for the first time!") + "**");
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
@@ -164,15 +165,15 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         new File(new File(Bukkit.getServer().getWorld("world").getWorldFolder(), "playerdata"), event.getPlayer().getUniqueId().toString() + ".dat").delete();
       }
     }
+    webhookClient.send(":heavy_minus_sign: **" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + " has left the server!");
   }
 
-  @EventHandler(priority = EventPriority.HIGHEST)
-  public void onInteract(PlayerInteractEvent event) {
-    if (Bukkit.getWorld("world") != null) {
-      if (!event.getPlayer().isOp() && event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && Material.DRAGON_EGG.equals(Objects.requireNonNull(event.getClickedBlock()).getType())) {
-        event.setCancelled(true);
-      }
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void onDeath(PlayerDeathEvent event) {
+    if (StringUtils.isBlank(event.getDeathMessage()) || !event.getEntityType().equals(EntityType.PLAYER)) {
+      return;
     }
+    webhookClient.send(":skull: **" + event.getDeathMessage() + "**");
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
