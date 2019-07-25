@@ -21,7 +21,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -50,24 +49,28 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   @Override
   public void onEnable() {
     log("Running onEnable flow...");
-    loadConfig();
     getServer().getPluginManager().registerEvents(this, this);
-    getCommand("communism").setExecutor(new CommunismCommand(this));
     getCommand("fuckbungee").setExecutor(new ServerCommand(this));
     getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:main");
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:discord", this);
-    log("Connecting to webhooks...");
-    webhookClient = new WebhookClientBuilder(getConfig().getString("webhookUrl")).setDaemon(true).build();
-    webhookClient.send(":white_check_mark: Server has started");
-    consoleWebhookClient = new WebhookClientBuilder(getConfig().getString("consoleUrl")).setDaemon(true).build();
-    new ConsoleInterceptor(this);
+    if (Bukkit.getWorld("world") != null) {
+      getCommand("communism").setExecutor(new CommunismCommand(this));
+      log("Connecting to webhooks...");
+      loadConfig();
+      webhookClient = new WebhookClientBuilder(getConfig().getString("webhookUrl")).setDaemon(true).build();
+      webhookClient.send(":white_check_mark: Server has started");
+      consoleWebhookClient = new WebhookClientBuilder(getConfig().getString("consoleUrl")).setDaemon(true).build();
+      new ConsoleInterceptor(this);
+    }
   }
 
   @Override
   public void onDisable() {
-    webhookClient.send(":octagonal_sign: Server has stopped");
+    if (webhookClient != null) {
+      webhookClient.send(":octagonal_sign: Server has stopped");
+    }
   }
 
   @SuppressWarnings("UnstableApiUsage")
@@ -132,9 +135,11 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   @SuppressWarnings("UnstableApiUsage")
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onJoin(PlayerJoinEvent event) {
-    if (!event.getPlayer().hasPlayedBefore()) {
-      communists.put(event.getPlayer().getUniqueId(), false);
-      event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 16, 54, -3, -90, 0));
+    if (Bukkit.getWorld("world") != null) {
+      if (!event.getPlayer().hasPlayedBefore()) {
+        communists.put(event.getPlayer().getUniqueId(), false);
+        event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 16, 54, -3, -90, 0));
+      }
     }
     if (!chatEnumCache.containsKey(event.getPlayer().getName()) || chatEnumCache.get(event.getPlayer().getName()).equals(ChatEnum.UNKNOWN)) {
       chatEnumCache.put(event.getPlayer().getName(), ChatEnum.UNKNOWN);
@@ -149,62 +154,67 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onLeave(PlayerQuitEvent event) {
-    if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
-      //noinspection ConstantConditions
-      new File(new File(Bukkit.getServer().getWorld("world").getWorldFolder(), "playerdata"), event.getPlayer().getUniqueId().toString() + ".dat").delete();
+    if (Bukkit.getWorld("world") != null) {
+      if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
+        //noinspection ConstantConditions
+        new File(new File(Bukkit.getServer().getWorld("world").getWorldFolder(), "playerdata"), event.getPlayer().getUniqueId().toString() + ".dat").delete();
+      }
     }
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onInteract(PlayerInteractEvent event) {
-    if (!event.getPlayer().isOp() && event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && Material.DRAGON_EGG.equals(Objects.requireNonNull(event.getClickedBlock()).getType())) {
-      event.setCancelled(true);
-    }
-  }
-
-  @EventHandler(priority = EventPriority.HIGHEST)
-  public void onBlockPhysicsEvent(BlockPhysicsEvent event) {
-    if (event.getSourceBlock().getType().equals(Material.DRAGON_EGG)) {
-      event.setCancelled(true);
+    if (Bukkit.getWorld("world") != null) {
+      if (!event.getPlayer().isOp() && event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && Material.DRAGON_EGG.equals(Objects.requireNonNull(event.getClickedBlock()).getType())) {
+        event.setCancelled(true);
+      }
     }
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onBlockBreak(BlockBreakEvent event) {
-    if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
-      event.setCancelled(true);
-      event.getPlayer().sendMessage("You must agree to the rules before you can break blocks! Type /communism when you read and agree.");
+    if (Bukkit.getWorld("world") != null) {
+      if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
+        event.setCancelled(true);
+        event.getPlayer().sendMessage("You must agree to the rules before you can break blocks! Type /communism when you read and agree.");
+      }
     }
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onBlockPlace(BlockPlaceEvent event) {
-    if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
-      event.setCancelled(true);
-      event.getPlayer().sendMessage("You must agree to the rules before you can place blocks! Type /communism when you read and agree.");
+    if (Bukkit.getWorld("world") != null) {
+      if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
+        event.setCancelled(true);
+        event.getPlayer().sendMessage("You must agree to the rules before you can place blocks! Type /communism when you read and agree.");
+      }
     }
   }
 
   @EventHandler(priority = EventPriority.HIGH)
   public void onSleep(PlayerBedEnterEvent event) {
-    if (event.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.OK) {
-      sleeping.add(event.getPlayer());
-      event.getPlayer().setStatistic(Statistic.TIME_SINCE_REST, 0);
-      Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.WHITE + " has started sleeping! " + ChatColor.YELLOW + ((event.getPlayer().getWorld().getPlayers().size() / 2) - sleeping.size()) + ChatColor.WHITE + " more player(s) need to sleep in order to advance to day!");
-      if (sleeping.size() >= (event.getPlayer().getWorld().getPlayers().size() / 2)) {
-        Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.WHITE + "Advancing to day!");
-        //noinspection ConstantConditions
-        Bukkit.getServer().getWorld(event.getPlayer().getWorld().getName()).setTime(1000L);
-        event.getPlayer().getWorld().setStorm(false);
-        event.getPlayer().getWorld().setThundering(false);
-        sleeping.clear();
+    if (Bukkit.getWorld("world") != null) {
+      if (event.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.OK) {
+        sleeping.add(event.getPlayer());
+        event.getPlayer().setStatistic(Statistic.TIME_SINCE_REST, 0);
+        Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.WHITE + " has started sleeping! " + ChatColor.YELLOW + ((event.getPlayer().getWorld().getPlayers().size() / 2) - sleeping.size()) + ChatColor.WHITE + " more player(s) need to sleep in order to advance to day!");
+        if (sleeping.size() >= (event.getPlayer().getWorld().getPlayers().size() / 2)) {
+          Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.WHITE + "Advancing to day!");
+          //noinspection ConstantConditions
+          Bukkit.getServer().getWorld(event.getPlayer().getWorld().getName()).setTime(1000L);
+          event.getPlayer().getWorld().setStorm(false);
+          event.getPlayer().getWorld().setThundering(false);
+          sleeping.clear();
+        }
       }
     }
   }
 
   @EventHandler(priority = EventPriority.HIGH)
   public void onUnSleep(PlayerBedLeaveEvent event) {
-    sleeping.remove(event.getPlayer());
+    if (Bukkit.getWorld("world") != null) {
+      sleeping.remove(event.getPlayer());
+    }
   }
 
   private void loadConfig() {
