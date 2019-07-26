@@ -2,6 +2,7 @@ package io.github.jroy.cowbot;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import com.vdurmont.emoji.EmojiParser;
 import io.github.jroy.cowbot.commands.discord.BanCommand;
 import io.github.jroy.cowbot.commands.discord.EvalCommand;
 import io.github.jroy.cowbot.commands.discord.LinkCommand;
@@ -317,7 +318,9 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
           sendMessage("trevor:discord", "cmd", e.getMessage().getContentRaw().replaceFirst("!c ", ""), target);
           return;
         }
-        sendMessage("trevor:discord", "chat", (e.getMember() == null ? e.getAuthor().getName() : e.getMember().getEffectiveName()) + ":" + e.getMessage().getContentDisplay(), target);
+        String message = EmojiParser.parseToAliases(e.getMessage().getContentDisplay());
+        message = message + (e.getMessage().getAttachments().isEmpty() ? "" : (" " + e.getMessage().getAttachments().get(0).getUrl()));
+        sendMessage("trevor:discord", "chat", (e.getMember() == null ? e.getAuthor().getName() : e.getMember().getEffectiveName()) + ":" + message, target);
       }
     }
   }
