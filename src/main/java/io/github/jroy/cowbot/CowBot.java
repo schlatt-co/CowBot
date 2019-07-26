@@ -29,7 +29,9 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CowBot extends JavaPlugin implements Listener, PluginMessageListener {
 
@@ -165,7 +167,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         new File(new File(Bukkit.getServer().getWorld("world").getWorldFolder(), "playerdata"), event.getPlayer().getUniqueId().toString() + ".dat").delete();
       }
     }
-    webhookClient.send(":heavy_minus_sign: **" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + " has left the server!");
+    webhookClient.send(":heavy_minus_sign: **" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + " has left the server!**");
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
@@ -174,6 +176,30 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
       return;
     }
     webhookClient.send(":skull: **" + event.getDeathMessage() + "**");
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void onAchievement(PlayerAdvancementDoneEvent event) {
+    event.getAdvancement();
+    if (event.getAdvancement().getKey().getKey().contains("recipe/")) {
+      return;
+    }
+
+    try {
+      Object craftAdvancement = ((Object) event.getAdvancement()).getClass().getMethod("getHandle").invoke(event.getAdvancement());
+      Object advancementDisplay = craftAdvancement.getClass().getMethod("c").invoke(craftAdvancement);
+      if (!(boolean) advancementDisplay.getClass().getMethod("i").invoke(advancementDisplay)) {
+        return;
+      }
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      e.printStackTrace();
+      return;
+    }
+    String rawAdvancementName = event.getAdvancement().getKey().getKey();
+    String advancementName = Arrays.stream(rawAdvancementName.substring(rawAdvancementName.lastIndexOf("/") + 1).toLowerCase().split("_"))
+        .map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
+        .collect(Collectors.joining(" "));
+    webhookClient.send(":medal: **" + event.getPlayer().getDisplayName() + " has made the advancement " + advancementName + "**");
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
