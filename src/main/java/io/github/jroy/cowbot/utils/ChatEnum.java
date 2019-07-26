@@ -8,6 +8,7 @@ public enum ChatEnum {
   CONTENT(ChatColor.YELLOW,50),
   MOD(ChatColor.GREEN, 40),
   PATREON(ChatColor.GOLD, 30),
+  BOOST(ChatColor.LIGHT_PURPLE, 25),
   MERCH(ChatColor.RED, 20),
   TWITCH(ChatColor.BLUE, 1);
 

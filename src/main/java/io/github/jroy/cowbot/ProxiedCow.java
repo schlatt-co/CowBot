@@ -191,6 +191,10 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
                 topRole = checkAndSet(topRole, ChatEnum.PATREON);
                 break;
               }
+              case "585535513230835742": {
+                topRole = checkAndSet(topRole, ChatEnum.BOOST);
+                break;
+              }
               case "582653648891281409":
               case "525473755712192552":
               case "479782883633135647": {
