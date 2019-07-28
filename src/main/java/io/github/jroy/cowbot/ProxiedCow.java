@@ -318,7 +318,7 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
           sendMessage("trevor:discord", "cmd", e.getMessage().getContentRaw().replaceFirst("!c ", ""), target);
           return;
         }
-        String message = EmojiParser.parseToAliases(e.getMessage().getContentDisplay());
+        String message = EmojiParser.parseToAliases(e.getMessage().getContentStripped());
         message = message + (e.getMessage().getAttachments().isEmpty() ? "" : (" " + e.getMessage().getAttachments().get(0).getUrl()));
         sendMessage("trevor:discord", "chat", (e.getMember() == null ? e.getAuthor().getName() : e.getMember().getEffectiveName()) + ":" + message, target);
       }

@@ -28,7 +28,7 @@ public class ConsoleInterceptor extends AbstractAppender {
     if (StringUtils.isBlank(line)) {
       return;
     }
-    cowBot.getConsoleWebhookClient().send(line);
+    cowBot.sendConsoleWebhookMessage(line);
   }
 
   private String sanitize(String text) {

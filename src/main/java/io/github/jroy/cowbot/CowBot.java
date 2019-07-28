@@ -67,7 +67,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     log("Connecting to webhooks...");
     loadConfig();
     webhookClient = new WebhookClientBuilder(getConfig().getString("webhookUrl")).setDaemon(true).build();
-    webhookClient.send(":white_check_mark: Server has started");
+    sendWebhookMessage(":white_check_mark: Server has started");
     consoleWebhookClient = new WebhookClientBuilder(getConfig().getString("consoleUrl")).setDaemon(true).build();
     new ConsoleInterceptor(this);
   }
@@ -75,7 +75,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   @Override
   public void onDisable() {
     if (webhookClient != null) {
-      webhookClient.send(":octagonal_sign: Server has stopped");
+      sendWebhookMessage(":octagonal_sign: Server has stopped");
     }
   }
 
@@ -131,11 +131,11 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     ChatEnum chatEnum = chatEnumCache.getOrDefault(event.getPlayer().getName(), ChatEnum.UNKNOWN);
     if (chatEnum != null && chatEnum != ChatEnum.UNKNOWN) {
       event.setFormat(prefix + ChatColor.GRAY + "<" + chatEnum.getChatColor() + ChatColor.stripColor(event.getPlayer().getDisplayName()) + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
-      webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
+      sendWebhookMessage(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage());
       return;
     }
     event.setFormat(prefix + ChatColor.GRAY + "<" + event.getPlayer().getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
-    webhookClient.send(ChatColor.stripColor(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage()));
+    sendWebhookMessage(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage());
   }
 
   @SuppressWarnings("UnstableApiUsage")
@@ -156,7 +156,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         event.getPlayer().sendPluginMessage(this, "trevor:main", out.toByteArray());
       }, 30);
     }
-    webhookClient.send(":heavy_plus_sign: **" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + " has joined the server" + (event.getPlayer().hasPlayedBefore() ? "!" : " for the first time!") + "**");
+   sendWebhookMessage(":heavy_plus_sign: **" + event.getPlayer().getDisplayName() + " has joined the server" + (event.getPlayer().hasPlayedBefore() ? "!" : " for the first time!") + "**");
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
@@ -167,7 +167,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         new File(new File(Bukkit.getServer().getWorld("world").getWorldFolder(), "playerdata"), event.getPlayer().getUniqueId().toString() + ".dat").delete();
       }
     }
-    webhookClient.send(":heavy_minus_sign: **" + ChatColor.stripColor(event.getPlayer().getDisplayName()) + " has left the server!**");
+    sendWebhookMessage(":heavy_minus_sign: **" + event.getPlayer().getDisplayName() + " has left the server!**");
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
@@ -175,7 +175,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     if (StringUtils.isBlank(event.getDeathMessage()) || !event.getEntityType().equals(EntityType.PLAYER)) {
       return;
     }
-    webhookClient.send(":skull: **" + event.getDeathMessage() + "**");
+    sendWebhookMessage(":skull: **" + event.getDeathMessage() + "**");
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
@@ -199,7 +199,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     String advancementName = Arrays.stream(rawAdvancementName.substring(rawAdvancementName.lastIndexOf("/") + 1).toLowerCase().split("_"))
         .map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
         .collect(Collectors.joining(" "));
-    webhookClient.send(":medal: **" + event.getPlayer().getDisplayName() + " has made the advancement " + advancementName + "**");
+    sendWebhookMessage(":medal: **" + event.getPlayer().getDisplayName() + " has made the advancement " + advancementName + "**");
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
@@ -257,12 +257,16 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     saveConfig();
   }
 
-  public WebhookClient getWebhookClient() {
-    return webhookClient;
+  public void sendWebhookMessage(String message) {
+    webhookClient.send(sanitizeWebhookMessage(message));
   }
 
-  public WebhookClient getConsoleWebhookClient() {
-    return consoleWebhookClient;
+  public void sendConsoleWebhookMessage(String message) {
+    consoleWebhookClient.send(sanitizeWebhookMessage(message));
+  }
+
+  private String sanitizeWebhookMessage(String message) {
+    return ChatColor.stripColor(message).replaceAll("@everyone", "@ everyone").replaceAll("\\[m|\\[([0-9]{1,2}[;m]?){3}|\u001B+", "");
   }
 
   private void log(String message) {

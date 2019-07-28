@@ -1,7 +1,6 @@
 package io.github.jroy.cowbot.utils;
 
 import io.github.jroy.cowbot.CowBot;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
@@ -111,7 +110,7 @@ public class FakeCommandSender implements ConsoleCommandSender {
 
   @Override
   public void sendMessage(@NotNull String message) {
-    cowBot.getWebhookClient().send(ChatColor.stripColor(message));
+    cowBot.sendWebhookMessage(message);
   }
 
   @Override
