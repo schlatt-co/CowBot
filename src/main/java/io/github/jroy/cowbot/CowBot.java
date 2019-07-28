@@ -123,7 +123,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     } else if (event.getPlayer().hasPermission("trevor.twitch")) {
       prefix = ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.GRAY + "] ";
     } else if (event.getPlayer().hasPermission("trevor.content")) {
-      prefix = ChatColor.GRAY + "[" + ChatColor.YELLOW + "Content" + ChatColor.GRAY + "] ";
+      prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "Content" + ChatColor.GRAY + "] ";
     } else if (event.getPlayer().hasPermission("trevor.gay")) {
       prefix = ChatColor.RED + "[" + ChatColor.GOLD + "G" + ChatColor.YELLOW + "a" + ChatColor.GREEN + "y" + ChatColor.LIGHT_PURPLE + "] ";
     }
