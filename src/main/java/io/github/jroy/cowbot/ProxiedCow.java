@@ -313,7 +313,7 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
     if (event instanceof GuildMessageReceivedEvent) {
       GuildMessageReceivedEvent e = (GuildMessageReceivedEvent) event;
       if ((e.getChannel().getId().equalsIgnoreCase(Constants.VANILLA_CHAT_CHANNEL_ID) || e.getChannel().getId().equalsIgnoreCase(Constants.FARM_CHAT_CHANNEL_ID)) && !e.getAuthor().isBot() && !e.isWebhookMessage()) {
-        String target = (e.getChannel().getId().equalsIgnoreCase(Constants.VANILLA_CHAT_CHANNEL_ID) ? "vanilla" : "farm");
+        String target = (e.getChannel().getId().equalsIgnoreCase(Constants.VANILLA_CHAT_CHANNEL_ID) ? "vanilla" : (e.getChannel().getId().equalsIgnoreCase(Constants.CREATIVE_CHAT_CHANNEL_ID) ? "creative" : "farm"));
         if (e.getMessage().getContentRaw().startsWith("!c ")) {
           sendMessage("trevor:discord", "cmd", e.getMessage().getContentRaw().replaceFirst("!c ", ""), target);
           return;
