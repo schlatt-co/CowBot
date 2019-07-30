@@ -192,7 +192,6 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         return;
       }
     } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      e.printStackTrace();
       return;
     }
     String rawAdvancementName = event.getAdvancement().getKey().getKey();
