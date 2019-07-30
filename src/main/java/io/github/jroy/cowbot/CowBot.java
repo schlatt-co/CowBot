@@ -15,13 +15,16 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Statistic;
+import org.bukkit.entity.Bat;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fish;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -254,6 +257,13 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     getConfig().addDefault("consoleUrl", "url");
     getConfig().options().copyDefaults(true);
     saveConfig();
+  }
+
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onCreatureSpawn(CreatureSpawnEvent event) {
+    if (event.getEntity() instanceof Bat || event.getEntity() instanceof Fish) {
+      event.setCancelled(true);
+    }
   }
 
   public void sendWebhookMessage(String message) {
