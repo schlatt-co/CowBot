@@ -1,7 +1,6 @@
 package io.github.jroy.cowbot.commands.spigot;
 
-import io.github.jroy.cowbot.CowBot;
-import org.bukkit.Bukkit;
+import io.github.jroy.cowbot.managers.CommunismManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class CommunismCommand implements CommandExecutor {
 
-  private CowBot cow;
+  private CommunismManager communismManager;
 
-  public CommunismCommand(CowBot cow) {
-    this.cow = cow;
+  public CommunismCommand(CommunismManager communismManager) {
+    this.communismManager = communismManager;
   }
 
   @Override
@@ -24,10 +23,9 @@ public class CommunismCommand implements CommandExecutor {
     }
     Player p = (Player) sender;
 
-    if (cow.communists.containsKey(p.getUniqueId()) && !cow.communists.get(p.getUniqueId())) {
-      cow.communists.put(p.getUniqueId(), true);
-      //noinspection ConstantConditions
-      p.teleport(Bukkit.getWorld("world").getSpawnLocation());
+    if (communismManager.playerInBox(p)) {
+      assert communismManager.world != null;
+      p.teleport(communismManager.world.getSpawnLocation());
     } else {
       p.sendMessage("You're already a communist!");
     }

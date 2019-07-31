@@ -5,8 +5,8 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import io.github.jroy.cowbot.commands.spigot.CommunismCommand;
 import io.github.jroy.cowbot.commands.spigot.ServerCommand;
+import io.github.jroy.cowbot.managers.CommunismManager;
 import io.github.jroy.cowbot.utils.ChatEnum;
 import io.github.jroy.cowbot.utils.ConsoleInterceptor;
 import io.github.jroy.cowbot.utils.DispatchCommandSender;
@@ -14,7 +14,6 @@ import io.github.jroy.cowbot.utils.WebhookCommandSender;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.EntityType;
@@ -23,8 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
@@ -32,7 +29,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,8 +41,6 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   private Map<String, ChatEnum> chatEnumCache = new HashMap<>();
 
   private List<Player> sleeping = new ArrayList<>();
-  public HashMap<UUID, Boolean> communists = new HashMap<>();
-
   private WebhookClient webhookClient;
   private WebhookClient consoleWebhookClient;
 
@@ -69,7 +63,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:discord", this);
     if (isVanilla) {
-      getCommand("communism").setExecutor(new CommunismCommand(this));
+      new CommunismManager(this);
     }
     log("Connecting to webhooks...");
     loadConfig();
@@ -151,12 +145,6 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   @SuppressWarnings("UnstableApiUsage")
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onJoin(PlayerJoinEvent event) {
-    if (isVanilla) {
-      if (!event.getPlayer().hasPlayedBefore()) {
-        communists.put(event.getPlayer().getUniqueId(), false);
-        event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 16, 54, -3, -90, 0));
-      }
-    }
     if (!chatEnumCache.containsKey(event.getPlayer().getName()) || chatEnumCache.get(event.getPlayer().getName()).equals(ChatEnum.UNKNOWN)) {
       chatEnumCache.put(event.getPlayer().getName(), ChatEnum.UNKNOWN);
       Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> {
@@ -171,12 +159,6 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
 
   @EventHandler(priority = EventPriority.MONITOR)
   public void onLeave(PlayerQuitEvent event) {
-    if (isVanilla) {
-      if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
-        //noinspection ConstantConditions
-        new File(new File(Bukkit.getServer().getWorld("world").getWorldFolder(), "playerdata"), event.getPlayer().getUniqueId().toString() + ".dat").delete();
-      }
-    }
     sendWebhookMessage(":heavy_minus_sign: **" + event.getPlayer().getDisplayName() + " has left the server!**");
   }
 
@@ -209,26 +191,6 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         .map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
         .collect(Collectors.joining(" "));
     sendWebhookMessage(":medal: **" + event.getPlayer().getDisplayName() + " has made the advancement " + advancementName + "**");
-  }
-
-  @EventHandler(priority = EventPriority.HIGHEST)
-  public void onBlockBreak(BlockBreakEvent event) {
-    if (isVanilla) {
-      if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
-        event.setCancelled(true);
-        event.getPlayer().sendMessage("You must agree to the rules before you can break blocks! Type /communism when you read and agree.");
-      }
-    }
-  }
-
-  @EventHandler(priority = EventPriority.HIGHEST)
-  public void onBlockPlace(BlockPlaceEvent event) {
-    if (isVanilla) {
-      if (communists.containsKey(event.getPlayer().getUniqueId()) && !communists.get(event.getPlayer().getUniqueId())) {
-        event.setCancelled(true);
-        event.getPlayer().sendMessage("You must agree to the rules before you can place blocks! Type /communism when you read and agree.");
-      }
-    }
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
