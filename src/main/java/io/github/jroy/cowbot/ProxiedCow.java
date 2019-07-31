@@ -43,6 +43,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -314,8 +315,12 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
       GuildMessageReceivedEvent e = (GuildMessageReceivedEvent) event;
       if ((e.getChannel().getId().equalsIgnoreCase(Constants.VANILLA_CHAT_CHANNEL_ID) || e.getChannel().getId().equalsIgnoreCase(Constants.FARM_CHAT_CHANNEL_ID)) && !e.getAuthor().isBot() && !e.isWebhookMessage()) {
         String target = (e.getChannel().getId().equalsIgnoreCase(Constants.VANILLA_CHAT_CHANNEL_ID) ? "vanilla" : (e.getChannel().getId().equalsIgnoreCase(Constants.CREATIVE_CHAT_CHANNEL_ID) ? "creative" : "farm"));
-        if (e.getMessage().getContentRaw().startsWith("!c ")) {
+        if (e.getMessage().getContentRaw().startsWith("!c ") && Objects.requireNonNull(e.getMember()).getRoles().stream().anyMatch(role -> role.getId().equalsIgnoreCase("549775492580900878"))) {
           sendMessage("trevor:discord", "cmd", e.getMessage().getContentRaw().replaceFirst("!c ", ""), target);
+          return;
+        }
+        if (e.getMessage().getContentRaw().startsWith("!list")) {
+          sendMessage("trevor:discord", "cmd", "list", target);
           return;
         }
         String message = EmojiParser.parseToAliases(e.getMessage().getContentStripped());

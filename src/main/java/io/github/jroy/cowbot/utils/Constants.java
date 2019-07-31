@@ -14,6 +14,7 @@ public class Constants {
   public static final String FARM_CONSOLE_CHANNEL_ID = "563902441213526018";
   public static final String CREATIVE_CHAT_CHANNEL_ID = "566692268241715372";
   public static final String CREATIVE_CONSOLE_CHANNEL_ID = "566692535813144586";
+  public static final String MC_ADMINS_ROLE_ID = "549775492580900878";
   public static final String SHOUT_CHANNEL_ID = "594928459139252244";
   public static final String JSCHALTT_UUID = "4f16bc54-a296-40ea-bb51-ba6b04ad42c1";
 }
