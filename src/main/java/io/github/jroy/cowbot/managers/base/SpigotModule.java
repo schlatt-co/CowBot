@@ -4,7 +4,7 @@ import io.github.jroy.cowbot.CowBot;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 
-public class SpigotModule extends BaseModule<CowBot, CommandExecutor> implements Listener {
+public abstract class SpigotModule extends BaseModule<CowBot, CommandExecutor> implements Listener {
 
   public SpigotModule(String moduleName, CowBot plugin) {
     super(moduleName, plugin);
