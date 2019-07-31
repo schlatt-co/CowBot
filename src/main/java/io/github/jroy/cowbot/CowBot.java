@@ -9,7 +9,8 @@ import io.github.jroy.cowbot.commands.spigot.CommunismCommand;
 import io.github.jroy.cowbot.commands.spigot.ServerCommand;
 import io.github.jroy.cowbot.utils.ChatEnum;
 import io.github.jroy.cowbot.utils.ConsoleInterceptor;
-import io.github.jroy.cowbot.utils.FakeCommandSender;
+import io.github.jroy.cowbot.utils.DispatchCommandSender;
+import io.github.jroy.cowbot.utils.WebhookCommandSender;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 public class CowBot extends JavaPlugin implements Listener, PluginMessageListener {
 
   private boolean isVanilla = true;
+  private boolean isCreative = false;
 
   private Map<String, ChatEnum> chatEnumCache = new HashMap<>();
 
@@ -58,10 +60,12 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   public void onEnable() {
     log("Running onEnable flow...");
     isVanilla = Bukkit.getWorld("world") != null;
+    isCreative = Bukkit.getWorld("creative") != null;
     getServer().getPluginManager().registerEvents(this, this);
     getCommand("fuckbungee").setExecutor(new ServerCommand(this));
     getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:main");
+    getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:discord");
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:discord", this);
     if (isVanilla) {
@@ -98,7 +102,10 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         String content = in.readUTF();
         getServer().broadcastMessage(ChatColor.AQUA + "[Trevorcord] " + ChatColor.YELLOW + content.split(":")[0] + ChatColor.AQUA + " >> " + ChatColor.WHITE + content.replaceFirst("(?:\\S(?: +)?)+:", ""));
       } else if (subchannel.equalsIgnoreCase("cmd")) {
-        getServer().dispatchCommand(new FakeCommandSender(this, getServer().getConsoleSender()), in.readUTF());
+        getServer().dispatchCommand(new WebhookCommandSender(this, getServer().getConsoleSender()), in.readUTF());
+      } else if (subchannel.equalsIgnoreCase("dispatch")) {
+        String msg = in.readUTF();
+        getServer().dispatchCommand(new DispatchCommandSender(this, getServer().getConsoleSender(), msg.split(":")[0]), msg.replaceFirst(msg.split(":")[0] + ":", ""));
       }
     }
   }
@@ -154,7 +161,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
       chatEnumCache.put(event.getPlayer().getName(), ChatEnum.UNKNOWN);
       Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("trevorrequest|" + (isVanilla ? "vanilla" : "farm"));
+        out.writeUTF("trevorrequest|" + (isVanilla ? "vanilla" : (isCreative ? "creative" : "farm")));
         out.writeUTF(event.getPlayer().getName());
         event.getPlayer().sendPluginMessage(this, "trevor:main", out.toByteArray());
       }, 30);

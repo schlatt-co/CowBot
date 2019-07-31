@@ -8,9 +8,7 @@ import io.github.jroy.cowbot.commands.discord.EvalCommand;
 import io.github.jroy.cowbot.commands.discord.LinkCommand;
 import io.github.jroy.cowbot.commands.discord.NameCommand;
 import io.github.jroy.cowbot.commands.discord.base.CommandFactory;
-import io.github.jroy.cowbot.commands.proxy.LockdownCommand;
-import io.github.jroy.cowbot.commands.proxy.StopCommand;
-import io.github.jroy.cowbot.commands.proxy.TrevorCommand;
+import io.github.jroy.cowbot.commands.proxy.*;
 import io.github.jroy.cowbot.utils.ChatEnum;
 import io.github.jroy.cowbot.utils.Constants;
 import io.github.jroy.cowbot.utils.DatabaseFactory;
@@ -111,6 +109,9 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
     getProxy().getPluginManager().registerCommand(this, new TrevorCommand(this));
     getProxy().getPluginManager().registerCommand(this, new LockdownCommand(this));
     getProxy().getPluginManager().registerCommand(this, new StopCommand(this));
+    getProxy().getPluginManager().registerCommand(this, new ShoutCommand());
+    getProxy().getPluginManager().registerCommand(this, new RestartCommand(this));
+    getProxy().getPluginManager().registerCommand(this, new DispatchCommand(this));
     getProxy().registerChannel("trevor:main");
     getProxy().registerChannel("trevor:discord");
   }
@@ -157,72 +158,77 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
   @SuppressWarnings("UnstableApiUsage")
   @EventHandler
   public void onPluginMessage(PluginMessageEvent event) {
-    if (!event.getTag().equalsIgnoreCase("trevor:main")) {
-      return;
-    }
-
-    ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
-    try {
-      String[] subchannel = in.readUTF().split("\\|");
-      if (subchannel[0].equalsIgnoreCase("trevorrequest")) {
-        String returnServer = subchannel[1];
-        String username = in.readUTF();
-        String discordId = databaseFactory.getDiscordIdFromUsername(username);
-        @SuppressWarnings("ConstantConditions") Member member = jda.getGuildById(Constants.GUILD_ID).getMemberById(discordId);
-        if (member != null) {
-          ChatEnum topRole = null;
-          for (Role role : member.getRoles()) {
-            switch (role.getId()) {
-              case "581340753708449793":
-              case "474574079362596864": {
-                topRole = checkAndSet(topRole, ChatEnum.UNKNOWN);
-                break;
-              }
-              case "574958723911385098":
-              case "556676267357765652": {
-                topRole = checkAndSet(topRole, ChatEnum.MOD);
-                break;
-              }
-              case "581910051766272036": {
-                topRole = checkAndSet(topRole, ChatEnum.CONTENT);
-                break;
-              }
-              case "509400860132900884":
-              case "509400824640700436":
-              case "509400795750465596": {
-                topRole = checkAndSet(topRole, ChatEnum.PATREON);
-                break;
-              }
-              case "585535513230835742": {
-                topRole = checkAndSet(topRole, ChatEnum.BOOST);
-                break;
-              }
-              case "582653648891281409":
-              case "525473755712192552":
-              case "479782883633135647": {
-                topRole = checkAndSet(topRole, ChatEnum.MERCH);
-                break;
-              }
-              case "469920113655808000":
-              case "461225008887365632": {
-                topRole = checkAndSet(topRole, ChatEnum.TWITCH);
-                break;
-              }
-              default: {
-                break;
+    if (event.getTag().equalsIgnoreCase("trevor:main")) {
+      ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
+      try {
+        String[] subchannel = in.readUTF().split("\\|");
+        if (subchannel[0].equalsIgnoreCase("trevorrequest")) {
+          String returnServer = subchannel[1];
+          String username = in.readUTF();
+          String discordId = databaseFactory.getDiscordIdFromUsername(username);
+          @SuppressWarnings("ConstantConditions") Member member = jda.getGuildById(Constants.GUILD_ID).getMemberById(discordId);
+          if (member != null) {
+            ChatEnum topRole = null;
+            for (Role role : member.getRoles()) {
+              switch (role.getId()) {
+                case "581340753708449793":
+                case "474574079362596864": {
+                  topRole = checkAndSet(topRole, ChatEnum.UNKNOWN);
+                  break;
+                }
+                case "574958723911385098":
+                case "556676267357765652": {
+                  topRole = checkAndSet(topRole, ChatEnum.MOD);
+                  break;
+                }
+                case "581910051766272036": {
+                  topRole = checkAndSet(topRole, ChatEnum.CONTENT);
+                  break;
+                }
+                case "509400860132900884":
+                case "509400824640700436":
+                case "509400795750465596": {
+                  topRole = checkAndSet(topRole, ChatEnum.PATREON);
+                  break;
+                }
+                case "585535513230835742": {
+                  topRole = checkAndSet(topRole, ChatEnum.BOOST);
+                  break;
+                }
+                case "582653648891281409":
+                case "525473755712192552":
+                case "479782883633135647": {
+                  topRole = checkAndSet(topRole, ChatEnum.MERCH);
+                  break;
+                }
+                case "469920113655808000":
+                case "461225008887365632": {
+                  topRole = checkAndSet(topRole, ChatEnum.TWITCH);
+                  break;
+                }
+                default: {
+                  break;
+                }
               }
             }
+            if (topRole == null) {
+              topRole = ChatEnum.UNKNOWN;
+            }
+            sendMessage("trevor:main", "trevorreturn", username + ":" + topRole.name(), returnServer);
           }
-          if (topRole == null) {
-            topRole = ChatEnum.UNKNOWN;
-          }
-          sendMessage("trevor:main", "trevorreturn", username + ":" + topRole.name(), returnServer);
+        } else if (subchannel[0].equalsIgnoreCase("target")) {
+          targetServer = in.readUTF();
         }
-      } else if (subchannel[0].equalsIgnoreCase("target")) {
-        targetServer = in.readUTF();
+      } catch (SQLException e) {
+        e.printStackTrace();
       }
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } else if (event.getTag().equalsIgnoreCase("trevor:discord")) {
+      ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
+      String subchannel = in.readUTF();
+      if (subchannel.equalsIgnoreCase("dispatchreply")) {
+        String msg = in.readUTF();
+        getProxy().getPlayer(msg.split(":")[0]).sendMessage(new TextComponent(msg.replaceFirst(msg.split(":")[0], "")));
+      }
     }
   }
 
@@ -242,7 +248,7 @@ public class ProxiedCow extends Plugin implements Listener, EventListener {
     return change;
   }
 
-  private void sendMessage(String channel, String subchannel, String message, String server) {
+  public void sendMessage(String channel, String subchannel, String message, String server) {
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     DataOutputStream out = new DataOutputStream(stream);
     try {

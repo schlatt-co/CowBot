@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class FakeCommandSender implements ConsoleCommandSender {
+public class WebhookCommandSender implements ConsoleCommandSender {
 
   private CowBot cowBot;
   private ConsoleCommandSender sender;
 
-  public FakeCommandSender(CowBot cowBot, ConsoleCommandSender consoleCommandSender) {
+  public WebhookCommandSender(CowBot cowBot, ConsoleCommandSender consoleCommandSender) {
     this.cowBot = cowBot;
     this.sender = consoleCommandSender;
   }
