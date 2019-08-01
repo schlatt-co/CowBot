@@ -35,6 +35,9 @@ public class CowBot extends JavaPlugin implements Listener {
   public void onEnable() {
     log("Loading CowBot...");
     for (ServerType type : ServerType.values()) {
+      if (type.equals(ServerType.UNKNOWN)) {
+        continue;
+      }
       if (Bukkit.getWorld(type.getWorldName()) != null) {
         currentServer = type;
       }
