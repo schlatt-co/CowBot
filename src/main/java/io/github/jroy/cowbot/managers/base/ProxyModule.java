@@ -4,9 +4,9 @@ import io.github.jroy.cowbot.ProxiedCow;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 
-public abstract class BungeeModule extends BaseModule<ProxiedCow, Command> implements Listener {
+public abstract class ProxyModule extends BaseModule<ProxiedCow, Command> implements Listener {
 
-  BungeeModule(String moduleName, ProxiedCow plugin) {
+  ProxyModule(String moduleName, ProxiedCow plugin) {
     super(moduleName, plugin);
   }
 
