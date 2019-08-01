@@ -1,39 +1,43 @@
 package io.github.jroy.cowbot;
 
-import club.minnced.discord.webhook.WebhookClient;
-import club.minnced.discord.webhook.WebhookClientBuilder;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import io.github.jroy.cowbot.commands.spigot.ServerCommand;
 import io.github.jroy.cowbot.managers.CommunismManager;
+import io.github.jroy.cowbot.managers.WebhookManager;
+import io.github.jroy.cowbot.managers.base.SpigotModule;
+import io.github.jroy.cowbot.utils.AsyncFinishedChatEvent;
 import io.github.jroy.cowbot.utils.ChatEnum;
-import io.github.jroy.cowbot.utils.ConsoleInterceptor;
 import io.github.jroy.cowbot.utils.DispatchCommandSender;
 import io.github.jroy.cowbot.utils.WebhookCommandSender;
 import net.md_5.bungee.api.ChatColor;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Bat;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fish;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CowBot extends JavaPlugin implements Listener, PluginMessageListener {
+
+  private List<SpigotModule> loadedModules = new ArrayList<>();
+
+  private WebhookManager webhookManager;
 
   private boolean isVanilla = true;
   private boolean isCreative = false;
@@ -41,18 +45,15 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
   private Map<String, ChatEnum> chatEnumCache = new HashMap<>();
 
   private List<Player> sleeping = new ArrayList<>();
-  private WebhookClient webhookClient;
-  private WebhookClient consoleWebhookClient;
 
   @Override
   public void onLoad() {
     log("Hello <3 -Trevor");
   }
 
-  @SuppressWarnings("ConstantConditions")
   @Override
   public void onEnable() {
-    log("Running onEnable flow...");
+    log("Loading CowBot...");
     isVanilla = Bukkit.getWorld("world") != null;
     isCreative = Bukkit.getWorld("creative") != null;
     getServer().getPluginManager().registerEvents(this, this);
@@ -63,20 +64,15 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:main", this);
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:discord", this);
     if (isVanilla) {
-      new CommunismManager(this);
+      loadedModules.add(new CommunismManager(this));
     }
-    log("Connecting to webhooks...");
-    loadConfig();
-    webhookClient = new WebhookClientBuilder(getConfig().getString("webhookUrl")).setDaemon(true).build();
-    sendWebhookMessage(":white_check_mark: Server has started");
-    consoleWebhookClient = new WebhookClientBuilder(getConfig().getString("consoleUrl")).setDaemon(true).build();
-    new ConsoleInterceptor(this);
+    loadedModules.add(webhookManager = new WebhookManager(this));
   }
 
   @Override
   public void onDisable() {
-    if (webhookClient != null) {
-      sendWebhookMessage(":octagonal_sign: Server has stopped");
+    for (SpigotModule module : loadedModules) {
+      module.onDisable();
     }
   }
 
@@ -96,21 +92,12 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         String content = in.readUTF();
         getServer().broadcastMessage(ChatColor.AQUA + "[Trevorcord] " + ChatColor.YELLOW + content.split(":")[0] + ChatColor.AQUA + " >> " + ChatColor.WHITE + content.replaceFirst("(?:\\S(?: +)?)+:", ""));
       } else if (subchannel.equalsIgnoreCase("cmd")) {
-        getServer().dispatchCommand(new WebhookCommandSender(this, getServer().getConsoleSender()), in.readUTF());
+        getServer().dispatchCommand(new WebhookCommandSender(webhookManager, getServer().getConsoleSender()), in.readUTF());
       } else if (subchannel.equalsIgnoreCase("dispatch")) {
         String msg = in.readUTF();
         getServer().dispatchCommand(new DispatchCommandSender(this, getServer().getConsoleSender(), msg.split(":")[0]), msg.replaceFirst(msg.split(":")[0] + ":", ""));
       }
     }
-  }
-
-  @SuppressWarnings("UnstableApiUsage")
-  public void sendToServer(Player player, String server) {
-    ByteArrayDataOutput out = ByteStreams.newDataOutput();
-    out.writeUTF("ConnectOther");
-    out.writeUTF(player.getName());
-    out.writeUTF(server);
-    player.sendPluginMessage(this, "BungeeCord", out.toByteArray());
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
@@ -133,13 +120,9 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     }
 
     ChatEnum chatEnum = chatEnumCache.getOrDefault(event.getPlayer().getName(), ChatEnum.UNKNOWN);
-    if (chatEnum != null && chatEnum != ChatEnum.UNKNOWN) {
-      event.setFormat(prefix + ChatColor.GRAY + "<" + chatEnum.getChatColor() + ChatColor.stripColor(event.getPlayer().getDisplayName()) + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
-      sendWebhookMessage(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage());
-      return;
-    }
-    event.setFormat(prefix + ChatColor.GRAY + "<" + event.getPlayer().getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|\\\\A)%(?:[^%]|\\\\z)", "%%"));
-    sendWebhookMessage(prefix + event.getPlayer().getDisplayName() + " >> " + event.getMessage());
+    boolean hasChatEnum = chatEnum != null && chatEnum != ChatEnum.UNKNOWN;
+    event.setFormat(prefix + ChatColor.GRAY + "<" + (hasChatEnum ? chatEnum.getChatColor() : "") + (hasChatEnum ? ChatColor.stripColor(event.getPlayer().getDisplayName()) : event.getPlayer().getDisplayName()) + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|^)(?:(%%)+|)(%)(?:[^%])\n", "%%"));
+    getServer().getPluginManager().callEvent(new AsyncFinishedChatEvent(prefix, event.getPlayer().getDisplayName(), event.getMessage()));
   }
 
   @SuppressWarnings("UnstableApiUsage")
@@ -154,43 +137,6 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         event.getPlayer().sendPluginMessage(this, "trevor:main", out.toByteArray());
       }, 30);
     }
-   sendWebhookMessage(":heavy_plus_sign: **" + event.getPlayer().getDisplayName() + " has joined the server" + (event.getPlayer().hasPlayedBefore() ? "!" : " for the first time!") + "**");
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR)
-  public void onLeave(PlayerQuitEvent event) {
-    sendWebhookMessage(":heavy_minus_sign: **" + event.getPlayer().getDisplayName() + " has left the server!**");
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR)
-  public void onDeath(PlayerDeathEvent event) {
-    if (StringUtils.isBlank(event.getDeathMessage()) || !event.getEntityType().equals(EntityType.PLAYER)) {
-      return;
-    }
-    sendWebhookMessage(":skull: **" + event.getDeathMessage() + "**");
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR)
-  public void onAchievement(PlayerAdvancementDoneEvent event) {
-    event.getAdvancement();
-    if (event.getAdvancement().getKey().getKey().contains("recipe/")) {
-      return;
-    }
-
-    try {
-      Object craftAdvancement = ((Object) event.getAdvancement()).getClass().getMethod("getHandle").invoke(event.getAdvancement());
-      Object advancementDisplay = craftAdvancement.getClass().getMethod("c").invoke(craftAdvancement);
-      if (!(boolean) advancementDisplay.getClass().getMethod("i").invoke(advancementDisplay)) {
-        return;
-      }
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NullPointerException e) {
-      return;
-    }
-    String rawAdvancementName = event.getAdvancement().getKey().getKey();
-    String advancementName = Arrays.stream(rawAdvancementName.substring(rawAdvancementName.lastIndexOf("/") + 1).toLowerCase().split("_"))
-        .map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
-        .collect(Collectors.joining(" "));
-    sendWebhookMessage(":medal: **" + event.getPlayer().getDisplayName() + " has made the advancement " + advancementName + "**");
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
@@ -221,30 +167,14 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     }
   }
 
-  private void loadConfig() {
-    getConfig().addDefault("webhookUrl", "url");
-    getConfig().addDefault("consoleUrl", "url");
-    getConfig().options().copyDefaults(true);
-    saveConfig();
-  }
-
+  /**
+   * This helps with a bug in minecraft which causes bats and fish not counting towards to mob cap.
+   */
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onCreatureSpawn(CreatureSpawnEvent event) {
     if (event.getEntity() instanceof Bat || event.getEntity() instanceof Fish) {
       event.setCancelled(true);
     }
-  }
-
-  public void sendWebhookMessage(String message) {
-    webhookClient.send(sanitizeWebhookMessage(message));
-  }
-
-  public void sendConsoleWebhookMessage(String message) {
-    consoleWebhookClient.send(sanitizeWebhookMessage(message));
-  }
-
-  private String sanitizeWebhookMessage(String message) {
-    return ChatColor.stripColor(message).replaceAll("@everyone", "@ everyone").replaceAll("\\[m|\\[([0-9]{1,2}[;m]?){3}|\u001B+", "");
   }
 
   private void log(String message) {

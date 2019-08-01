@@ -1,6 +1,6 @@
 package io.github.jroy.cowbot.utils;
 
-import io.github.jroy.cowbot.CowBot;
+import io.github.jroy.cowbot.managers.WebhookManager;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
@@ -15,11 +15,11 @@ import java.util.Set;
 
 public class WebhookCommandSender implements ConsoleCommandSender {
 
-  private CowBot cowBot;
+  private WebhookManager webhookManager;
   private ConsoleCommandSender sender;
 
-  public WebhookCommandSender(CowBot cowBot, ConsoleCommandSender consoleCommandSender) {
-    this.cowBot = cowBot;
+  public WebhookCommandSender(WebhookManager webhookManager, ConsoleCommandSender consoleCommandSender) {
+    this.webhookManager = webhookManager;
     this.sender = consoleCommandSender;
   }
 
@@ -110,7 +110,7 @@ public class WebhookCommandSender implements ConsoleCommandSender {
 
   @Override
   public void sendMessage(@NotNull String message) {
-    cowBot.sendWebhookMessage(message);
+    webhookManager.sendWebhookMessage(message);
   }
 
   @Override

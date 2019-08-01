@@ -1,6 +1,6 @@
 package io.github.jroy.cowbot.utils;
 
-import io.github.jroy.cowbot.CowBot;
+import io.github.jroy.cowbot.managers.WebhookManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -13,11 +13,11 @@ public class ConsoleInterceptor extends AbstractAppender {
 
   private static final Pattern sanitizePattern = Pattern.compile("\\[m|\\[([0-9]{1,2}[;m]?){3}|\u001B+");
 
-  private CowBot cowBot;
+  private WebhookManager webhookManager;
 
-  public ConsoleInterceptor(CowBot cowBot) {
-    super("Trevor-Console", null, null, false);
-    this.cowBot = cowBot;
+  public ConsoleInterceptor(WebhookManager webhookManager) {
+    super("Trevor-Console", null, null, false, null);
+    this.webhookManager = webhookManager;
     ((Logger) LogManager.getRootLogger()).addAppender(this);
     start();
   }
@@ -28,7 +28,7 @@ public class ConsoleInterceptor extends AbstractAppender {
     if (StringUtils.isBlank(line)) {
       return;
     }
-    cowBot.sendConsoleWebhookMessage(line);
+    webhookManager.sendConsoleWebhookMessage(line);
   }
 
   private String sanitize(String text) {
