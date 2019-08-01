@@ -1,6 +1,7 @@
 package io.github.jroy.cowbot;
 
 import com.google.common.io.ByteStreams;
+import io.github.jroy.cowbot.commands.proxy.ModManager;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
 import io.github.jroy.cowbot.managers.proxy.DatabaseManager;
 import io.github.jroy.cowbot.managers.proxy.DiscordManager;
@@ -52,6 +53,7 @@ public class ProxiedCow extends Plugin implements Listener {
     loadedModules.add(playerConnectionManager = new PlayerConnectionManager(this, databaseManager));
     databaseManager.setPlayerConnectionManager(playerConnectionManager);
     loadedModules.add(new PluginMessageManager(this, discordManager, databaseManager, playerConnectionManager));
+    loadedModules.add(new ModManager(this));
   }
 
   @Override
