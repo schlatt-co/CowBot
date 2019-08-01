@@ -6,7 +6,7 @@ import net.md_5.bungee.api.plugin.Listener;
 
 public abstract class ProxyModule extends BaseModule<ProxiedCow, Command> implements Listener {
 
-  ProxyModule(String moduleName, ProxiedCow plugin) {
+  public ProxyModule(String moduleName, ProxiedCow plugin) {
     super(moduleName, plugin);
   }
 
@@ -15,7 +15,7 @@ public abstract class ProxyModule extends BaseModule<ProxiedCow, Command> implem
     plugin.getProxy().getPluginManager().registerCommand(plugin, command);
   }
 
-  public void addCommand(Command command) {
+  protected void addCommand(Command command) {
     addCommand("", command);
   }
 

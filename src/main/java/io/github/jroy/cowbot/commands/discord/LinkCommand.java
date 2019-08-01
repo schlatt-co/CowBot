@@ -1,10 +1,11 @@
 package io.github.jroy.cowbot.commands.discord;
 
-import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.discord.base.CommandBase;
 import io.github.jroy.cowbot.commands.discord.base.CommandEvent;
+import io.github.jroy.cowbot.managers.proxy.DiscordManager;
 import io.github.jroy.cowbot.utils.ATLauncherUtils;
 import io.github.jroy.cowbot.utils.Constants;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.sql.SQLException;
@@ -12,11 +13,11 @@ import java.time.Instant;
 
 public class LinkCommand extends CommandBase {
 
-  private ProxiedCow cow;
+  private DiscordManager discordManager;
 
-  public LinkCommand(ProxiedCow cow) {
+  public LinkCommand(DiscordManager discordManager) {
     super("link", "<minecraft username>", "Links your minecraft username with your discord account.");
-    this.cow = cow;
+    this.discordManager = discordManager;
     setDisabled(true);
   }
 
@@ -39,9 +40,9 @@ public class LinkCommand extends CommandBase {
     }
 
     String userId = e.getMember().getUser().getId();
-    if (cow.getDatabaseFactory().isBanned(userId)) {
+    if (discordManager.getDatabaseManager().isBanned(userId)) {
       try {
-        e.replyError("You are banned from the server for the following reason: " + cow.getDatabaseFactory().getBanReason(userId));
+        e.replyError("You are banned from the server for the following reason: " + discordManager.getDatabaseManager().getBanReason(userId));
       } catch (SQLException ex) {
         e.replyError("You are banned from the server but I honestly don't give two shits why.");
       }
@@ -54,13 +55,13 @@ public class LinkCommand extends CommandBase {
     }
 
     final Runnable addAtlPlayer = () -> ATLauncherUtils.addPlayer(e.getSplitArgs()[0]);
-    if (cow.getDatabaseFactory().isLinked(userId)) {
+    if (discordManager.getDatabaseManager().isLinked(userId)) {
       try {
-        String pastName = cow.getDatabaseFactory().getUsernameFromDiscordId(userId);
-        cow.getDatabaseFactory().updateUser(userId, e.getSplitArgs()[0]);
+        String pastName = discordManager.getDatabaseManager().getUsernameFromDiscordId(userId);
+        discordManager.getDatabaseManager().updateUser(userId, e.getSplitArgs()[0]);
         e.reply("Updated " + e.getMember().getAsMention() + "'s current Minecraft name to " + e.getSplitArgs()[0]);
-        if (cow.getProxy().getPlayer(pastName) != null) {
-          cow.getProxy().getPlayer(pastName).disconnect(new TextComponent("Your username has been updated!\nTo prevent freeloading, you've been disconnected\nfuck you"));
+        if (ProxyServer.getInstance().getPlayer(pastName) != null) {
+          ProxyServer.getInstance().getPlayer(pastName).disconnect(new TextComponent("Your username has been updated!\nTo prevent freeloading, you've been disconnected\nfuck you"));
         }
         new Thread(() -> ATLauncherUtils.removePlayer(pastName)).start();
         new Thread(addAtlPlayer).start();
@@ -71,7 +72,7 @@ public class LinkCommand extends CommandBase {
       return;
     }
     try {
-      cow.getDatabaseFactory().linkUser(userId, e.getSplitArgs()[0]);
+      discordManager.getDatabaseManager().linkUser(userId, e.getSplitArgs()[0]);
       e.reply("Added " + e.getMember().getAsMention() + " to the whitelist with the username " + e.getSplitArgs()[0]);
       new Thread(addAtlPlayer).start();
     } catch (SQLException ex) {

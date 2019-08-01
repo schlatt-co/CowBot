@@ -1,18 +1,18 @@
 package io.github.jroy.cowbot.commands.discord;
 
-import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.discord.base.CommandBase;
 import io.github.jroy.cowbot.commands.discord.base.CommandEvent;
+import io.github.jroy.cowbot.managers.proxy.DiscordManager;
 
 import java.sql.SQLException;
 
 public class BanCommand extends CommandBase {
 
-  private ProxiedCow cow;
+  private DiscordManager discordManager;
 
-  public BanCommand(ProxiedCow cow) {
+  public BanCommand(DiscordManager discordManager) {
     super("ban", "<id> <reason>", "Bans a user from linking their account.", true);
-    this.cow = cow;
+    this.discordManager = discordManager;
   }
 
   @Override
@@ -23,9 +23,9 @@ public class BanCommand extends CommandBase {
     }
 
     if (e.getSplitArgs().length == 1) {
-      if (cow.getDatabaseFactory().isBanned(e.getSplitArgs()[0])) {
+      if (discordManager.getDatabaseManager().isBanned(e.getSplitArgs()[0])) {
         try {
-          cow.getDatabaseFactory().pardonUser(e.getSplitArgs()[0]);
+          discordManager.getDatabaseManager().pardonUser(e.getSplitArgs()[0]);
           e.reply("Pardoned User!");
         } catch (SQLException ex) {
           e.replyError("Error while pardoning user: " + ex.getMessage());
@@ -34,9 +34,9 @@ public class BanCommand extends CommandBase {
         e.replyError("Please supply a reason to ban the user!");
       }
     } else {
-      if (cow.getDatabaseFactory().isBanned(e.getSplitArgs()[0])) {
+      if (discordManager.getDatabaseManager().isBanned(e.getSplitArgs()[0])) {
         try {
-          cow.getDatabaseFactory().pardonUser(e.getSplitArgs()[0]);
+          discordManager.getDatabaseManager().pardonUser(e.getSplitArgs()[0]);
           e.reply("Pardoned User!");
         } catch (SQLException ex) {
           e.replyError("Error while pardoning user: " + ex.getMessage());
@@ -45,7 +45,7 @@ public class BanCommand extends CommandBase {
       }
 
       try {
-        cow.getDatabaseFactory().banUser(e.getSplitArgs()[0], e.getArgs().replace(e.getSplitArgs()[0] + " ", ""));
+        discordManager.getDatabaseManager().banUser(e.getSplitArgs()[0], e.getArgs().replace(e.getSplitArgs()[0] + " ", ""));
         e.reply("Banned User!");
       } catch (SQLException ex) {
         e.replyError("Error while banning user: " + ex.getMessage());

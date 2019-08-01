@@ -1,6 +1,7 @@
 package io.github.jroy.cowbot.commands.proxy;
 
 import io.github.jroy.cowbot.ProxiedCow;
+import io.github.jroy.cowbot.managers.proxy.PluginMessageManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -27,7 +28,7 @@ public class RestartCommand extends Command {
         sender.sendMessage(new TextComponent("Invalid Server!"));
         return;
       }
-      proxiedCow.sendMessage("trevor:discord", "cmd", "restart", args[0]);
+      PluginMessageManager.sendMessage(proxiedCow, "trevor:discord", "cmd", "restart", args[0]);
       sender.sendMessage(new TextComponent("Requested a restart on that server"));
     }
   }

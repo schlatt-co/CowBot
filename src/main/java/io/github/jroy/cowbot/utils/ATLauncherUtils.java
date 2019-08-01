@@ -19,14 +19,14 @@ public class ATLauncherUtils {
 
   public static String getPlayers() throws IOException {
     HttpGet get = new HttpGet(endpoint);
-    get.addHeader("API-KEY", ProxiedCow.configuration.getString("atl-key"));
+    get.addHeader("API-KEY", ProxiedCow.getInstance().getConfiguration().getString("atl-key"));
     return fetchResponse(client.execute(get));
   }
 
   public static void addPlayer(String player) {
     try {
       HttpPost post = new HttpPost(endpoint);
-      post.addHeader("API-KEY", ProxiedCow.configuration.getString("atl-key"));
+      post.addHeader("API-KEY", ProxiedCow.getInstance().getConfiguration().getString("atl-key"));
       post.addHeader("Content-Type", "application/json");
       post.setEntity(new StringEntity("[\"" + player + "\"]"));
       client.execute(post);
@@ -38,7 +38,7 @@ public class ATLauncherUtils {
   public static void removePlayer(String player) {
     try {
       HttpDeleteWithBody delete = new HttpDeleteWithBody(endpoint);
-      delete.addHeader("API-KEY", ProxiedCow.configuration.getString("atl-key"));
+      delete.addHeader("API-KEY", ProxiedCow.getInstance().getConfiguration().getString("atl-key"));
       delete.addHeader("Content-Type", "application/json");
       delete.setEntity(new StringEntity("[\"" + player + "\"]"));
       client.execute(delete);

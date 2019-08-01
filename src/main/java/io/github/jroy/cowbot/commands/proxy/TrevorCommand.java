@@ -1,6 +1,8 @@
 package io.github.jroy.cowbot.commands.proxy;
 
-import io.github.jroy.cowbot.ProxiedCow;
+import io.github.jroy.cowbot.managers.proxy.DatabaseManager;
+import io.github.jroy.cowbot.managers.proxy.DiscordManager;
+import io.github.jroy.cowbot.managers.proxy.PlayerConnectionManager;
 import net.dv8tion.jda.api.entities.User;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -8,15 +10,17 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 
-import java.sql.SQLException;
-
 public class TrevorCommand extends Command {
 
-  private ProxiedCow cow;
+  private DatabaseManager databaseManager;
+  private DiscordManager discordManager;
+  private PlayerConnectionManager playerConnectionManager;
 
-  public TrevorCommand(ProxiedCow cow) {
+  public TrevorCommand(DatabaseManager databaseManager, DiscordManager discordManager, PlayerConnectionManager playerConnectionManager) {
     super("trevor");
-    this.cow = cow;
+    this.databaseManager = databaseManager;
+    this.discordManager = discordManager;
+    this.playerConnectionManager = playerConnectionManager;
   }
 
   @Override
@@ -29,14 +33,14 @@ public class TrevorCommand extends Command {
 
       switch (args[0].toLowerCase()) {
         case "whois": {
-          if (!cow.getDatabaseFactory().isWhitelisted(args[1])) {
+          if (!databaseManager.isWhitelisted(args[1])) {
             sender.sendMessage(new ComponentBuilder("Unknown Player!").color(ChatColor.RED).create());
             return;
           }
 
           try {
-            String discordId = cow.getDatabaseFactory().getDiscordIdFromUsername(args[1]);
-            User user = cow.getJda().getUserById(discordId);
+            String discordId = databaseManager.getDiscordIdFromUsername(args[1]);
+            User user = discordManager.getJda().getUserById(discordId);
             assert user != null;
             sender.sendMessage(new TextComponent(ChatColor.YELLOW + "Target User is " + ChatColor.GOLD + "@" + user.getName() + "#" + user.getDiscriminator() + ChatColor.YELLOW + " with user id " + ChatColor.GOLD + user.getId()));
           } catch (Exception e) {
@@ -50,7 +54,7 @@ public class TrevorCommand extends Command {
           for (String arg : args) {
             motdBuilder.append(arg).append(" ");
           }
-          ProxiedCow.serverMotd = motdBuilder.toString().replaceFirst("motd ", "").replace("\\n", "\n");
+          playerConnectionManager.setServerMotd(motdBuilder.toString().replaceFirst("motd ", "").replace("\\n", "\n"));
           sender.sendMessage(new TextComponent("Updated MOTD!"));
           break;
         }
