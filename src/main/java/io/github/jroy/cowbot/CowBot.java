@@ -57,7 +57,6 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     isVanilla = Bukkit.getWorld("world") != null;
     isCreative = Bukkit.getWorld("creative") != null;
     getServer().getPluginManager().registerEvents(this, this);
-    getCommand("fuckbungee").setExecutor(new ServerCommand(this));
     getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:main");
     getServer().getMessenger().registerOutgoingPluginChannel(this, "trevor:discord");
