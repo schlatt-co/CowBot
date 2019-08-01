@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.managers.CommunismManager;
+import io.github.jroy.cowbot.managers.SleepManager;
 import io.github.jroy.cowbot.managers.WebhookManager;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.utils.AsyncFinishedChatEvent;
@@ -12,7 +13,6 @@ import io.github.jroy.cowbot.utils.DispatchCommandSender;
 import io.github.jroy.cowbot.utils.WebhookCommandSender;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Statistic;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.Fish;
 import org.bukkit.entity.Player;
@@ -21,8 +21,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -44,8 +42,6 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
 
   private Map<String, ChatEnum> chatEnumCache = new HashMap<>();
 
-  private List<Player> sleeping = new ArrayList<>();
-
   @Override
   public void onLoad() {
     log("Hello <3 -Trevor");
@@ -64,6 +60,7 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
     getServer().getMessenger().registerIncomingPluginChannel(this, "trevor:discord", this);
     if (isVanilla) {
       loadedModules.add(new CommunismManager(this));
+      loadedModules.add(new SleepManager(this));
     }
     loadedModules.add(webhookManager = new WebhookManager(this));
   }
@@ -135,34 +132,6 @@ public class CowBot extends JavaPlugin implements Listener, PluginMessageListene
         out.writeUTF(event.getPlayer().getName());
         event.getPlayer().sendPluginMessage(this, "trevor:main", out.toByteArray());
       }, 30);
-    }
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR)
-  public void onSleep(PlayerBedEnterEvent event) {
-    if (isVanilla) {
-      if (event.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.OK) {
-        sleeping.add(event.getPlayer());
-        event.getPlayer().setStatistic(Statistic.TIME_SINCE_REST, 0);
-        Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.YELLOW + event.getPlayer().getName() + ChatColor.WHITE + " has started sleeping! " + ChatColor.YELLOW + ((event.getPlayer().getWorld().getPlayers().size() / 3) - sleeping.size()) + ChatColor.WHITE + " more player(s) need to sleep in order to advance to day!");
-        if (sleeping.size() >= (event.getPlayer().getWorld().getPlayers().size() / 3)) {
-          Bukkit.broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.WHITE + "Advancing to day in 5 seconds!");
-          getServer().getScheduler().runTaskLater(this, () -> {
-            //noinspection ConstantConditions
-            Bukkit.getServer().getWorld(event.getPlayer().getWorld().getName()).setTime(1000L);
-            event.getPlayer().getWorld().setStorm(false);
-            event.getPlayer().getWorld().setThundering(false);
-            sleeping.clear();
-          }, 100);
-        }
-      }
-    }
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR)
-  public void onUnSleep(PlayerBedLeaveEvent event) {
-    if (isVanilla) {
-      sleeping.remove(event.getPlayer());
     }
   }
 
