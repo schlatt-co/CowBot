@@ -54,6 +54,10 @@ public class ProxiedCow extends Plugin implements Listener {
     databaseManager.setPlayerConnectionManager(playerConnectionManager);
     loadedModules.add(new PluginMessageManager(this, discordManager, databaseManager, playerConnectionManager));
     loadedModules.add(new ModManager(this));
+
+    for (ProxyModule module : loadedModules) {
+      module.onEnable();
+    }
   }
 
   @Override
