@@ -35,4 +35,10 @@ public class AsyncFinishedChatEvent extends Event {
   public @NotNull HandlerList getHandlers() {
     return handlers;
   }
+
+  @SuppressWarnings("unused")
+  @NotNull
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
 }

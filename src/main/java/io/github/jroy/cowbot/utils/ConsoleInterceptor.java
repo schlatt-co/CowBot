@@ -15,8 +15,9 @@ public class ConsoleInterceptor extends AbstractAppender {
 
   private WebhookManager webhookManager;
 
+  @SuppressWarnings("deprecation")
   public ConsoleInterceptor(WebhookManager webhookManager) {
-    super("Trevor-Console", null, null, false, null);
+    super("Trevor-Console", null, null, false);
     this.webhookManager = webhookManager;
     ((Logger) LogManager.getRootLogger()).addAppender(this);
     start();
