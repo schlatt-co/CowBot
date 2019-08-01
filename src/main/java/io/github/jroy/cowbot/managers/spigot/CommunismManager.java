@@ -75,6 +75,10 @@ public class CommunismManager extends SpigotModule {
   }
 
   public boolean playerInBox(Player player){
+    if (player.hasPermission("trevor.admin")) {
+      return false;
+    }
+
     int x1,x2,y1,y2,z1,z2;
     x1 = boxCornerOne.getX() > boxCornerTwo.getX() ? (int) boxCornerTwo.getX() : (int) boxCornerOne.getX();
     y1 = boxCornerOne.getY() > boxCornerTwo.getY() ? (int) boxCornerTwo.getY() : (int) boxCornerOne.getY();
