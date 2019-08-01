@@ -1,6 +1,6 @@
 package io.github.jroy.cowbot.utils;
 
-import io.github.jroy.cowbot.managers.WebhookManager;
+import io.github.jroy.cowbot.managers.spigot.WebhookManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;

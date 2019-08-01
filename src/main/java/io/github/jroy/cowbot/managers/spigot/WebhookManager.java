@@ -1,4 +1,4 @@
-package io.github.jroy.cowbot.managers;
+package io.github.jroy.cowbot.managers.spigot;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;

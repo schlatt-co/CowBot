@@ -1,6 +1,6 @@
 package io.github.jroy.cowbot.commands.spigot;
 
-import io.github.jroy.cowbot.managers.CommunismManager;
+import io.github.jroy.cowbot.managers.spigot.CommunismManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

@@ -1,4 +1,4 @@
-package io.github.jroy.cowbot.managers;
+package io.github.jroy.cowbot.managers.spigot;
 
 import io.github.jroy.cowbot.CowBot;
 import io.github.jroy.cowbot.commands.spigot.CommunismCommand;

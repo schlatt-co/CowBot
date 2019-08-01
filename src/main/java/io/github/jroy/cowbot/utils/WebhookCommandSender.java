@@ -1,6 +1,6 @@
 package io.github.jroy.cowbot.utils;
 
-import io.github.jroy.cowbot.managers.WebhookManager;
+import io.github.jroy.cowbot.managers.spigot.WebhookManager;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
