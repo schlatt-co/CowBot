@@ -7,6 +7,6 @@ commands:
   communism:
     description: Communism Command
     usage: /communism
-  fuckbungee:
-    description: eee
-    usage: /fuckbungee
+  disguise:
+    description: dfddd
+    usage: /disguise
