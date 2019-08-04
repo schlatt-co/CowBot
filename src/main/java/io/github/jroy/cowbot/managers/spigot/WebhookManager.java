@@ -21,6 +21,7 @@ public class WebhookManager extends SpigotModule {
 
   private WebhookClient webhookClient;
   private WebhookClient consoleWebhookClient;
+  private boolean closed = false;
 
   public WebhookManager(CowBot cowBot) {
     super("Webhook Manager", cowBot);
@@ -46,6 +47,7 @@ public class WebhookManager extends SpigotModule {
 
   @Override
   public void disable() {
+    closed = true;
     if (webhookClient != null) {
       sendWebhookMessage(":octagonal_sign: Server has stopped");
       webhookClient.close();
@@ -56,11 +58,15 @@ public class WebhookManager extends SpigotModule {
   }
 
   public void sendWebhookMessage(String message) {
-    webhookClient.send(sanitizeWebhookMessage(message));
+    if (!closed) {
+      webhookClient.send(sanitizeWebhookMessage(message));
+    }
   }
 
   public void sendConsoleWebhookMessage(String message) {
-    consoleWebhookClient.send(sanitizeWebhookMessage(message));
+    if (!closed) {
+      consoleWebhookClient.send(sanitizeWebhookMessage(message));
+    }
   }
 
   private String sanitizeWebhookMessage(String message) {
