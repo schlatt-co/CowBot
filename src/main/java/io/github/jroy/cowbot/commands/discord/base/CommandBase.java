@@ -23,9 +23,9 @@ public abstract class CommandBase extends Command {
   /**
    * Constructor for commands with certain role requires for execution.
    *
-   * @param commandName    Command's name to be used for execution.
-   * @param arguments      Arguments of the command to be used for command help.
-   * @param helpMessage    Command description to be used inside the command list.
+   * @param commandName Command's name to be used for execution.
+   * @param arguments   Arguments of the command to be used for command help.
+   * @param helpMessage Command description to be used inside the command list.
    */
   public CommandBase(@NotNull String commandName, String arguments, String helpMessage) {
     this(commandName, arguments, helpMessage, false);
@@ -34,10 +34,10 @@ public abstract class CommandBase extends Command {
   /**
    * Constructor for commands with certain role requires for execution.
    *
-   * @param commandName    Command's name to be used for execution.
-   * @param arguments      Arguments of the command to be used for command help.
-   * @param helpMessage    Command description to be used inside the command list.
-   * @param ownerOnly      Is the command only executable for the owner.
+   * @param commandName Command's name to be used for execution.
+   * @param arguments   Arguments of the command to be used for command help.
+   * @param helpMessage Command description to be used inside the command list.
+   * @param ownerOnly   Is the command only executable for the owner.
    */
   public CommandBase(@NotNull String commandName, String arguments, String helpMessage, boolean ownerOnly) {
     this.name = commandName;

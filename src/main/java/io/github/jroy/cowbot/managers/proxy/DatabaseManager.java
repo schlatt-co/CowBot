@@ -105,7 +105,8 @@ public class DatabaseManager extends ProxyModule {
       statement.setString(1, mcName);
       ResultSet rs = statement.executeQuery();
       return rs.next();
-    } catch (SQLException ignored) {}
+    } catch (SQLException ignored) {
+    }
     return false;
   }
 
@@ -114,7 +115,8 @@ public class DatabaseManager extends ProxyModule {
       PreparedStatement statement = connection.prepareStatement("SELECT id, mc, discordid FROM players WHERE discordid = ?");
       statement.setString(1, discordId);
       return statement.executeQuery().next();
-    } catch (SQLException ignored) {}
+    } catch (SQLException ignored) {
+    }
     return false;
   }
 
@@ -137,6 +139,7 @@ public class DatabaseManager extends ProxyModule {
     statement.setInt(1, id);
     statement.executeUpdate();
   }
+
   void deleteUser(String mcName) throws SQLException {
     PreparedStatement statement = connection.prepareStatement("DELETE FROM players WHERE mc = ? COLLATE NOCASE");
     statement.setString(1, mcName);
@@ -177,7 +180,8 @@ public class DatabaseManager extends ProxyModule {
       PreparedStatement statement = connection.prepareStatement("SELECT id FROM bans WHERE discordid = ? COLLATE NOCASE");
       statement.setString(1, discordId);
       return statement.executeQuery().next();
-    } catch (SQLException ignored) {}
+    } catch (SQLException ignored) {
+    }
     return false;
   }
 

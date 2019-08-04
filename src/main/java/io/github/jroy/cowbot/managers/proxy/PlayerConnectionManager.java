@@ -24,7 +24,9 @@ public class PlayerConnectionManager extends ProxyModule {
   private DatabaseManager databaseManager;
 
   private boolean lockdown = false;
-  private List<String> lockdownList  = new ArrayList<>(); {
+  private List<String> lockdownList = new ArrayList<>();
+
+  {
     lockdownList.add("WheezyGold7931");
     lockdownList.add("wolfmitchell");
     lockdownList.add("iliketanks1998");

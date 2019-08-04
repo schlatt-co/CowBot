@@ -23,6 +23,6 @@ public class ShoutCommand extends Command {
       return;
     }
 
-    ProxyServer.getInstance().broadcast(new TextComponent(ChatColor.RED + "[SHOUT] " + ChatColor.GRAY + "<" + ChatColor.AQUA  + ((ProxiedPlayer) sender).getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + String.join(" ", args)));
+    ProxyServer.getInstance().broadcast(new TextComponent(ChatColor.RED + "[SHOUT] " + ChatColor.GRAY + "<" + ChatColor.AQUA + ((ProxiedPlayer) sender).getDisplayName() + ChatColor.GRAY + "> " + ChatColor.WHITE + String.join(" ", args)));
   }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class DisguiseCommand implements CommandExecutor {
 
   private ChatManager chatManager;
+
   public DisguiseCommand(ChatManager chatManager) {
     this.chatManager = chatManager;
   }

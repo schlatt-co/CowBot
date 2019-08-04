@@ -74,12 +74,12 @@ public class CommunismManager extends SpigotModule {
     player.sendMessage("You must agree to the rules before you can do that! Type /communism when you read and agree to the rules.");
   }
 
-  public boolean playerInBox(Player player){
+  public boolean playerInBox(Player player) {
     if (player.hasPermission("trevor.admin")) {
       return false;
     }
 
-    int x1,x2,y1,y2,z1,z2;
+    int x1, x2, y1, y2, z1, z2;
     x1 = boxCornerOne.getX() > boxCornerTwo.getX() ? (int) boxCornerTwo.getX() : (int) boxCornerOne.getX();
     y1 = boxCornerOne.getY() > boxCornerTwo.getY() ? (int) boxCornerTwo.getY() : (int) boxCornerOne.getY();
     z1 = boxCornerOne.getZ() > boxCornerTwo.getZ() ? (int) boxCornerTwo.getZ() : (int) boxCornerOne.getZ();
@@ -88,9 +88,9 @@ public class CommunismManager extends SpigotModule {
     y2 = ((int) boxCornerOne.getY()) == y1 ? (int) boxCornerTwo.getY() : (int) boxCornerOne.getY();
     z2 = ((int) boxCornerOne.getZ()) == z1 ? (int) boxCornerTwo.getZ() : (int) boxCornerOne.getZ();
 
-    for (int x = x1; x <= x2; x++){
-      for (int y = y1; y <= y2; y++){
-        for (int z = z1; z <= z2; z++){
+    for (int x = x1; x <= x2; x++) {
+      for (int y = y1; y <= y2; y++) {
+        for (int z = z1; z <= z2; z++) {
           if (player.getLocation().getBlock().getLocation().equals(new Location(world, x, y, z))) {
             return true;
           }
