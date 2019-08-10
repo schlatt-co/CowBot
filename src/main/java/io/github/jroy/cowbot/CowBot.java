@@ -6,6 +6,7 @@ import io.github.jroy.cowbot.utils.ServerType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.Fish;
+import org.bukkit.entity.Pillager;
 import org.bukkit.entity.Squid;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -73,7 +74,7 @@ public class CowBot extends JavaPlugin implements Listener {
    */
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onCreatureSpawn(CreatureSpawnEvent event) {
-    if (event.getEntity() instanceof Bat || event.getEntity() instanceof Fish || event.getEntity() instanceof Squid) {
+    if (event.getEntity() instanceof Bat || event.getEntity() instanceof Fish || event.getEntity() instanceof Squid || event.getEntity() instanceof Pillager) {
       event.setCancelled(true);
     }
   }
