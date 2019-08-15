@@ -54,8 +54,6 @@ public class ChatManager extends SpigotModule {
         prefix = ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.GRAY + "] ";
       } else if (event.getPlayer().hasPermission("trevor.content")) {
         prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "Content" + ChatColor.GRAY + "] ";
-      } else if (event.getPlayer().hasPermission("trevor.gay")) {
-        prefix = ChatColor.RED + "[" + ChatColor.GOLD + "G" + ChatColor.YELLOW + "a" + ChatColor.GREEN + "y" + ChatColor.LIGHT_PURPLE + "] ";
       }
     }
 
