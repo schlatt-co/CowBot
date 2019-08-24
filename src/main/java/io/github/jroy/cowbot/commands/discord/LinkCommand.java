@@ -28,21 +28,23 @@ public class LinkCommand extends CommandBase {
     }
 
     if ((Instant.now().getEpochSecond() - e.getMember().getTimeCreated().toEpochSecond()) <= 432000) {
-      e.replyError("To prevent abuse, your linkage request was blocked. Please try again in a few days.");
+      e.replyError(e.getMember().getAsMention() + ": To prevent abuse, your linkage request was blocked. Please try again in a few days.");
       //noinspection ConstantConditions
       e.getGuild().getTextChannelById(Constants.SHOUT_CHANNEL_ID).sendMessage("New User Warning: " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator()).queue();
       return;
     }
 
     if (e.getMember().getRoles().isEmpty()) {
-      e.reply("The minecraft server is for profileable users only! Pay Schlatt or no dice.");
+      e.reply(e.getMember().getAsMention() + ": The minecraft server is for profileable users only! Pay Schlatt or no dice.");
       return;
     }
 
     String userId = e.getMember().getUser().getId();
     if (discordManager.getDatabaseManager().isBanned(userId)) {
       try {
-        e.replyError("You are banned from the server for the following reason: " + discordManager.getDatabaseManager().getBanReason(userId));
+        //noinspection ConstantConditions
+        e.getGuild().getTextChannelById(Constants.SHOUT_CHANNEL_ID).sendMessage("Banned user (" + discordManager.getDatabaseManager().getBanReason(userId) + ") attempted to link: " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator()).queue();
+        e.reply("Added " + e.getMember().getAsMention() + " to the whitelist with the username " + e.getSplitArgs()[0]);
       } catch (SQLException ex) {
         e.replyError("You are banned from the server but I honestly don't give two shits why.");
       }
