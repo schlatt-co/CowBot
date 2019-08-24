@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("WeakerAccess")
 public class DatabaseManager extends ProxyModule {
 
   private ProxiedCow proxiedCow;
@@ -94,7 +95,7 @@ public class DatabaseManager extends ProxyModule {
     this.playerConnectionManager = playerConnectionManager;
   }
 
-  private ResultSet getUsers() throws SQLException {
+  public ResultSet getUsers() throws SQLException {
     return connection.createStatement().executeQuery("SELECT id, mc, discordid FROM players");
   }
 
@@ -134,13 +135,13 @@ public class DatabaseManager extends ProxyModule {
     statement.executeUpdate();
   }
 
-  private void deleteUser(int id) throws SQLException {
+  public void deleteUser(int id) throws SQLException {
     PreparedStatement statement = connection.prepareStatement("DELETE FROM players WHERE id = ?");
     statement.setInt(1, id);
     statement.executeUpdate();
   }
 
-  void deleteUser(String mcName) throws SQLException {
+  public void deleteUser(String mcName) throws SQLException {
     PreparedStatement statement = connection.prepareStatement("DELETE FROM players WHERE mc = ? COLLATE NOCASE");
     statement.setString(1, mcName);
     statement.executeUpdate();
