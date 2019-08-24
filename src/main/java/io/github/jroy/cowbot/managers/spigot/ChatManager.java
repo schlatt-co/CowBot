@@ -63,6 +63,17 @@ public class ChatManager extends SpigotModule {
     if (disCache.containsKey(event.getPlayer().getName())) {
       name = disCache.get(event.getPlayer().getName());
     }
+
+    if (!event.getPlayer().hasPermission("trevor.mod") && !event.getPlayer().hasPermission("trevor.donor") && chatEnumCache.get(event.getPlayer().getName()).equals(ChatEnum.TWITCH)) {
+      if (event.getMessage().contains("tps")) {
+        event.setMessage("Wow! The TPS is so great right now!");
+      } else if (event.getMessage().contains("lag")) {
+        event.setMessage("OMG! The server is so lag free right now!");
+      } else if (event.getMessage().contains("restart")) {
+        event.setMessage("Oh boy, no need for a restart with this performance!");
+      }
+    }
+
     event.setFormat(prefix + ChatColor.GRAY + "<" + (hasChatEnum ? chatEnum.getChatColor() : "") + name + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|^)(?:(%%)+|)(%)(?:[^%])\n", "%%").replaceAll("%","%%"));
     cowBot.getServer().getPluginManager().callEvent(new AsyncFinishedChatEvent(prefix, event.getPlayer().getDisplayName(), event.getMessage()));
   }
