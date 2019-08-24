@@ -1,7 +1,7 @@
 package io.github.jroy.cowbot;
 
 import com.google.common.io.ByteStreams;
-import io.github.jroy.cowbot.commands.proxy.ModManager;
+import io.github.jroy.cowbot.managers.proxy.ModManager;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
 import io.github.jroy.cowbot.managers.proxy.DatabaseManager;
 import io.github.jroy.cowbot.managers.proxy.DiscordManager;
