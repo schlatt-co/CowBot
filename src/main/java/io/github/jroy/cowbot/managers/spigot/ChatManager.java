@@ -3,6 +3,7 @@ package io.github.jroy.cowbot.managers.spigot;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.CowBot;
+import io.github.jroy.cowbot.commands.spigot.ChatCommand;
 import io.github.jroy.cowbot.commands.spigot.DisguiseCommand;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.utils.AsyncFinishedChatEvent;
@@ -24,6 +25,8 @@ public class ChatManager extends SpigotModule {
   Map<String, ChatEnum> chatEnumCache = new HashMap<>();
   public Map<String, String> disCache = new HashMap<>();
 
+  private boolean silence = false;
+
   public ChatManager(CowBot cowBot) {
     super("Chat Manager", cowBot);
     this.cowBot = cowBot;
@@ -32,6 +35,7 @@ public class ChatManager extends SpigotModule {
   @Override
   public void addCommands() {
     addCommand("disguise", new DisguiseCommand(this));
+    addCommand("chat", new ChatCommand(this));
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
@@ -39,6 +43,10 @@ public class ChatManager extends SpigotModule {
     if (event.getPlayer().hasPermission("trevor.admin") && event.getMessage().equalsIgnoreCase("hey trevor can you purge the normie cache")) {
       chatEnumCache.clear();
       cowBot.getServer().getScheduler().runTaskLaterAsynchronously(cowBot, () -> cowBot.getServer().broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.WHITE + "sure dad :)"), 10);
+    }
+
+    if (event.getPlayer().hasPermission("trevor.mod")) {
+      event.getPlayer().sendMessage(org.bukkit.ChatColor.AQUA + "Chat>> " + org.bukkit.ChatColor.YELLOW + "That chat is silenced!");
     }
 
 
@@ -92,5 +100,13 @@ public class ChatManager extends SpigotModule {
         event.getPlayer().sendPluginMessage(cowBot, "trevor:main", out.toByteArray());
       }, 30);
     }
+  }
+
+  public boolean isSilence() {
+    return silence;
+  }
+
+  public void setSilence(boolean silence) {
+    this.silence = silence;
   }
 }

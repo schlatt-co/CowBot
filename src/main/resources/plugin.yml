@@ -10,3 +10,6 @@ commands:
   disguise:
     description: dfddd
     usage: /disguise
+  chat:
+    description: Chat Command
+    usage: /chat
