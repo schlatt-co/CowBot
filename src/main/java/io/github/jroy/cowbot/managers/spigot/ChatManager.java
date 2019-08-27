@@ -47,6 +47,7 @@ public class ChatManager extends SpigotModule {
 
     if (silence && !event.getPlayer().hasPermission("trevor.mod")) {
       event.getPlayer().sendMessage(org.bukkit.ChatColor.AQUA + "Chat>> " + org.bukkit.ChatColor.YELLOW + "That chat is silenced!");
+      event.setCancelled(true);
       return;
     }
 
