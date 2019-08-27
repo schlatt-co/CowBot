@@ -45,8 +45,9 @@ public class ChatManager extends SpigotModule {
       cowBot.getServer().getScheduler().runTaskLaterAsynchronously(cowBot, () -> cowBot.getServer().broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.WHITE + "sure dad :)"), 10);
     }
 
-    if (event.getPlayer().hasPermission("trevor.mod")) {
+    if (silence && !event.getPlayer().hasPermission("trevor.mod")) {
       event.getPlayer().sendMessage(org.bukkit.ChatColor.AQUA + "Chat>> " + org.bukkit.ChatColor.YELLOW + "That chat is silenced!");
+      return;
     }
 
 
