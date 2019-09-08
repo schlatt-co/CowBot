@@ -5,7 +5,6 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import io.github.jroy.cowbot.CowBot;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.utils.AsyncFinishedChatEvent;
-import io.github.jroy.cowbot.utils.ConsoleInterceptor;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.EntityType;
@@ -20,7 +19,7 @@ public class WebhookManager extends SpigotModule {
   private CowBot cowBot;
 
   private WebhookClient webhookClient;
-  private WebhookClient consoleWebhookClient;
+//  private WebhookClient consoleWebhookClient;
   private boolean closed = false;
 
   public WebhookManager(CowBot cowBot) {
@@ -40,9 +39,7 @@ public class WebhookManager extends SpigotModule {
     //noinspection ConstantConditions
     webhookClient = new WebhookClientBuilder(cowBot.getConfig().getString("webhookUrl")).setDaemon(true).build();
     sendWebhookMessage(":white_check_mark: Server has started");
-    //noinspection ConstantConditions
-    consoleWebhookClient = new WebhookClientBuilder(cowBot.getConfig().getString("consoleUrl")).setDaemon(true).build();
-    new ConsoleInterceptor(this);
+    //    consoleWebhookClient = new WebhookClientBuilder(cowBot.getConfig().getString("consoleUrl")).setDaemon(true).build();
   }
 
   @Override
@@ -52,9 +49,9 @@ public class WebhookManager extends SpigotModule {
       sendWebhookMessage(":octagonal_sign: Server has stopped");
       webhookClient.close();
     }
-    if (consoleWebhookClient != null) {
-      consoleWebhookClient.close();
-    }
+//    if (consoleWebhookClient != null) {
+//      consoleWebhookClient.close();
+//    }
   }
 
   public void sendWebhookMessage(String message) {
@@ -63,11 +60,11 @@ public class WebhookManager extends SpigotModule {
     }
   }
 
-  public void sendConsoleWebhookMessage(String message) {
-    if (!closed) {
-      consoleWebhookClient.send(sanitizeWebhookMessage(message));
-    }
-  }
+//  public void sendConsoleWebhookMessage(String message) {
+//    if (!closed) {
+//      consoleWebhookClient.send(sanitizeWebhookMessage(message));
+//    }
+//  }
 
   private String sanitizeWebhookMessage(String message) {
     return ChatColor.stripColor(message).replaceAll("@everyone", "@ everyone").replaceAll("\\[m|\\[([0-9]{1,2}[;m]?){3}|\u001B+", "");

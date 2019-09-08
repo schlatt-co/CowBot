@@ -29,7 +29,7 @@ public class ConsoleInterceptor extends AbstractAppender {
     if (StringUtils.isBlank(line)) {
       return;
     }
-    webhookManager.sendConsoleWebhookMessage(line);
+//    webhookManager.sendConsoleWebhookMessage(line);
   }
 
   private String sanitize(String text) {
