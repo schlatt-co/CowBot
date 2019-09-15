@@ -15,6 +15,8 @@ import java.util.Set;
 
 public class GlobalMessageCommand extends Command implements TabExecutor {
 
+  static HashSet<String> noSpy = new HashSet<>();
+
   public GlobalMessageCommand() {
     super("gmsg");
   }
@@ -45,10 +47,10 @@ public class GlobalMessageCommand extends Command implements TabExecutor {
       msg.append(curPart).append(" ");
     }
 
-    sender.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GOLD + "->" + ChatColor.YELLOW + "you" + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
-    player.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + "you" + ChatColor.GOLD + "->" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
+    target.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GOLD + "->" + ChatColor.YELLOW + "you" + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
+    player.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + "you" + ChatColor.GOLD + "->" + ChatColor.YELLOW + target.getDisplayName() + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
     for (ProxiedPlayer curPlayer : ProxyServer.getInstance().getPlayers()) {
-      if (curPlayer.hasPermission("trevor.admin")) {
+      if (!curPlayer.getName().equals(player.getName()) && !noSpy.contains(curPlayer.getName()) && curPlayer.hasPermission("trevor.admin")) {
         curPlayer.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GOLD + "->" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
       }
     }

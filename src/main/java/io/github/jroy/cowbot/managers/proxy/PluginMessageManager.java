@@ -3,10 +3,7 @@ package io.github.jroy.cowbot.managers.proxy;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.ProxiedCow;
-import io.github.jroy.cowbot.commands.proxy.DispatchCommand;
-import io.github.jroy.cowbot.commands.proxy.GlobalMessageCommand;
-import io.github.jroy.cowbot.commands.proxy.RestartCommand;
-import io.github.jroy.cowbot.commands.proxy.ShoutCommand;
+import io.github.jroy.cowbot.commands.proxy.*;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
 import io.github.jroy.cowbot.utils.ChatEnum;
 import io.github.jroy.cowbot.utils.Constants;
@@ -48,6 +45,7 @@ public class PluginMessageManager extends ProxyModule {
     addCommand(new DispatchCommand(proxiedCow));
     addCommand(new ShoutCommand());
     addCommand(new GlobalMessageCommand());
+    addCommand(new GlobalSpyCommand());
   }
 
   @SuppressWarnings("UnstableApiUsage")
