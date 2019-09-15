@@ -47,6 +47,11 @@ public class GlobalMessageCommand extends Command implements TabExecutor {
 
     sender.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GOLD + "->" + ChatColor.YELLOW + "you" + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
     player.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + "you" + ChatColor.GOLD + "->" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
+    for (ProxiedPlayer curPlayer : ProxyServer.getInstance().getPlayers()) {
+      if (curPlayer.hasPermission("trevor.admin")) {
+        curPlayer.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GOLD + "->" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
+      }
+    }
   }
 
   @Override
