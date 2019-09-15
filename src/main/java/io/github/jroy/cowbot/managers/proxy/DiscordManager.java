@@ -2,10 +2,7 @@ package io.github.jroy.cowbot.managers.proxy;
 
 import com.vdurmont.emoji.EmojiParser;
 import io.github.jroy.cowbot.ProxiedCow;
-import io.github.jroy.cowbot.commands.discord.BanCommand;
-import io.github.jroy.cowbot.commands.discord.EvalCommand;
-import io.github.jroy.cowbot.commands.discord.LinkCommand;
-import io.github.jroy.cowbot.commands.discord.NameCommand;
+import io.github.jroy.cowbot.commands.discord.*;
 import io.github.jroy.cowbot.commands.discord.base.CommandFactory;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
 import io.github.jroy.cowbot.utils.Constants;
@@ -48,7 +45,8 @@ public class DiscordManager extends ProxyModule implements EventListener {
               new LinkCommand(this),
               new BanCommand(this),
               new NameCommand(this),
-              new EvalCommand(proxiedCow, this)
+              new EvalCommand(proxiedCow, this),
+              new JoinDateCommand()
           ).build(), this)
           .build().awaitReady();
       log("Logged into JDA!");

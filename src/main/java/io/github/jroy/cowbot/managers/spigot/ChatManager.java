@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.CowBot;
 import io.github.jroy.cowbot.commands.spigot.ChatCommand;
 import io.github.jroy.cowbot.commands.spigot.DisguiseCommand;
+import io.github.jroy.cowbot.commands.spigot.JoinDateCommand;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.utils.AsyncFinishedChatEvent;
 import io.github.jroy.cowbot.utils.ChatEnum;
@@ -36,6 +37,7 @@ public class ChatManager extends SpigotModule {
   public void addCommands() {
     addCommand("disguise", new DisguiseCommand(this));
     addCommand("chat", new ChatCommand(this));
+    addCommand("joindate", new JoinDateCommand());
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
