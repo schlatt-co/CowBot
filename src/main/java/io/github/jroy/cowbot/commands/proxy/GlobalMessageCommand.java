@@ -50,8 +50,8 @@ public class GlobalMessageCommand extends Command implements TabExecutor {
     target.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GOLD + "->" + ChatColor.YELLOW + "you" + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
     player.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + "you" + ChatColor.GOLD + "->" + ChatColor.YELLOW + target.getDisplayName() + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
     for (ProxiedPlayer curPlayer : ProxyServer.getInstance().getPlayers()) {
-      if (!curPlayer.getName().equals(player.getName()) && !noSpy.contains(curPlayer.getName()) && curPlayer.hasPermission("trevor.admin")) {
-        curPlayer.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GOLD + "->" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
+      if ((!curPlayer.getName().equals(player.getName()) || !curPlayer.getName().equals(target.getName())) && !noSpy.contains(curPlayer.getName()) && curPlayer.hasPermission("trevor.admin")) {
+        curPlayer.sendMessage(new TextComponent(ChatColor.GREEN + "[" + ChatColor.YELLOW + player.getDisplayName() + ChatColor.GOLD + "->" + ChatColor.YELLOW + target.getDisplayName() + ChatColor.GREEN + "] " + ChatColor.WHITE + msg.toString()));
       }
     }
   }
