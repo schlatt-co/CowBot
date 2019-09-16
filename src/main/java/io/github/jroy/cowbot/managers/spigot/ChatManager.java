@@ -61,7 +61,7 @@ public class ChatManager extends SpigotModule {
       } else if (event.getPlayer().hasPermission("trevor.mod")) {
         prefix = ChatColor.GRAY + "[" + ChatColor.GREEN + "Mod" + ChatColor.GRAY + "] ";
       } else if (event.getPlayer().hasPermission("trevor.stonks")) {
-        prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "$" + ChatColor.GRAY + "] ";
+        prefix = ChatColor.GRAY + "[" + ChatColor.GREEN + "$" + ChatColor.GRAY + "] ";
       } else if (event.getPlayer().hasPermission("trevor.donor")) {
         prefix = ChatColor.GRAY + "[" + ChatColor.AQUA + "Donor" + ChatColor.GRAY + "] ";
       } else if (event.getPlayer().hasPermission("trevor.redacted")) {
