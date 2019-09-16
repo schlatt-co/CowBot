@@ -13,6 +13,6 @@ commands:
   chat:
     description: Chat Command
     usage: /chat
-  joindate
+  joindate:
     description: Join Date Command
     usage: /joindate
