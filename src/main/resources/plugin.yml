@@ -16,3 +16,6 @@ commands:
   joindate:
     description: Join Date Command
     usage: /joindate
+  dirt:
+    description: Dirt
+    usage: /dirt
