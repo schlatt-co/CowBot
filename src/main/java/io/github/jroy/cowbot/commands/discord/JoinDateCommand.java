@@ -30,6 +30,11 @@ public class JoinDateCommand extends CommandBase {
 
   @Override
   protected void executeCommand(CommandEvent event) {
+    if (!event.isOwner()) {
+      event.getMessage().addReaction("❌").queue();
+      return;
+    }
+
     Member target = matchMember(event.getMember(), event.getArgs());
 
     Message message = event.getChannel().sendMessage("Searching through the jungle...").complete();
