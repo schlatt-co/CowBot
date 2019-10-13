@@ -95,6 +95,7 @@ public class PlayerConnectionManager extends ProxyModule {
     ping.setDescriptionComponent(new TextComponent(ChatColor.translateAlternateColorCodes('&', serverMotd)));
     ping.setVersion(new ServerPing.Protocol(targetVersion, targetProtocol));
     ping.setPlayers(new ServerPing.Players(proxiedCow.getProxy().getOnlineCount() + 1, proxiedCow.getProxy().getOnlineCount(), new ServerPing.PlayerInfo[]{new ServerPing.PlayerInfo("jschlatt", UUID.fromString(Constants.JSCHALTT_UUID))}));
+    ping.setFavicon(event.getResponse().getFaviconObject());
     event.setResponse(ping);
   }
 
