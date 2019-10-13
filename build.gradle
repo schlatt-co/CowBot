@@ -11,9 +11,9 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     jcenter()
-    maven { url 'https://jitpack.io' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url "https://papermc.io/repo/repository/maven-public/" }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -26,7 +26,7 @@ dependencies {
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.28.0'
     compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.0'
     compileOnly "com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT"
-    compileOnly "net.md-5:bungeecord-api:1.14-SNAPSHOT"
+    compileOnly "io.github.waterfallmc:waterfall-api:1.14-SNAPSHOT"
 }
 
 compileJava.options.encoding = 'UTF-8'
