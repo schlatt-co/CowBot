@@ -15,6 +15,8 @@ public class LinkCommand extends CommandBase {
 
   private DiscordManager discordManager;
 
+  private boolean disableLinking = false;
+
   public LinkCommand(DiscordManager discordManager) {
     super("link", "<minecraft username>", "Links your minecraft username with your discord account.");
     this.discordManager = discordManager;
@@ -24,6 +26,11 @@ public class LinkCommand extends CommandBase {
   @Override
   protected void executeCommand(CommandEvent e) {
     if (!e.getTextChannel().getId().equalsIgnoreCase(Constants.MC_CHANNEL_ID)) {
+      return;
+    }
+
+    if (disableLinking && !e.isOwner()) {
+      e.replyError("Link requests are currently disabled, please try again later!");
       return;
     }
 
@@ -39,6 +46,17 @@ public class LinkCommand extends CommandBase {
       return;
     }
 
+    if (e.getArgs().isEmpty()) {
+      e.reply(invalid);
+      return;
+    }
+
+    if (e.getSplitArgs()[0].equalsIgnoreCase("toggle") && e.isOwner()) {
+      disableLinking = !disableLinking;
+      e.reply("Toggled disabled state to: " + disableLinking);
+      return;
+    }
+
     String userId = e.getMember().getUser().getId();
     if (discordManager.getDatabaseManager().isBanned(userId)) {
       try {
@@ -48,11 +66,6 @@ public class LinkCommand extends CommandBase {
       } catch (SQLException ex) {
         e.replyError("You are banned from the server but I honestly don't give two shits why.");
       }
-      return;
-    }
-
-    if (e.getArgs().isEmpty()) {
-      e.reply(invalid);
       return;
     }
 
