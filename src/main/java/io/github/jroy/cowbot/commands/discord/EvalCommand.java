@@ -4,7 +4,6 @@ import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.discord.base.CommandBase;
 import io.github.jroy.cowbot.commands.discord.base.CommandEvent;
 import io.github.jroy.cowbot.managers.proxy.DiscordManager;
-import io.github.jroy.cowbot.utils.Constants;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -22,7 +21,7 @@ public class EvalCommand extends CommandBase {
 
   @Override
   protected void executeCommand(CommandEvent e) {
-    if (!e.getMember().getId().equalsIgnoreCase(Constants.OWNER_ID)) {
+    if (!e.isOwner()) {
       e.replyError("drown.");
       return;
     }
