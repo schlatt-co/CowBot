@@ -64,9 +64,8 @@ public class ChatManager extends SpigotModule {
     boolean hasChatEnum = chatEnum != null && chatEnum != ChatEnum.UNKNOWN;
     String name = (hasChatEnum ? ChatColor.stripColor(event.getPlayer().getDisplayName()) : event.getPlayer().getDisplayName());
 
-    String prefix = prefixes.getOrDefault(event.getPlayer().getUniqueId(), "");
-    prefix = prefix.equals("") ? prefix : (prefix + " ");
-    event.setFormat(prefix + ChatColor.GRAY + "<" + (hasChatEnum ? chatEnum.getChatColor() : "") + name + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|^)(?:(%%)+|)(%)(?:[^%])\n", "%%").replaceAll("%", "%%"));
+    String prefix = ChatColor.translateAlternateColorCodes('&', prefixes.getOrDefault(event.getPlayer().getUniqueId(), ""));
+    event.setFormat(prefix + ChatColor.GRAY + " <" + (hasChatEnum ? chatEnum.getChatColor() : "") + name + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|^)(?:(%%)+|)(%)(?:[^%])\n", "%%").replaceAll("%", "%%"));
     cowBot.getServer().getPluginManager().callEvent(new AsyncFinishedChatEvent(prefix, event.getPlayer().getDisplayName(), event.getMessage()));
   }
 
