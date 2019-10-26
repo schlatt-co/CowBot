@@ -7,9 +7,6 @@ commands:
   communism:
     description: Communism Command
     usage: /communism
-  disguise:
-    description: dfddd
-    usage: /disguise
   chat:
     description: Chat Command
     usage: /chat

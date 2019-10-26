@@ -10,7 +10,6 @@ public abstract class SpigotModule extends BaseModule<CowBot, CommandExecutor> i
     super(moduleName, plugin);
   }
 
-  @SuppressWarnings("ConstantConditions")
   @Override
   public void addCommand(String name, CommandExecutor command) {
     plugin.getCommand(name).setExecutor(command);
