@@ -9,6 +9,7 @@ import io.github.jroy.cowbot.commands.spigot.JoinDateCommand;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.utils.AsyncFinishedChatEvent;
 import io.github.jroy.cowbot.utils.ChatEnum;
+import io.github.jroy.tagger.events.TaggerTagUpdateEvent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -18,11 +19,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ChatManager extends SpigotModule {
 
   private CowBot cowBot;
 
+  private Map<UUID, String> prefixes = new HashMap<>();
   Map<String, ChatEnum> chatEnumCache = new HashMap<>();
 
   private boolean silence = false;
@@ -39,6 +42,11 @@ public class ChatManager extends SpigotModule {
     addCommand("dirt", new DirtCommand());
   }
 
+  @EventHandler
+  public void onTaggerUpdate(TaggerTagUpdateEvent event) {
+    prefixes.put(event.getPlayerUuid(), event.getTag().getText());
+  }
+
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onChat(AsyncPlayerChatEvent event) {
     if (event.getPlayer().hasPermission("trevor.admin") && event.getMessage().equalsIgnoreCase("hey trevor can you purge the normie cache")) {
@@ -52,28 +60,12 @@ public class ChatManager extends SpigotModule {
       return;
     }
 
-
-    String prefix = "";
-    if (event.getPlayer().hasPermission("trevor.admin")) {
-      prefix = ChatColor.GRAY + "[" + ChatColor.RED + "Admin" + ChatColor.GRAY + "] ";
-    } else if (event.getPlayer().hasPermission("trevor.mod")) {
-      prefix = ChatColor.GRAY + "[" + ChatColor.GREEN + "Mod" + ChatColor.GRAY + "] ";
-    } else if (event.getPlayer().hasPermission("trevor.stonks")) {
-      prefix = ChatColor.GRAY + "[" + ChatColor.GREEN + "$" + ChatColor.GRAY + "] ";
-    } else if (event.getPlayer().hasPermission("trevor.donor")) {
-      prefix = ChatColor.GRAY + "[" + ChatColor.AQUA + "Donor" + ChatColor.GRAY + "] ";
-    } else if (event.getPlayer().hasPermission("trevor.redacted")) {
-      prefix = ChatColor.GRAY + "[" + ChatColor.RED + "R" + ChatColor.GOLD + "E" + ChatColor.YELLOW + "D" + ChatColor.GREEN + "A" + ChatColor.BLUE + "C" + ChatColor.LIGHT_PURPLE + "T" + ChatColor.RED + "E" + ChatColor.GOLD + "D" + ChatColor.GRAY + "] ";
-    } else if (event.getPlayer().hasPermission("trevor.twitch")) {
-      prefix = ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.GRAY + "] ";
-    } else if (event.getPlayer().hasPermission("trevor.content")) {
-      prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "Content" + ChatColor.GRAY + "] ";
-    }
-
     ChatEnum chatEnum = chatEnumCache.getOrDefault(event.getPlayer().getName(), ChatEnum.UNKNOWN);
     boolean hasChatEnum = chatEnum != null && chatEnum != ChatEnum.UNKNOWN;
     String name = (hasChatEnum ? ChatColor.stripColor(event.getPlayer().getDisplayName()) : event.getPlayer().getDisplayName());
 
+    String prefix = prefixes.getOrDefault(event.getPlayer().getUniqueId(), "");
+    prefix = prefix.equals("") ? prefix : (prefix + " ");
     event.setFormat(prefix + ChatColor.GRAY + "<" + (hasChatEnum ? chatEnum.getChatColor() : "") + name + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|^)(?:(%%)+|)(%)(?:[^%])\n", "%%").replaceAll("%", "%%"));
     cowBot.getServer().getPluginManager().callEvent(new AsyncFinishedChatEvent(prefix, event.getPlayer().getDisplayName(), event.getMessage()));
   }
