@@ -28,7 +28,6 @@ public class PlayerConnectionManager extends ProxyModule {
 
   {
     lockdownList.add("WheezyGold7931");
-    lockdownList.add("wolfmitchell");
     lockdownList.add("iliketanks1998");
   }
 
