@@ -38,7 +38,6 @@ public class DatabaseManager extends ProxyModule {
       log("Connected to database!");
       connection.createStatement().execute("CREATE TABLE IF NOT EXISTS players( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL, discordid text NOT NULL);");
       connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans( id integer PRIMARY KEY AUTOINCREMENT, discordid text NOT NULL, reason text NOT NULL);");
-      connection.createStatement().execute("CREATE TABLE IF NOT EXISTS vives( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL);");
       log("Database tables initialized!");
       proxiedCow.getProxy().getScheduler().schedule(proxiedCow, () -> {
         log("Auditing server whitelist...");
