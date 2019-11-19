@@ -40,7 +40,7 @@ public abstract class BaseModule<PluginClass, CommandClass> {
 
   protected abstract void registerSelf();
 
-  public void log(String message) {
+  protected void log(String message) {
     System.out.println("[CowBot] " + moduleName + "> " + message);
   }
 }

@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ public class DirtCommand implements CommandExecutor {
   private void newDirt() {
     List<String> lore = new ArrayList<>();
     lore.add(ChatColor.RED + "Dirt ID; " + UUID.randomUUID().toString());
-    dirt.setLore(lore);
+    ItemMeta meta = dirt.getItemMeta();
+    meta.setLore(lore);
+    dirt.setItemMeta(meta);
   }
 }
