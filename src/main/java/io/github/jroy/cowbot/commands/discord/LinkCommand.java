@@ -3,7 +3,6 @@ package io.github.jroy.cowbot.commands.discord;
 import io.github.jroy.cowbot.commands.discord.base.CommandBase;
 import io.github.jroy.cowbot.commands.discord.base.CommandEvent;
 import io.github.jroy.cowbot.managers.proxy.DiscordManager;
-import io.github.jroy.cowbot.utils.ATLauncherUtils;
 import io.github.jroy.cowbot.utils.Constants;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -69,7 +68,6 @@ public class LinkCommand extends CommandBase {
       return;
     }
 
-    final Runnable addAtlPlayer = () -> ATLauncherUtils.addPlayer(e.getSplitArgs()[0]);
     if (discordManager.getDatabaseManager().isLinked(userId)) {
       try {
         String pastName = discordManager.getDatabaseManager().getUsernameFromDiscordId(userId);
@@ -78,8 +76,6 @@ public class LinkCommand extends CommandBase {
         if (ProxyServer.getInstance().getPlayer(pastName) != null) {
           ProxyServer.getInstance().getPlayer(pastName).disconnect(new TextComponent("Your username has been updated!\nTo prevent freeloading, you've been disconnected\nfuck you"));
         }
-        new Thread(() -> ATLauncherUtils.removePlayer(pastName)).start();
-        new Thread(addAtlPlayer).start();
       } catch (SQLException ex) {
         e.replyError("Error while updating your Minecraft name: " + ex.getMessage());
         ex.printStackTrace();
@@ -89,7 +85,6 @@ public class LinkCommand extends CommandBase {
     try {
       discordManager.getDatabaseManager().linkUser(userId, e.getSplitArgs()[0]);
       e.reply("Added " + e.getMember().getAsMention() + " to the whitelist with the username " + e.getSplitArgs()[0]);
-      new Thread(addAtlPlayer).start();
     } catch (SQLException ex) {
       e.replyError("Error white linking your Minecraft name: " + ex.getMessage());
       ex.printStackTrace();

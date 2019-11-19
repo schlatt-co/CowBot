@@ -3,7 +3,6 @@ package io.github.jroy.cowbot.managers.proxy;
 import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.proxy.TrevorCommand;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
-import io.github.jroy.cowbot.utils.ATLauncherUtils;
 import io.github.jroy.cowbot.utils.Constants;
 import net.dv8tion.jda.api.entities.Member;
 
@@ -58,7 +57,6 @@ public class DatabaseManager extends ProxyModule {
             StringBuilder sb = new StringBuilder("What's poppin boys, it's time to chop some bovine from the sub server:\n\n");
             for (String curName : purgedUsers) {
               sb.append("**").append(curName).append("**\n");
-              new Thread(() -> ATLauncherUtils.removePlayer(curName)).start();
             }
             sb.append("\nKeep giving Schlatt your money or face the consequences...");
             discordManager.getJda().getGuildById(Constants.GUILD_ID).getTextChannelById(Constants.LOG_CHANNEL_ID).sendMessage(sb.toString()).queue();
