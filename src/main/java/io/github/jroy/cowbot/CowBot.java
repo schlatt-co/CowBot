@@ -4,10 +4,7 @@ import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.managers.spigot.*;
 import io.github.jroy.cowbot.utils.ServerType;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Bat;
-import org.bukkit.entity.Fish;
-import org.bukkit.entity.Pillager;
-import org.bukkit.entity.Squid;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -26,11 +23,6 @@ public class CowBot extends JavaPlugin implements Listener {
   private ChatManager chatManager;
 
   private ServerType currentServer = ServerType.UNKNOWN;
-
-  @Override
-  public void onLoad() {
-    log("Hello <3 -Trevor");
-  }
 
   @Override
   public void onEnable() {
@@ -74,7 +66,7 @@ public class CowBot extends JavaPlugin implements Listener {
    */
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onCreatureSpawn(CreatureSpawnEvent event) {
-    if (event.getEntity() instanceof Bat || event.getEntity() instanceof Fish || event.getEntity() instanceof Squid || event.getEntity() instanceof Pillager) {
+    if (event.getEntity() instanceof Bat || event.getEntity() instanceof FishHook || event.getEntity() instanceof Squid || event.getEntity() instanceof Pillager) {
       event.setCancelled(true);
     }
   }

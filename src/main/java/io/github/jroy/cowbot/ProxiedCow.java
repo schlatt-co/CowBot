@@ -1,12 +1,8 @@
 package io.github.jroy.cowbot;
 
 import com.google.common.io.ByteStreams;
-import io.github.jroy.cowbot.managers.proxy.ModManager;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
-import io.github.jroy.cowbot.managers.proxy.DatabaseManager;
-import io.github.jroy.cowbot.managers.proxy.DiscordManager;
-import io.github.jroy.cowbot.managers.proxy.PlayerConnectionManager;
-import io.github.jroy.cowbot.managers.proxy.PluginMessageManager;
+import io.github.jroy.cowbot.managers.proxy.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -20,8 +16,6 @@ import java.util.List;
 @SuppressWarnings("FieldCanBeLocal")
 public class ProxiedCow extends Plugin implements Listener {
 
-  private static ProxiedCow instance;
-
   private Configuration configuration;
 
   private List<ProxyModule> loadedModules = new ArrayList<>();
@@ -31,14 +25,8 @@ public class ProxiedCow extends Plugin implements Listener {
   private PlayerConnectionManager playerConnectionManager;
 
   @Override
-  public void onLoad() {
-    log("Hello <3 -Trevor");
-  }
-
-  @Override
   public void onEnable() {
     log("Loading CowBot...");
-    instance = this;
 
     log("Loading config...");
     if (!loadConfig()) {
@@ -92,13 +80,5 @@ public class ProxiedCow extends Plugin implements Listener {
       e.printStackTrace();
       return false;
     }
-  }
-
-  public Configuration getConfiguration() {
-    return configuration;
-  }
-
-  public static ProxiedCow getInstance() {
-    return instance;
   }
 }
