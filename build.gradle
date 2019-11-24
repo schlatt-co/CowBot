@@ -30,6 +30,10 @@ dependencies {
     compileOnly "com.github.schlatt-co:Tagger:82ad15854a"
 }
 
+configurations {
+    all*.exclude group: 'org.spigot', module: 'spigot-api'
+}
+
 compileJava.options.encoding = 'UTF-8'
 
 tasks.withType(JavaCompile) {
