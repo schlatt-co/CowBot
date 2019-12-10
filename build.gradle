@@ -17,8 +17,8 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:4.0.0_62'
-    compile 'club.minnced:discord-webhooks:0.1.7'
+    compile 'net.dv8tion:JDA:4.0.0_73'
+    compile 'club.minnced:discord-webhooks:0.1.8'
     compile 'com.jagrosh:jda-utilities:3.0.2'
     compile 'com.vdurmont:emoji-java:5.1.1'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.10'
