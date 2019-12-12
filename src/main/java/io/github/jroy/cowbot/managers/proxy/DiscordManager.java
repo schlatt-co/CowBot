@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.md_5.bungee.config.Configuration;
@@ -88,6 +89,8 @@ public class DiscordManager extends ProxyModule implements EventListener {
         message = message + (e.getMessage().getAttachments().isEmpty() ? "" : (" " + e.getMessage().getAttachments().get(0).getUrl()));
         PluginMessageManager.sendMessage(proxiedCow, "trevor:discord", "chat", (e.getMember() == null ? e.getAuthor().getName() : e.getMember().getEffectiveName()) + ":" + message, target);
       }
+    } else if (event instanceof StatusChangeEvent && ((StatusChangeEvent) event).getNewStatus() == JDA.Status.CONNECTED) {
+      Objects.requireNonNull(Objects.requireNonNull(event.getJDA().getGuildById(Constants.GUILD_ID)).getTextChannelById(Constants.MC_CHANNEL_ID)).sendMessage("Wakey wakey!").queue();
     }
   }
 
