@@ -28,6 +28,7 @@ public class DiscordManager extends ProxyModule implements EventListener {
   private DatabaseManager databaseManager;
 
   private JDA jda;
+  private boolean woke = false;
 
   public DiscordManager(ProxiedCow proxiedCow, Configuration configuration) {
     super("Discord Manager", proxiedCow);
@@ -89,8 +90,9 @@ public class DiscordManager extends ProxyModule implements EventListener {
         message = message + (e.getMessage().getAttachments().isEmpty() ? "" : (" " + e.getMessage().getAttachments().get(0).getUrl()));
         PluginMessageManager.sendMessage(proxiedCow, "trevor:discord", "chat", (e.getMember() == null ? e.getAuthor().getName() : e.getMember().getEffectiveName()) + ":" + message, target);
       }
-    } else if (event instanceof StatusChangeEvent && ((StatusChangeEvent) event).getNewStatus() == JDA.Status.CONNECTED) {
+    } else if (event instanceof StatusChangeEvent && ((StatusChangeEvent) event).getNewStatus() == JDA.Status.CONNECTED && !woke) {
       Objects.requireNonNull(Objects.requireNonNull(event.getJDA().getGuildById(Constants.GUILD_ID)).getTextChannelById(Constants.MC_CHANNEL_ID)).sendMessage("Wakey wakey!").queue();
+      woke = true;
     }
   }
 
