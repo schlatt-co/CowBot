@@ -31,11 +31,11 @@ public class PlayerConnectionManager extends ProxyModule {
     lockdownList.add("iliketanks1998");
   }
 
-  private String targetVersion = "1.14.4";
-  private int targetProtocol = 498;
+  private String targetVersion = "1.15.1";
+  private int targetProtocol = 575;
   private String targetServer = "vanilla";
 
-  private String serverMotd = "&ajschlatt twitch subscriber server\n&bsubscribe with &5twitch prime&b!";
+  private String serverMotd = "&ajschlatt twitch subscriber server\n&ethinkin' about bees";
 
   public PlayerConnectionManager(ProxiedCow proxiedCow, DatabaseManager databaseManager) {
     super("Player Connection Manager", proxiedCow);
