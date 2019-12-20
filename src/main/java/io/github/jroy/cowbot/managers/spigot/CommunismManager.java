@@ -6,11 +6,13 @@ import io.github.jroy.cowbot.managers.base.SpigotModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,9 +20,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class CommunismManager extends SpigotModule {
 
   public final World world = Bukkit.getWorld("world");
-  private final Location boxSpawnLocation = new Location(world, 16, 54, -3, -90, 0);
-  private final Location boxCornerOne = new Location(world, 6, 66, 7);
-  private final Location boxCornerTwo = new Location(world, 26, 51, -13);
+  private final Location boxSpawnLocation = new Location(world, 252, 7, -29, 90, 0);
+  private final Location boxCornerOne = new Location(world, 241, 16, -20);
+  private final Location boxCornerTwo = new Location(world, 260, 5, -38);
 
   public CommunismManager(CowBot plugin) {
     super("Communism Manager", plugin);
@@ -59,6 +61,14 @@ public class CommunismManager extends SpigotModule {
     if (playerInBox(event.getPlayer())) {
       event.setCancelled(true);
       sendMessage(event.getPlayer());
+    }
+  }
+
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onFight(EntityDamageEvent event) {
+    if (event.getEntityType() == EntityType.PLAYER && playerInBox((Player) event.getEntity())) {
+      event.setCancelled(true);
+      sendMessage((Player) event.getEntity());
     }
   }
 
