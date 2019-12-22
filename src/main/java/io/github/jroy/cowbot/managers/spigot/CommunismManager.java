@@ -2,6 +2,7 @@ package io.github.jroy.cowbot.managers.spigot;
 
 import io.github.jroy.cowbot.CowBot;
 import io.github.jroy.cowbot.commands.spigot.CommunismCommand;
+import io.github.jroy.cowbot.commands.spigot.SpawnCommand;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,6 +32,7 @@ public class CommunismManager extends SpigotModule {
   @Override
   public void addCommands() {
     addCommand("communism", new CommunismCommand(this));
+    addCommand("spawn", new SpawnCommand(this));
   }
 
   @EventHandler

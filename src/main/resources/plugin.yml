@@ -17,3 +17,6 @@ commands:
   dirt:
     description: Dirt
     usage: /dirt
+  spawn:
+    description: Teleports to spawn
+    usage: /spawn
