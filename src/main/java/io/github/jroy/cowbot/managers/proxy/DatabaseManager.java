@@ -5,6 +5,7 @@ import io.github.jroy.cowbot.commands.proxy.TrevorCommand;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
 import io.github.jroy.cowbot.utils.Constants;
 import net.dv8tion.jda.api.entities.Member;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -40,28 +41,38 @@ public class DatabaseManager extends ProxyModule {
       connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans( id integer PRIMARY KEY AUTOINCREMENT, discordid text NOT NULL, reason text NOT NULL);");
       log("Database tables initialized!");
       proxiedCow.getProxy().getScheduler().schedule(proxiedCow, () -> {
-        log("Auditing server whitelist...");
-        List<String> purgedUsers = new ArrayList<>();
         try {
-          ResultSet whitelistSet = getUsers();
-          while (whitelistSet.next()) {
-            Member member = discordManager.getJda().getGuildById(Constants.GUILD_ID).getMemberById(whitelistSet.getString("discordid"));
-            if (member == null || member.getRoles().isEmpty()) {
-              purgedUsers.add(whitelistSet.getString("mc"));
-              deleteUser(whitelistSet.getInt("id"));
+          proxiedCow.getProxy().getScheduler().runAsync(proxiedCow, () -> {
+            log("Auditing server whitelist...");
+            List<String> purgedUsers = new ArrayList<>();
+            try {
+              ResultSet whitelistSet = getUsers();
+              while (whitelistSet.next()) {
+                Member member = discordManager.getJda().getGuildById(Constants.GUILD_ID).getMemberById(whitelistSet.getString("discordid"));
+                if (member == null || member.getRoles().isEmpty()) {
+                  if (proxiedCow.getProxy().getPlayer(whitelistSet.getString("mc")) != null) {
+                    proxiedCow.getProxy().getPlayer(whitelistSet.getString("mc")).disconnect(new TextComponent("Hey you little shit!!!! your sub is up!!\nAHHAHA so fuck you\nbuy money"));
+                  }
+                  deleteUser(whitelistSet.getInt("id"));
+                  purgedUsers.add(whitelistSet.getString("mc"));
+                }
+              }
+              log("Purged " + purgedUsers.size() + " user(s) from the whitelist!");
+              if (purgedUsers.size() > 0) {
+                StringBuilder sb = new StringBuilder("What's poppin boys, it's time to chop some bovine from the sub server:\n\n");
+                for (String curName : purgedUsers) {
+                  sb.append("**").append(curName).append("**\n");
+                }
+                sb.append("\nKeep giving Schlatt your money or face the consequences...");
+                discordManager.getJda().getGuildById(Constants.GUILD_ID).getTextChannelById(Constants.LOG_CHANNEL_ID).sendMessage(sb.toString()).queue();
+              }
+            } catch (SQLException e) {
+              log("Error while executing whitelist purge: " + e.getMessage());
+              e.printStackTrace();
             }
-          }
-          log("Purged " + purgedUsers.size() + " user(s) from the whitelist!");
-          if (purgedUsers.size() > 0) {
-            StringBuilder sb = new StringBuilder("What's poppin boys, it's time to chop some bovine from the sub server:\n\n");
-            for (String curName : purgedUsers) {
-              sb.append("**").append(curName).append("**\n");
-            }
-            sb.append("\nKeep giving Schlatt your money or face the consequences...");
-            discordManager.getJda().getGuildById(Constants.GUILD_ID).getTextChannelById(Constants.LOG_CHANNEL_ID).sendMessage(sb.toString()).queue();
-          }
-        } catch (SQLException e) {
-          log("Error while executing whitelist purge: " + e.getMessage());
+          });
+        } catch (Exception e) {
+          log("Error while executing async purge: " + e.getMessage());
           e.printStackTrace();
         }
       }, 0, 1, TimeUnit.HOURS);
