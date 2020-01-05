@@ -15,10 +15,12 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.aikar.co/content/groups/aikar/' }
+    maven { url 'https://papermc.io/repo/repository/maven-public/' }
 }
 
 dependencies {
     compile 'net.dv8tion:JDA:4.0.0_73'
+    compile "io.papermc:paperlib:1.0.2"
     compile 'com.jagrosh:jda-utilities:3.0.2'
     compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
     compileOnly "org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT"

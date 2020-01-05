@@ -1,6 +1,7 @@
 package io.github.jroy.cowbot.commands.spigot;
 
 import io.github.jroy.cowbot.managers.spigot.CommunismManager;
+import io.papermc.lib.PaperLib;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,7 +24,7 @@ public class SpawnCommand implements CommandExecutor {
     Player player = (Player) sender;
 
     assert communismManager.world != null;
-    player.teleport(communismManager.world.getSpawnLocation());
+    PaperLib.teleportAsync(player, communismManager.world.getSpawnLocation());
     return true;
   }
 }
