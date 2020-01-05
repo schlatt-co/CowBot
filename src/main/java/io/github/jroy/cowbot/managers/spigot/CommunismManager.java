@@ -14,9 +14,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.*;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class CommunismManager extends SpigotModule {
 
@@ -24,6 +25,8 @@ public class CommunismManager extends SpigotModule {
   private final Location boxSpawnLocation = new Location(world, 252, 7, -29, 90, 0);
   private final Location boxCornerOne = new Location(world, 241, 16, -20);
   private final Location boxCornerTwo = new Location(world, 260, 5, -38);
+
+  private final HashMap<UUID, Boolean> players = new HashMap<>();
 
   public CommunismManager(CowBot plugin) {
     super("Communism Manager", plugin);
@@ -39,7 +42,17 @@ public class CommunismManager extends SpigotModule {
   public void onJoin(PlayerJoinEvent event) {
     if (!event.getPlayer().hasPlayedBefore()) {
       event.getPlayer().teleport(boxSpawnLocation);
+      players.put(event.getPlayer().getUniqueId(), true);
+      return;
     }
+    if (playerInBox(event.getPlayer())) {
+      players.put(event.getPlayer().getUniqueId(), true);
+    }
+  }
+
+  @EventHandler
+  public void onLeave(PlayerQuitEvent event) {
+    players.remove(event.getPlayer().getUniqueId());
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
@@ -82,13 +95,26 @@ public class CommunismManager extends SpigotModule {
     }
   }
 
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void onTeleport(PlayerTeleportEvent event) {
+    playerInBox(event.getPlayer(), false);
+  }
+
   private void sendMessage(Player player) {
     player.sendMessage("You must agree to the rules before you can do that! Type /communism when you read and agree to the rules.");
   }
 
   public boolean playerInBox(Player player) {
+    return playerInBox(player, true);
+  }
+
+  public boolean playerInBox(Player player, boolean cache) {
     if (player.hasPermission("trevor.admin")) {
       return false;
+    }
+
+    if (cache && players.containsKey(player.getUniqueId())) {
+      return players.get(player.getUniqueId());
     }
 
     int x1, x2, y1, y2, z1, z2;
@@ -104,11 +130,13 @@ public class CommunismManager extends SpigotModule {
       for (int y = y1; y <= y2; y++) {
         for (int z = z1; z <= z2; z++) {
           if (player.getLocation().getBlock().getLocation().equals(new Location(world, x, y, z))) {
+            players.put(player.getUniqueId(), true);
             return true;
           }
         }
       }
     }
+    players.put(player.getUniqueId(), false);
     return false;
   }
 }
