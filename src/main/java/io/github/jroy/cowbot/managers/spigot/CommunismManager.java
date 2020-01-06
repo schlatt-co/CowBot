@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class CommunismManager extends SpigotModule {
   private final Location boxCornerOne = new Location(world, 241, 16, -20);
   private final Location boxCornerTwo = new Location(world, 260, 5, -38);
 
-  private final HashMap<UUID, Boolean> players = new HashMap<>();
+  public final HashMap<UUID, Boolean> players = new HashMap<>();
 
   public CommunismManager(CowBot plugin) {
     super("Communism Manager", plugin);
@@ -50,7 +51,7 @@ public class CommunismManager extends SpigotModule {
     }
   }
 
-  @EventHandler
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onLeave(PlayerQuitEvent event) {
     players.remove(event.getPlayer().getUniqueId());
   }
@@ -98,6 +99,11 @@ public class CommunismManager extends SpigotModule {
   @EventHandler(priority = EventPriority.MONITOR)
   public void onTeleport(PlayerTeleportEvent event) {
     playerInBox(event.getPlayer(), false);
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void onDeath(PlayerDeathEvent event) {
+    playerInBox(event.getEntity(), false);
   }
 
   private void sendMessage(Player player) {

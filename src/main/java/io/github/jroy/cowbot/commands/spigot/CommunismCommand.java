@@ -1,11 +1,14 @@
 package io.github.jroy.cowbot.commands.spigot;
 
 import io.github.jroy.cowbot.managers.spigot.CommunismManager;
+import io.papermc.lib.PaperLib;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.ExecutionException;
 
 public class CommunismCommand implements CommandExecutor {
 
@@ -23,9 +26,14 @@ public class CommunismCommand implements CommandExecutor {
     }
     Player p = (Player) sender;
 
-    if (communismManager.playerInBox(p)) {
+    if (communismManager.playerInBox(p, false)) {
       assert communismManager.world != null;
-      p.teleport(communismManager.world.getSpawnLocation());
+      try {
+        PaperLib.teleportAsync(p, communismManager.world.getSpawnLocation()).get();
+        communismManager.players.put(p.getUniqueId(), false);
+      } catch (InterruptedException | ExecutionException e) {
+        e.printStackTrace();
+      }
     } else {
       p.sendMessage("You're already a communist!");
     }
