@@ -1,5 +1,6 @@
 package io.github.jroy.cowbot.utils;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
@@ -124,7 +125,7 @@ public class FileCommandSender implements ConsoleCommandSender {
   @Override
   public void sendMessage(@NotNull String message) {
     try {
-      Files.write(path, (message + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
+      Files.write(path, (ChatColor.stripColor(message) + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
     } catch (IOException e) {
       e.printStackTrace();
     }
