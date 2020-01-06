@@ -3,6 +3,7 @@ package io.github.jroy.cowbot.managers.spigot;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.CowBot;
+import io.github.jroy.cowbot.commands.spigot.FetchBaltopCommand;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.utils.ChatEnum;
 import io.github.jroy.cowbot.utils.DispatchCommandSender;
@@ -31,6 +32,11 @@ public class PluginMessageManager extends SpigotModule implements PluginMessageL
     cowBot.getServer().getMessenger().registerOutgoingPluginChannel(cowBot, "trevor:discord");
     cowBot.getServer().getMessenger().registerIncomingPluginChannel(cowBot, "trevor:main", this);
     cowBot.getServer().getMessenger().registerIncomingPluginChannel(cowBot, "trevor:discord", this);
+  }
+
+  @Override
+  public void addCommands() {
+    addCommand("fetchbaltop", new FetchBaltopCommand());
   }
 
   @SuppressWarnings("UnstableApiUsage")

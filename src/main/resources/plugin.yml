@@ -20,3 +20,6 @@ commands:
   spawn:
     description: Teleports to spawn
     usage: /spawn
+  fetchbaltop:
+    description: Fetches baltop
+    usage: /fetchbaltop
