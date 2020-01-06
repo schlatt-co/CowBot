@@ -19,6 +19,7 @@ public class FetchBaltopCommand implements CommandExecutor {
     }
     Bukkit.dispatchCommand(new FileCommandSender(Bukkit.getConsoleSender(), Path.of(Bukkit.getWorldContainer().toString(), "/baltop/baltopone.txt")), "baltop");
     Bukkit.dispatchCommand(new FileCommandSender(Bukkit.getConsoleSender(), Path.of(Bukkit.getWorldContainer().toString(), "/baltop/baltoptwo.txt")), "baltop 2");
+    Bukkit.dispatchCommand(new FileCommandSender(Bukkit.getConsoleSender(), Path.of(Bukkit.getWorldContainer().toString(), "/baltop/baltopthree.txt")), "baltop 3");
     return true;
   }
 }
