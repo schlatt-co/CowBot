@@ -3,7 +3,7 @@ author: JRoy
 version: 1.2
 api-version: 1.14
 main: io.github.jroy.cowbot.CowBot
-depend: [PluginLibrary, Tagger]
+depend: [PluginLibrary, Tagger, Essentials]
 commands:
   communism:
     description: Communism Command
