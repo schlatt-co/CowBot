@@ -4,11 +4,18 @@ import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.managers.spigot.*;
 import io.github.jroy.cowbot.utils.ServerType;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.*;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Bat;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Pillager;
+import org.bukkit.entity.Squid;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -48,6 +55,10 @@ public class CowBot extends JavaPlugin implements Listener {
     for (SpigotModule module : loadedModules) {
       module.onEnable();
     }
+
+    getServer().addRecipe(new ShapelessRecipe(new NamespacedKey(this, "honeycomb"),
+        new ItemStack(Material.HONEYCOMB, 4))
+        .addIngredient(1, Material.HONEYCOMB_BLOCK));
   }
 
   public ServerType getCurrentServer() {
