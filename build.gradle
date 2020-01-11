@@ -29,10 +29,12 @@ dependencies {
     compileOnly "com.github.schlatt-co:Tagger:82ad15854a"
     compileOnly "com.github.schlatt-co:PluginLibrary:c65436d5b6"
     compileOnly "net.ess3:EssentialsX:2.17.0"
+    compileOnly 'com.github.schlatt-co:stonks:04bffb7d8c'
 }
 
 configurations {
     all*.exclude group: 'org.spigot', module: 'spigot-api'
+    all*.exclude module: 'bukkit'
 }
 
 compileJava.options.encoding = 'UTF-8'
