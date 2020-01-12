@@ -51,7 +51,10 @@ public class CowBot extends JavaPlugin implements Listener {
     loadedModules.add(webhookManager = new WebhookManager(this));
     loadedModules.add(chatManager = new ChatManager(this));
     loadedModules.add(new PluginMessageManager(this, webhookManager, chatManager));
-    loadedModules.add(new HomeManager(this));
+    if (getServer().getPluginManager().getPlugin("Stonks") != null) {
+      log("Loading Stonks Integration...");
+      loadedModules.add(new HomeManager(this));
+    }
 
     for (SpigotModule module : loadedModules) {
       module.onEnable();
