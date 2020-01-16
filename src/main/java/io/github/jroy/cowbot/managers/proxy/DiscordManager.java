@@ -5,14 +5,18 @@ import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.discord.*;
 import io.github.jroy.cowbot.commands.discord.base.CommandFactory;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
+import io.github.jroy.cowbot.managers.proxy.discord.Roles;
 import io.github.jroy.cowbot.utils.Constants;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.md_5.bungee.config.Configuration;
 
@@ -93,6 +97,56 @@ public class DiscordManager extends ProxyModule implements EventListener {
     } else if (event instanceof StatusChangeEvent && ((StatusChangeEvent) event).getNewStatus() == JDA.Status.CONNECTED && !woke) {
       Objects.requireNonNull(Objects.requireNonNull(event.getJDA().getGuildById(Constants.GUILD_ID)).getTextChannelById(Constants.MC_CHANNEL_ID)).sendMessage("Wakey wakey!").queue();
       woke = true;
+    } else if (event instanceof GenericGuildMessageReactionEvent) {
+      processAction((GenericGuildMessageReactionEvent) event, event instanceof GuildMessageReactionAddEvent);
+    }
+  }
+
+  private void processAction(GenericGuildMessageReactionEvent event, boolean add) {
+    if (event.getChannel().getId().equalsIgnoreCase("667273766899941386")) {
+      Member member = event.getMember();
+      assert member != null;
+      try {
+        switch (event.getReactionEmote().getId()) {
+          case "614623648820625419": { //mc
+            toggleRole(member, Roles.MINECRAFT, add);
+            break;
+          }
+          case "614612014056210482": { //civ
+            toggleRole(member, Roles.CIVILIZATION, add);
+            break;
+          }
+          case "459218643348357120": { //tf2
+            toggleRole(member, Roles.TF2, add);
+            break;
+          }
+          case "509365681460871168": { //csgo
+            toggleRole(member, Roles.CSGO, add);
+            break;
+          }
+          case "550016541563813935": { //star
+            toggleRole(member, Roles.STELLARIS, add);
+            break;
+          }
+          case "487863478938501130": { //rainbow
+            toggleRole(member, Roles.RAINBOW, add);
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      } catch (Exception ignored) {
+      }
+    }
+  }
+
+  private void toggleRole(Member member, Roles role, boolean add) {
+    boolean hasRole = member.getRoles().stream().anyMatch(p -> p.getId().equals(role.getRoleId()));
+    if (add && !hasRole) {
+      member.getGuild().addRoleToMember(member, role.getRole(member.getGuild())).queue();
+    } else if (!add && hasRole) {
+      member.getGuild().removeRoleFromMember(member, role.getRole(member.getGuild())).queue();
     }
   }
 
