@@ -17,4 +17,5 @@ public class Constants {
   public static final String MC_ADMINS_ROLE_ID = "549775492580900878";
   public static final String SHOUT_CHANNEL_ID = "594928459139252244";
   public static final String JSCHALTT_UUID = "4f16bc54-a296-40ea-bb51-ba6b04ad42c1";
+  public static final String TICKET_CATEGORY_ID = "601516983233806336";
 }
