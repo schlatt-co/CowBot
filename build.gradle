@@ -24,7 +24,7 @@ dependencies {
     compile "io.papermc:paperlib:1.0.2"
     compile 'com.jagrosh:jda-utilities:3.0.2'
     compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
-    compileOnly "org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT"
+    compileOnly "org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT"
     compileOnly "net.md-5:bungeecord-api:1.15-SNAPSHOT"
     compileOnly "com.github.schlatt-co:Tagger:82ad15854a"
     compileOnly "com.github.schlatt-co:PluginLibrary:c65436d5b6"

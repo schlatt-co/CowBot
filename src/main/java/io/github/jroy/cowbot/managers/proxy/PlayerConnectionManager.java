@@ -31,8 +31,8 @@ public class PlayerConnectionManager extends ProxyModule {
     lockdownList.add("iliketanks1998");
   }
 
-  private String targetVersion = "1.15.1";
-  private int targetProtocol = 575;
+  private String targetVersion = "1.15.2";
+  private int targetProtocol = 578;
   private String targetServer = "vanilla";
 
   private String serverMotd = "&ajschlatt twitch subscriber server\n&ethinkin' about bees";
