@@ -15,9 +15,10 @@ public class ShoutCommand extends Command {
 
   @Override
   public void execute(CommandSender sender, String[] args) {
-    if (!(sender instanceof ProxiedPlayer)) {
+    if (!(sender instanceof ProxiedPlayer) || !sender.hasPermission("trevor.shout")) {
       return;
     }
+
     if (args.length == 0) {
       sender.sendMessage(new TextComponent("Command Usage: /shout <message>"));
       return;
