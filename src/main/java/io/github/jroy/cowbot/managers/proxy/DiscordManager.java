@@ -6,6 +6,7 @@ import io.github.jroy.cowbot.commands.discord.*;
 import io.github.jroy.cowbot.commands.discord.base.CommandFactory;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
 import io.github.jroy.cowbot.managers.proxy.discord.Roles;
+import io.github.jroy.cowbot.managers.proxy.discord.StarMessages;
 import io.github.jroy.cowbot.utils.Constants;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
@@ -54,7 +55,7 @@ public class DiscordManager extends ProxyModule implements EventListener {
               new EvalCommand(proxiedCow, this),
               new JoinDateCommand(),
               new TicketCommand(new TicketManager(plugin, this))
-          ).build(), this)
+          ).build(), this, new StarMessages())
           .build().awaitReady();
       log("Logged into JDA!");
     } catch (InterruptedException | LoginException e) {
