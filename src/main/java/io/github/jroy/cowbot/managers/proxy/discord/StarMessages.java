@@ -53,7 +53,7 @@ public class StarMessages extends ListenerAdapter {
 
   private class HandleStar implements Runnable {
 
-    private static final int NUM_STARS_REQUIRED = 8;
+    private static final int NUM_STARS_REQUIRED = 12;
     private GuildMessageReactionAddEvent e;
     private Message message;
 
