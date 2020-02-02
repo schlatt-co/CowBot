@@ -40,7 +40,7 @@ public class LinkCommand extends CommandBase {
       return;
     }
 
-    if (e.getMember().getRoles().isEmpty()) {
+    if (e.getMember().getRoles().isEmpty() || discordManager.getDatabaseManager().hasNoPaymentRole(e.getMember().getRoles())) {
       e.reply(e.getMember().getAsMention() + ": The minecraft server is for profileable users only! Pay Schlatt or no dice.");
       return;
     }

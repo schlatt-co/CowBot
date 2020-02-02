@@ -5,6 +5,7 @@ import io.github.jroy.cowbot.commands.proxy.TrevorCommand;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
 import io.github.jroy.cowbot.utils.Constants;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.sql.*;
@@ -49,7 +50,7 @@ public class DatabaseManager extends ProxyModule {
               ResultSet whitelistSet = getUsers();
               while (whitelistSet.next()) {
                 Member member = discordManager.getJda().getGuildById(Constants.GUILD_ID).getMemberById(whitelistSet.getString("discordid"));
-                if (member == null || member.getRoles().isEmpty()) {
+                if (member == null || member.getRoles().isEmpty() || hasNoPaymentRole(member.getRoles())) {
                   if (proxiedCow.getProxy().getPlayer(whitelistSet.getString("mc")) != null) {
                     proxiedCow.getProxy().getPlayer(whitelistSet.getString("mc")).disconnect(new TextComponent("Hey you little shit!!!! your sub is up!!\nAHHAHA so fuck you\nbuy money"));
                   }
@@ -82,6 +83,15 @@ public class DatabaseManager extends ProxyModule {
       e.printStackTrace();
       proxiedCow.getProxy().stop();
     }
+  }
+
+  public boolean hasNoPaymentRole(List<Role> roles) {
+    for (Role role : roles) {
+      if (!role.getName().startsWith("_")) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override
