@@ -134,6 +134,10 @@ public class DiscordManager extends ProxyModule implements EventListener {
             toggleRole(member, Roles.RAINBOW, add);
             break;
           }
+          case "439567535931916320": { //tarkov
+            toggleRole(member, Roles.TARKOV, add);
+            break;
+          }
           default: {
             break;
           }
