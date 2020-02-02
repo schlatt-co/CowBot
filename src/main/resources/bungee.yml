@@ -2,4 +2,4 @@ name: CowBot
 author: JRoy
 version: 1.2
 main: io.github.jroy.cowbot.ProxiedCow
-depend: [PluginLibrary]
+depends: [PluginLibrary]
