@@ -111,6 +111,9 @@ public class DiscordManager extends ProxyModule implements EventListener {
       try {
         switch (event.getReactionEmote().getId()) {
           case "614623648820625419": { //mc
+            if (add && databaseManager.isBanned(member.getId())) {
+              return;
+            }
             toggleRole(member, Roles.MINECRAFT, add);
             break;
           }
