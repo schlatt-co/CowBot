@@ -23,9 +23,9 @@ import java.util.UUID;
 public class CommunismManager extends SpigotModule {
 
   public final World world = Bukkit.getWorld("world");
-  private final Location boxSpawnLocation = new Location(world, 252, 7, -29, 90, 0);
-  private final Location boxCornerOne = new Location(world, 241, 16, -20);
-  private final Location boxCornerTwo = new Location(world, 260, 5, -38);
+  private final Location boxSpawnLocation = new Location(world, 16, 54, -3, -90, 0);
+  private final Location boxCornerOne = new Location(world, 6, 66, 7);
+  private final Location boxCornerTwo = new Location(world, 26, 51, -13);
 
   public final HashMap<UUID, Boolean> players = new HashMap<>();
 
