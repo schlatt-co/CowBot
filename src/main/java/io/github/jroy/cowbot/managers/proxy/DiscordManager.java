@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -24,6 +25,7 @@ import net.md_5.bungee.config.Configuration;
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DiscordManager extends ProxyModule implements EventListener {
 
@@ -54,7 +56,9 @@ public class DiscordManager extends ProxyModule implements EventListener {
               new NameCommand(this),
               new EvalCommand(proxiedCow, this),
               new JoinDateCommand(),
-              new TicketCommand(new TicketManager(plugin, this))
+              new TicketCommand(new TicketManager(plugin, this)),
+              new NoEventsCommand(this),
+              new PingCommand()
           ).build(), this, new StarMessages())
           .build().awaitReady();
       log("Logged into JDA!");
@@ -115,6 +119,7 @@ public class DiscordManager extends ProxyModule implements EventListener {
               return;
             }
             toggleRole(member, Roles.MINECRAFT, add);
+            toggleRole(member, Roles.MC_EVENTS, add);
             break;
           }
           case "614612014056210482": { //civ
@@ -154,13 +159,22 @@ public class DiscordManager extends ProxyModule implements EventListener {
     }
   }
 
-  private void toggleRole(Member member, Roles role, boolean add) {
+  public void toggleRole(Member member, Roles role, boolean add) {
     boolean hasRole = member.getRoles().stream().anyMatch(p -> p.getId().equals(role.getRoleId()));
     if (add && !hasRole) {
       member.getGuild().addRoleToMember(member, role.getRole(member.getGuild())).queue();
     } else if (!add && hasRole) {
       member.getGuild().removeRoleFromMember(member, role.getRole(member.getGuild())).queue();
     }
+  }
+
+  public int applyRoleToAll(Role role) {
+    AtomicInteger count = new AtomicInteger();
+    role.getGuild().getMembers().stream().filter(m -> m.getRoles().stream().anyMatch(p -> p.getId().equals(Roles.MINECRAFT.getRoleId()))).forEach(member -> {
+      role.getGuild().addRoleToMember(member, role).queue();
+      count.getAndIncrement();
+    });
+    return count.get();
   }
 
   public JDA getJda() {
