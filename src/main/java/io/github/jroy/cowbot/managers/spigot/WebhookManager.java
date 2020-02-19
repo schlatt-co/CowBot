@@ -44,9 +44,9 @@ public class WebhookManager extends SpigotModule {
 
   @Override
   public void disable() {
-    closed = true;
     if (webhookClient != null) {
       sendWebhookMessage(":octagonal_sign: Server has stopped");
+      closed = true;
       webhookClient.close();
     }
 //    if (consoleWebhookClient != null) {
