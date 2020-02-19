@@ -2,20 +2,23 @@ package io.github.jroy.cowbot;
 
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.managers.spigot.*;
+import io.github.jroy.cowbot.utils.CartMeta;
 import io.github.jroy.cowbot.utils.ServerType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Bat;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Pillager;
-import org.bukkit.entity.Squid;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.Rail;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.vehicle.VehicleCreateEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -74,6 +77,77 @@ public class CowBot extends JavaPlugin implements Listener {
     for (SpigotModule module : loadedModules) {
       module.onDisable();
     }
+  }
+
+  @EventHandler(ignoreCancelled = true)
+  public void onVehicleCreate(VehicleCreateEvent event) {
+    if (event.getVehicle() instanceof Minecart) {
+      ((Minecart) event.getVehicle()).setMaxSpeed(getConfig().getDouble("cart"));
+    }
+  }
+
+  @EventHandler(ignoreCancelled = true)
+  public void onVehicleMove(VehicleMoveEvent event) {
+    if (event.getVehicle() instanceof Minecart) {
+      Minecart cart = (Minecart) event.getVehicle();
+      CartMeta meta = getCartMeta(cart);
+      Block toBlock = event.getTo().getBlock();
+
+      if (isRail(toBlock)) {
+        if (shouldTakeSlow(toBlock)) {
+          if (cart.getMaxSpeed() > 0.4D) {
+            if (meta.previousTickVelocity != null) {
+              cart.setVelocity(meta.previousTickVelocity);
+            }
+            cart.setMaxSpeed(0.4D);
+            // Reset the count down to full speed.
+            meta.slowDownRemainingTicks = 40;
+
+          }
+        } else {
+          // Count down the ticks before setting full speed.
+          if (--meta.slowDownRemainingTicks <= 0) {
+            // Set max speed EVERY tick to track the /cart-speed.
+            cart.setMaxSpeed(getConfig().getDouble("cart"));
+          }
+        }
+      }
+      meta.previousTickVelocity = cart.getVelocity();
+    }
+  }
+
+  private CartMeta getCartMeta(Minecart cart) {
+    List<MetadataValue> metaList = cart.getMetadata("TrevorCart");
+    CartMeta meta = (metaList.size() == 1) ? (CartMeta) metaList.get(0) : null;
+    if (meta == null) {
+      meta = new CartMeta(this);
+      cart.setMetadata("TrevorCart", meta);
+    }
+    return meta;
+  }
+
+  private boolean isRail(Block b) {
+    return b.getType() == Material.RAIL ||
+        b.getType() == Material.POWERED_RAIL ||
+        b.getType() == Material.DETECTOR_RAIL ||
+        b.getType() == Material.ACTIVATOR_RAIL;
+  }
+
+  private boolean shouldTakeSlow(Block b) {
+    Rail rail = (Rail) b.getBlockData();
+    Rail.Shape shape = rail.getShape();
+    if (b.getType() == Material.RAIL) {
+      // Ramps and curves of regular rail.
+      return (shape != Rail.Shape.NORTH_SOUTH && shape != Rail.Shape.EAST_WEST);
+    } else if (b.getType() == Material.DETECTOR_RAIL ||
+        b.getType() == Material.ACTIVATOR_RAIL ||
+        (b.getType() == Material.POWERED_RAIL && b.getBlockPower() != 0)) {
+      return shape == Rail.Shape.ASCENDING_NORTH ||
+          shape == Rail.Shape.ASCENDING_SOUTH ||
+          shape == Rail.Shape.ASCENDING_EAST ||
+          shape == Rail.Shape.ASCENDING_WEST;
+    }
+    return false;
   }
 
   /**

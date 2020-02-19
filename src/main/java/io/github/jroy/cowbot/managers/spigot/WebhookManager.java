@@ -32,6 +32,7 @@ public class WebhookManager extends SpigotModule {
     log("Loading config...");
     cowBot.getConfig().addDefault("webhookUrl", "url");
     cowBot.getConfig().addDefault("consoleUrl", "url");
+    cowBot.getConfig().addDefault("cart", 0.9D);
     cowBot.getConfig().options().copyDefaults(true);
     cowBot.saveConfig();
     log("Config loaded!");
@@ -55,7 +56,7 @@ public class WebhookManager extends SpigotModule {
   }
 
   public void sendWebhookMessage(String message) {
-    if (!closed) {
+    if (webhookClient != null && !closed) {
       webhookClient.send(sanitizeWebhookMessage(message));
     }
   }
