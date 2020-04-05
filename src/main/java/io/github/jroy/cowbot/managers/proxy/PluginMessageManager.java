@@ -37,6 +37,7 @@ public class PluginMessageManager extends ProxyModule {
   public void enable() {
     proxiedCow.getProxy().registerChannel("trevor:main");
     proxiedCow.getProxy().registerChannel("trevor:discord");
+    proxiedCow.getProxy().registerChannel("badlion:mods");
   }
 
   @Override
