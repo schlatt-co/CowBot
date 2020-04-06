@@ -18,12 +18,14 @@ public class PluginMessageManager extends SpigotModule implements PluginMessageL
   private CowBot cowBot;
   private WebhookManager webhookManager;
   private ChatManager chatManager;
+  private NewCuckManager newCuckManager;
 
-  public PluginMessageManager(CowBot cowBot, WebhookManager webhookManager, ChatManager chatManager) {
+  public PluginMessageManager(CowBot cowBot, WebhookManager webhookManager, ChatManager chatManager, NewCuckManager newCuckManager) {
     super("Plugin Message Manager", cowBot);
     this.cowBot = cowBot;
     this.webhookManager = webhookManager;
     this.chatManager = chatManager;
+    this.newCuckManager = newCuckManager;
   }
 
   @Override
@@ -44,9 +46,12 @@ public class PluginMessageManager extends SpigotModule implements PluginMessageL
   public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
     if (channel.equalsIgnoreCase("trevor:main")) {
       ByteArrayDataInput in = ByteStreams.newDataInput(message);
-      if (in.readUTF().equalsIgnoreCase("trevorreturn")) {
+      String subchannel = in.readUTF();
+      if (subchannel.equalsIgnoreCase("trevorreturn")) {
         String[] input = in.readUTF().split(":");
         chatManager.chatEnumCache.put(input[0], ChatEnum.valueOf(input[1]));
+      } else if (subchannel.equalsIgnoreCase("rauth")) {
+        newCuckManager.addAuthorizedUser(in.readUTF());
       }
     } else if (channel.equalsIgnoreCase("trevor:discord")) {
       ByteArrayDataInput in = ByteStreams.newDataInput(message);

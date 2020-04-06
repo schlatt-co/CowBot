@@ -5,6 +5,7 @@ import net.md_5.bungee.api.ChatColor;
 public enum ChatEnum {
 
   UNKNOWN(ChatColor.WHITE, 100),
+  NONE(null, 99),
   CONTENT(ChatColor.DARK_GREEN, 50),
   MOD(ChatColor.GREEN, 40),
   PATREON(ChatColor.GOLD, 30),

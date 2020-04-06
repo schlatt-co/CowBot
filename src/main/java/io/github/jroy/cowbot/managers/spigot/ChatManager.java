@@ -70,7 +70,7 @@ public class ChatManager extends SpigotModule {
     String name = (hasChatEnum ? ChatColor.stripColor(event.getPlayer().getDisplayName()) : event.getPlayer().getDisplayName());
 
     String prefix = ChatColor.translateAlternateColorCodes('&', prefixes.getOrDefault(event.getPlayer().getUniqueId(), "")).trim();
-    event.setFormat(prefix + (prefix.equalsIgnoreCase("") ? "" : " ") + ChatColor.GRAY + "<" + (hasChatEnum ? chatEnum.getChatColor() : "") + name + ChatColor.GRAY + "> " + ChatColor.WHITE + event.getMessage().replaceAll("(?:[^%]|^)(?:(%%)+|)(%)(?:[^%])\n", "%%").replaceAll("%", "%%"));
+    event.setFormat(prefix + (prefix.equalsIgnoreCase("") ? "" : " ") + ChatColor.GRAY + "<" + (hasChatEnum ? (chatEnum.getChatColor() == null ? ChatColor.RED + "[Non-Sub] " + ChatColor.GRAY : chatEnum.getChatColor()) : "") + name + ChatColor.GRAY + "> " + ChatColor.WHITE + "%2$s");//event.getMessage().replaceAll("(?:[^%]|^)(?:(%%)+|)(%)(?:[^%])\n", "%%").replaceAll("%", "%%"));
     cowBot.getServer().getPluginManager().callEvent(new AsyncFinishedChatEvent(prefix, event.getPlayer().getDisplayName(), event.getMessage()));
   }
 

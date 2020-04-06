@@ -1,6 +1,7 @@
 package io.github.jroy.cowbot.managers.proxy;
 
 import io.github.jroy.cowbot.ProxiedCow;
+import io.github.jroy.cowbot.commands.proxy.BungeeWhitelistCommand;
 import io.github.jroy.cowbot.commands.proxy.LockdownCommand;
 import io.github.jroy.cowbot.commands.proxy.StopCommand;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
@@ -9,12 +10,14 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.event.EventHandler;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +26,10 @@ public class PlayerConnectionManager extends ProxyModule {
   private ProxiedCow proxiedCow;
   private DatabaseManager databaseManager;
 
+  private boolean whitelist = true;
   private boolean lockdown = false;
   private List<String> lockdownList = new ArrayList<>();
+  private HashSet<String> whitelistList = new HashSet<>();
 
   {
     lockdownList.add("WheezyGold7931");
@@ -47,6 +52,7 @@ public class PlayerConnectionManager extends ProxyModule {
   public void addCommands() {
     addCommand(new LockdownCommand(proxiedCow, this));
     addCommand(new StopCommand(proxiedCow));
+    addCommand(new BungeeWhitelistCommand(this));
   }
 
   @EventHandler
@@ -58,10 +64,15 @@ public class PlayerConnectionManager extends ProxyModule {
     }
 
     if (!databaseManager.isWhitelisted(event.getConnection().getName())) {
-      event.setCancelReason(new TextComponent(("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getConnection().getName() + "\" in the #mc channel on the discord server")));
-      event.setCancelled(true);
+      if (whitelist) {
+        event.setCancelReason(new TextComponent(("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getConnection().getName() + "\" in the #mc channel on the discord server")));
+        event.setCancelled(true);
+      }
       return;
     }
+
+    whitelistList.add(event.getConnection().getName());
+    PluginMessageManager.sendMessage(proxiedCow, "trevor:main", "rauth", event.getConnection().getName(), targetServer);
 
     try {
       databaseManager.getDiscordIdFromUsername(event.getConnection().getName());
@@ -89,6 +100,11 @@ public class PlayerConnectionManager extends ProxyModule {
   }
 
   @EventHandler
+  public void onPlayerLeave(PlayerDisconnectEvent event) {
+    whitelistList.remove(event.getPlayer().getName());
+  }
+
+  @EventHandler
   public void onServerPing(ProxyPingEvent event) {
     ServerPing ping = new ServerPing();
     ping.setDescriptionComponent(new TextComponent(ChatColor.translateAlternateColorCodes('&', serverMotd)));
@@ -96,6 +112,18 @@ public class PlayerConnectionManager extends ProxyModule {
     ping.setPlayers(new ServerPing.Players(proxiedCow.getProxy().getOnlineCount() + 1, proxiedCow.getProxy().getOnlineCount(), new ServerPing.PlayerInfo[]{new ServerPing.PlayerInfo("jschlatt", UUID.fromString(Constants.JSCHALTT_UUID))}));
     ping.setFavicon(event.getResponse().getFaviconObject());
     event.setResponse(ping);
+  }
+
+  public boolean isAuthed(String name) {
+    return whitelistList.contains(name);
+  }
+
+  public boolean isWhitelist() {
+    return whitelist;
+  }
+
+  public void setWhitelist(boolean whitelist) {
+    this.whitelist = whitelist;
   }
 
   public boolean isLockdown() {

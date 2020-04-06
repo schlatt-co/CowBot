@@ -28,6 +28,7 @@ public class CowBot extends JavaPlugin implements Listener {
 
   private WebhookManager webhookManager;
   private ChatManager chatManager;
+  private NewCuckManager newCuckManager;
 
   private ServerType currentServer = ServerType.UNKNOWN;
 
@@ -51,7 +52,8 @@ public class CowBot extends JavaPlugin implements Listener {
     }
     loadedModules.add(webhookManager = new WebhookManager(this));
     loadedModules.add(chatManager = new ChatManager(this));
-    loadedModules.add(new PluginMessageManager(this, webhookManager, chatManager));
+    loadedModules.add(newCuckManager = new NewCuckManager(this));
+    loadedModules.add(new PluginMessageManager(this, webhookManager, chatManager, newCuckManager));
     if (getServer().getPluginManager().getPlugin("Stonks") != null) {
       log("Loading Stonks Integration...");
       loadedModules.add(new HomeManager(this));

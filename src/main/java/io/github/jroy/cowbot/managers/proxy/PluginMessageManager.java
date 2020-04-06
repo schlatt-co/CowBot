@@ -59,10 +59,14 @@ public class PluginMessageManager extends ProxyModule {
         if (subchannel[0].equalsIgnoreCase("trevorrequest")) {
           String returnServer = subchannel[1];
           String username = in.readUTF();
+          ChatEnum topRole = null;
+          if (!playerConnectionManager.isAuthed(username)) {
+            sendMessage(proxiedCow, "trevor:main", "trevorreturn", username + ":" + ChatEnum.NONE.name(), returnServer);
+            return;
+          }
           String discordId = databaseManager.getDiscordIdFromUsername(username);
           @SuppressWarnings("ConstantConditions") Member member = discordManager.getJda().getGuildById(Constants.GUILD_ID).getMemberById(discordId);
           if (member != null) {
-            ChatEnum topRole = null;
             for (Role role : member.getRoles()) {
               switch (role.getId()) {
                 case "581340753708449793":
@@ -110,8 +114,11 @@ public class PluginMessageManager extends ProxyModule {
             }
             sendMessage(proxiedCow, "trevor:main", "trevorreturn", username + ":" + topRole.name(), returnServer);
           }
-        } else if (subchannel[0].equalsIgnoreCase("target")) {
-          playerConnectionManager.setTargetServer(in.readUTF());
+        } else if (subchannel[0].equalsIgnoreCase("auth")) {
+          String name = in.readUTF();
+          if (playerConnectionManager.isAuthed(name)) {
+            sendMessage(proxiedCow, "trevor:main", "rauth", name, "vanilla");
+          }
         }
       } catch (SQLException e) {
         e.printStackTrace();
