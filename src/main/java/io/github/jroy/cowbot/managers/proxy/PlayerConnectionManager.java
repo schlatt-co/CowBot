@@ -26,7 +26,7 @@ public class PlayerConnectionManager extends ProxyModule {
   private ProxiedCow proxiedCow;
   private DatabaseManager databaseManager;
 
-  private boolean whitelist = true;
+  private boolean whitelist = false;
   private boolean lockdown = false;
   private List<String> lockdownList = new ArrayList<>();
   private HashSet<String> whitelistList = new HashSet<>();
