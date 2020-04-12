@@ -49,6 +49,16 @@ public class ChatManager extends SpigotModule {
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onChat(AsyncPlayerChatEvent event) {
+    if (!chatEnumCache.containsKey(event.getPlayer().getName())) {
+      Bukkit.getScheduler().runTaskAsynchronously(cowBot, () -> {
+        //noinspection UnstableApiUsage
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("trevorrequest|" + cowBot.getCurrentServer().getServerName());
+        out.writeUTF(event.getPlayer().getName());
+        event.getPlayer().sendPluginMessage(cowBot, "trevor:main", out.toByteArray());
+      });
+    }
+
     if (event.getPlayer().hasPermission("trevor.admin") && event.getMessage().equalsIgnoreCase("hey trevor can you purge the normie cache")) {
       chatEnumCache.clear();
       cowBot.getServer().getScheduler().runTaskLaterAsynchronously(cowBot, () -> cowBot.getServer().broadcastMessage(ChatColor.AQUA + "[Trevor from Cowchop] " + ChatColor.WHITE + "sure dad :)"), 10);
