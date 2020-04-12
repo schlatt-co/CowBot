@@ -87,7 +87,7 @@ public class ChatManager extends SpigotModule {
   @SuppressWarnings("UnstableApiUsage")
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onJoin(PlayerJoinEvent event) {
-    if (event.getPlayer().hasPlayedBefore()) {
+    if (!event.getPlayer().hasPlayedBefore()) {
       Bukkit.broadcastMessage(ChatColor.YELLOW + event.getPlayer().getName() + " has joined for the first time!");
     }
     if (!chatEnumCache.containsKey(event.getPlayer().getName()) || chatEnumCache.get(event.getPlayer().getName()).equals(ChatEnum.UNKNOWN)) {
