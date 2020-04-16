@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("WeakerAccess")
@@ -40,6 +41,8 @@ public class DatabaseManager extends ProxyModule {
       log("Connected to database!");
       connection.createStatement().execute("CREATE TABLE IF NOT EXISTS players( id integer PRIMARY KEY AUTOINCREMENT, mc text NOT NULL, discordid text NOT NULL);");
       connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans( id integer PRIMARY KEY AUTOINCREMENT, discordid text NOT NULL, reason text NOT NULL);");
+      connection.createStatement().execute("CREATE TABLE IF NOT EXISTS twitch( id integer PRIMARY KEY AUTOINCREMENT, twitchid text NOT NULL, uuid text NOT NULL);");
+      connection.createStatement().execute("CREATE TABLE IF NOT EXISTS freeload( id integer PRIMARY KEY AUTOINCREMENT, uuid text NOT NULL, discordid text NOT NULL);");
       log("Database tables initialized!");
       proxiedCow.getProxy().getScheduler().schedule(proxiedCow, () -> {
         try {
@@ -85,15 +88,6 @@ public class DatabaseManager extends ProxyModule {
     }
   }
 
-  public boolean hasNoPaymentRole(List<Role> roles) {
-    for (Role role : roles) {
-      if (!role.getName().startsWith("_")) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @Override
   public void disable() {
     try {
@@ -107,6 +101,52 @@ public class DatabaseManager extends ProxyModule {
   @Override
   public void addCommands() {
     addCommand(new TrevorCommand(this, discordManager, playerConnectionManager));
+  }
+
+  public void addFreeloader(String discordid, UUID uuid) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("INSERT INTO freeload(discordid, uuid) VALUES(?, ?)");
+    statement.setString(1, discordid);
+    statement.setString(2, uuid.toString());
+    statement.executeUpdate();
+  }
+
+  public Boolean isAuthorizedDiscordId(String discordId, UUID uuid) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("SELECT discordId FROM freeload WHERE uuid = ?");
+    statement.setString(1, uuid.toString());
+    ResultSet rs = statement.executeQuery();
+    if (rs.next()) {
+      return rs.getString("discordid").equals(discordId);
+    }
+    return null;
+  }
+
+  public Boolean isTwitchIdAuthorized(String twitchId, UUID uuid) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("SELECT uuid FROM twitch WHERE twitchid = ?");
+    statement.setString(1, twitchId);
+    ResultSet rs = statement.executeQuery();
+    if (!rs.next()) {
+      return true;
+    }
+    if (rs.getString("uuid").equals(uuid.toString())) {
+      return false;
+    }
+    return null;
+  }
+
+  public void addTwitchId(String twitchId, UUID uuid) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("INSERT INTO twitch(twitchid, uuid) VALUES(?, ?)");
+    statement.setString(1, twitchId);
+    statement.setString(2, uuid.toString());
+    statement.executeUpdate();
+  }
+
+  public boolean hasNoPaymentRole(List<Role> roles) {
+    for (Role role : roles) {
+      if (!role.getName().startsWith("_")) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public void setPlayerConnectionManager(PlayerConnectionManager playerConnectionManager) {

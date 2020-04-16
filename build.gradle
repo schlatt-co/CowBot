@@ -6,7 +6,7 @@ plugins {
 
 group 'io.github.jroy'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
     mavenCentral()
@@ -23,6 +23,7 @@ dependencies {
     compile 'net.dv8tion:JDA:4.0.0_73'
     compile "io.papermc:paperlib:1.0.2"
     compile 'com.jagrosh:jda-utilities:3.0.2'
+    compile 'com.squareup.okhttp3:okhttp:4.3.1'
     compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
     compileOnly "org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT"
     compileOnly "net.md-5:bungeecord-api:1.15-SNAPSHOT"
