@@ -7,6 +7,7 @@ import io.github.jroy.cowbot.managers.base.SpigotModule;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -50,7 +51,7 @@ public class NewCuckManager extends SpigotModule {
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onBlockBreak(BlockBreakEvent event) {
-    if (isProhibited(event.getPlayer())) {
+    if (isProhibited(event.getPlayer(), event.getBlock().getType())) {
       event.setCancelled(true);
       sendMessage(event.getPlayer());
     }
@@ -58,15 +59,18 @@ public class NewCuckManager extends SpigotModule {
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onBlockPlace(BlockPlaceEvent event) {
-    if (isProhibited(event.getPlayer())) {
+    if (isProhibited(event.getPlayer(), event.getBlock().getType())) {
       event.setCancelled(true);
       sendMessage(event.getPlayer());
     }
   }
 
-  private boolean isProhibited(Player player) {
+  private boolean isProhibited(Player player, Material material) {
     if (authorizedUsers.contains(player.getName())) {
       return false;
+    }
+    if (material == Material.TNT || material == Material.WITHER_SKELETON_SKULL) {
+      return true;
     }
     Location loc= player.getLocation();
     return !(Math.abs(loc.getX()) > 2000) && !(Math.abs(loc.getZ()) > 2000);
