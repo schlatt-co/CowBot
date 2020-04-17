@@ -71,8 +71,7 @@ public class TwitchManager extends ProxyModule implements EventListener {
       GuildMemberJoinEvent joinEvent = (GuildMemberJoinEvent) event;
       Guild guild = Objects.requireNonNull(discordManager.getJda().getGuildById(Constants.GUILD_ID));
       Objects.requireNonNull(guild.getTextChannelById("551619721410117642")).retrieveInvites().queue(list -> {
-        //noinspection unchecked
-        HashMap<String, InviteToken> copy = (HashMap<String, InviteToken>) inviteMap.clone();
+        HashMap<String, InviteToken> copy = new HashMap<>(inviteMap);
         for (Invite invite : list) {
           copy.remove(invite.getCode());
         }
