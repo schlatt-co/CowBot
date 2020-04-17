@@ -1,8 +1,11 @@
 package io.github.jroy.cowbot.managers.spigot;
 
 import dev.tycho.stonks.api.StonksAPI;
+import dev.tycho.stonks.api.StonksAPIException;
 import dev.tycho.stonks.model.core.Company;
 import io.github.jroy.cowbot.CowBot;
+import io.github.jroy.cowbot.commands.spigot.stonks.HomeCommand;
+import io.github.jroy.cowbot.commands.spigot.stonks.SetHomeCommand;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.utils.CompanyHomePerk;
 import org.bukkit.Bukkit;
@@ -41,6 +44,16 @@ public class HomeManager extends SpigotModule {
       connection.close();
     } catch (SQLException e) {
       log("Error while closing connection: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+  @Override
+  public void addCommands() {
+    try {
+      StonksAPI.addStonksCommandSub("sethome", new SetHomeCommand(this));
+      StonksAPI.addStonksCommandSub("home", new HomeCommand(this));
+    } catch (StonksAPIException e) {
       e.printStackTrace();
     }
   }
