@@ -57,7 +57,7 @@ public class NewCuckManager extends SpigotModule {
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
-  public void onBlockBreak(BlockPlaceEvent event) {
+  public void onBlockPlace(BlockPlaceEvent event) {
     if (isProhibited(event.getPlayer())) {
       event.setCancelled(true);
       sendMessage(event.getPlayer());
