@@ -9,6 +9,8 @@ import io.github.jroy.cowbot.utils.ChatEnum;
 import io.github.jroy.cowbot.utils.Constants;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.event.EventHandler;
@@ -61,6 +63,7 @@ public class PluginMessageManager extends ProxyModule {
           String username = in.readUTF();
           ChatEnum topRole = null;
           if (!playerConnectionManager.isAuthed(username)) {
+            ProxyServer.getInstance().getPlayer(username).sendMessage(TextComponent.fromLegacyText(ChatColor.YELLOW + "Subscribe to jschlatt on Twitch for more perks on this server. Once you subscribe, do /twitch"));
             sendMessage(proxiedCow, "trevor:main", "trevorreturn", username + ":" + ChatEnum.NONE.name(), returnServer);
             return;
           }
