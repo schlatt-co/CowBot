@@ -80,6 +80,6 @@ public class NewCuckManager extends SpigotModule {
     player.sendMessage(ChatColor.RED + "You must be a twitch subscriber to interact with blocks within 2000,2000!");
     player.sendMessage(ChatColor.LIGHT_PURPLE + "You can subscribe at https://twitch.tv/jschlatt");
     player.sendMessage(ChatColor.LIGHT_PURPLE + "Once you subscribe: join the discord (do /discord), read #games-info to join the Minecraft channels, then read #mc-info to link your mc account to twitch!");
-    player.sendMessage(ChatColor.RED + "To randomly teleport past 2000, 2000: do /rtp");
+    player.sendMessage(ChatColor.RED + "To find a place a build, follow the directions from spawn to the Silk Road!");
   }
 }
