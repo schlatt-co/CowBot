@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 
@@ -38,9 +39,12 @@ public class CartManager extends SpigotModule {
       Block toBlock = event.getTo().getBlock();
 
       if (isRail(toBlock)) {
-        if (shouldTakeSlow(toBlock)) {
+        boolean isUnPowered = toBlock.getType() == Material.POWERED_RAIL && !toBlock.isBlockPowered();
+        if (shouldTakeSlow(toBlock) || isUnPowered) {
           if (cart.getMaxSpeed() > 0.4D) {
-            if (meta.previousTickVelocity != null) {
+            if (isUnPowered) {
+              cart.setVelocity(new Vector());
+            } else if (meta.previousTickVelocity != null) {
               cart.setVelocity(meta.previousTickVelocity);
             }
             cart.setMaxSpeed(0.4D);
@@ -85,7 +89,7 @@ public class CartManager extends SpigotModule {
       return (shape != Rail.Shape.NORTH_SOUTH && shape != Rail.Shape.EAST_WEST);
     } else if (b.getType() == Material.DETECTOR_RAIL ||
         b.getType() == Material.ACTIVATOR_RAIL ||
-        (b.getType() == Material.POWERED_RAIL && b.getBlockPower() != 0)) {
+        (b.getType() == Material.POWERED_RAIL && b.isBlockPowered())) {
       return shape == Rail.Shape.ASCENDING_NORTH ||
           shape == Rail.Shape.ASCENDING_SOUTH ||
           shape == Rail.Shape.ASCENDING_EAST ||
