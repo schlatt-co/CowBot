@@ -3,6 +3,7 @@ package io.github.jroy.cowbot.commands.discord;
 import io.github.jroy.cowbot.commands.discord.base.CommandBase;
 import io.github.jroy.cowbot.commands.discord.base.CommandEvent;
 import io.github.jroy.cowbot.managers.proxy.DiscordManager;
+import io.github.jroy.cowbot.managers.proxy.PluginMessageManager;
 import io.github.jroy.cowbot.utils.Constants;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -62,6 +63,7 @@ public class LinkCommand extends CommandBase {
         //noinspection ConstantConditions
         e.getGuild().getTextChannelById(Constants.SHOUT_CHANNEL_ID).sendMessage("Banned user (" + discordManager.getDatabaseManager().getBanReason(userId) + ") attempted to link: " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator()).queue();
         e.reply("Added " + e.getMember().getAsMention() + " to the whitelist with the username " + e.getSplitArgs()[0]);
+        PluginMessageManager.sendMessage(discordManager.getProxiedCow(), "trevor:main", "clear", e.getSplitArgs()[0], "vanilla");
       } catch (SQLException ex) {
         e.replyError("You are banned from the server but I honestly don't give two shits why.");
       }

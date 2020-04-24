@@ -52,6 +52,8 @@ public class PluginMessageManager extends SpigotModule implements PluginMessageL
         chatManager.chatEnumCache.put(input[0], ChatEnum.valueOf(input[1]));
       } else if (subchannel.equalsIgnoreCase("rauth")) {
         newCuckManager.addAuthorizedUser(in.readUTF());
+      } else if (subchannel.equalsIgnoreCase("clear")) {
+        chatManager.chatEnumCache.remove(in.readUTF());
       }
     } else if (channel.equalsIgnoreCase("trevor:discord")) {
       ByteArrayDataInput in = ByteStreams.newDataInput(message);

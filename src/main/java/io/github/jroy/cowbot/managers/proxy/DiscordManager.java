@@ -29,8 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DiscordManager extends ProxyModule implements EventListener {
 
-  private ProxiedCow proxiedCow;
-  private Configuration configuration;
+  private final ProxiedCow proxiedCow;
+  private final Configuration configuration;
 
   private DatabaseManager databaseManager;
 
@@ -179,5 +179,9 @@ public class DiscordManager extends ProxyModule implements EventListener {
 
   public JDA getJda() {
     return jda;
+  }
+
+  public ProxiedCow getProxiedCow() {
+    return proxiedCow;
   }
 }
