@@ -11,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.util.Vector;
 
 import java.util.List;
 
@@ -39,12 +38,9 @@ public class CartManager extends SpigotModule {
       Block toBlock = event.getTo().getBlock();
 
       if (isRail(toBlock)) {
-        boolean isUnPowered = toBlock.getType() == Material.POWERED_RAIL && !toBlock.isBlockPowered();
-        if (shouldTakeSlow(toBlock) || isUnPowered) {
+        if (shouldTakeSlow(toBlock)) {
           if (cart.getMaxSpeed() > 0.4D) {
-            if (isUnPowered) {
-              cart.setVelocity(new Vector());
-            } else if (meta.previousTickVelocity != null) {
+            if (meta.previousTickVelocity != null) {
               cart.setVelocity(meta.previousTickVelocity);
             }
             cart.setMaxSpeed(0.4D);
