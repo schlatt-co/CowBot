@@ -96,6 +96,7 @@ public class PluginMessageManager extends ProxyModule {
                   topRole = checkAndSet(topRole, ChatEnum.BOOST);
                   break;
                 }
+                case "693594871306649700":
                 case "582653648891281409":
                 case "525473755712192552":
                 case "479782883633135647": {
