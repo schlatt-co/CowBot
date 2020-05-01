@@ -4,10 +4,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.github.jroy.cowbot.CowBot;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -79,7 +76,12 @@ public class NewCuckManager extends SpigotModule {
       return true;
     }
     Location loc= player.getLocation();
-    return !(Math.abs(loc.getX()) > 2000) && !(Math.abs(loc.getZ()) > 2000);
+    int bound = 2000;
+    if (loc.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
+      bound = 250;
+    }
+
+    return !(Math.abs(loc.getX()) > bound) && !(Math.abs(loc.getZ()) > bound);
   }
 
   private void sendMessage(Player player) {
