@@ -23,9 +23,9 @@ import java.util.UUID;
 
 public class ChatManager extends SpigotModule {
 
-  private CowBot cowBot;
+  private final CowBot cowBot;
 
-  private Map<UUID, String> prefixes = new HashMap<>();
+  private final Map<UUID, String> prefixes = new HashMap<>();
   Map<String, ChatEnum> chatEnumCache = new HashMap<>();
 
   private boolean silence = false;
@@ -81,6 +81,9 @@ public class ChatManager extends SpigotModule {
 
     String prefix = ChatColor.translateAlternateColorCodes('&', prefixes.getOrDefault(event.getPlayer().getUniqueId(), "")).trim();
     event.setFormat(prefix + (prefix.equalsIgnoreCase("") ? "" : " ") + ChatColor.GRAY + "<" + (hasChatEnum ? (chatEnum.getChatColor() == null ? ChatColor.RED + "[Non-Sub] " + ChatColor.GRAY : chatEnum.getChatColor()) : "") + name + ChatColor.GRAY + "> " + ChatColor.WHITE + "%2$s");//event.getMessage().replaceAll("(?:[^%]|^)(?:(%%)+|)(%)(?:[^%])\n", "%%").replaceAll("%", "%%"));
+    if (hasChatEnum && chatEnum.getChatColor() == null) {
+      prefix = ChatColor.RED + "[Non-Sub] " + prefix;
+    }
     cowBot.getServer().getPluginManager().callEvent(new AsyncFinishedChatEvent(prefix, event.getPlayer().getDisplayName(), event.getMessage()));
   }
 
