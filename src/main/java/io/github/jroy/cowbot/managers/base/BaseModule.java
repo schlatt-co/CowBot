@@ -2,8 +2,8 @@ package io.github.jroy.cowbot.managers.base;
 
 public abstract class BaseModule<PluginClass, CommandClass> {
 
-  private final String moduleName;
   protected final PluginClass plugin;
+  private final String moduleName;
 
   BaseModule(String moduleName, PluginClass plugin) {
     this.moduleName = moduleName;

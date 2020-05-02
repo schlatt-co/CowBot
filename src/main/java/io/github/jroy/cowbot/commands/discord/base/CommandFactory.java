@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class CommandFactory {
 
-  private CommandClientBuilder clientBuilder;
+  private final CommandClientBuilder clientBuilder;
 
-  private Map<String, CommandBase> registeredCommands = new HashMap<>();
+  private final Map<String, CommandBase> registeredCommands = new HashMap<>();
 
   public CommandFactory(String prefix, String alternativePrefix) {
     clientBuilder = new CommandClientBuilder();

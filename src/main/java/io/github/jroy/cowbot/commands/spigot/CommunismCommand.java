@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 
 public class CommunismCommand implements CommandExecutor {
 
-  private CommunismManager communismManager;
+  private final CommunismManager communismManager;
 
   public CommunismCommand(CommunismManager communismManager) {
     this.communismManager = communismManager;

@@ -18,9 +18,9 @@ import java.util.Set;
 
 public class DispatchCommandSender implements ConsoleCommandSender {
 
-  private CowBot cowBot;
-  private ConsoleCommandSender sender;
-  private String returnUser;
+  private final CowBot cowBot;
+  private final ConsoleCommandSender sender;
+  private final String returnUser;
 
   public DispatchCommandSender(CowBot cowBot, ConsoleCommandSender consoleCommandSender, String returnUser) {
     this.cowBot = cowBot;

@@ -23,11 +23,10 @@ import java.util.UUID;
 public class CommunismManager extends SpigotModule {
 
   public final World world = Bukkit.getWorld("world");
+  public final HashMap<UUID, Boolean> players = new HashMap<>();
   private final Location boxSpawnLocation = new Location(world, 16, 54, -3, -90, 0);
   private final Location boxCornerOne = new Location(world, 6, 66, 7);
   private final Location boxCornerTwo = new Location(world, 26, 51, -13);
-
-  public final HashMap<UUID, Boolean> players = new HashMap<>();
 
   public CommunismManager(CowBot plugin) {
     super("Communism Manager", plugin);

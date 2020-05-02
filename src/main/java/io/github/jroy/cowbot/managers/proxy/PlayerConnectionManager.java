@@ -23,24 +23,21 @@ import java.util.UUID;
 
 public class PlayerConnectionManager extends ProxyModule {
 
-  private ProxiedCow proxiedCow;
-  private DatabaseManager databaseManager;
-
+  private final ProxiedCow proxiedCow;
+  private final DatabaseManager databaseManager;
+  private final List<String> lockdownList = new ArrayList<>();
+  private final HashSet<String> whitelistList = new HashSet<>();
+  private final String targetVersion = "1.15.2";
+  private final int targetProtocol = 578;
   private boolean whitelist = false;
   private boolean lockdown = false;
-  private List<String> lockdownList = new ArrayList<>();
-  private HashSet<String> whitelistList = new HashSet<>();
+  private String targetServer = "vanilla";
+  private String serverMotd = "&ajschlatt twitch subscriber server\n&ethinkin' about bees";
 
   {
     lockdownList.add("WheezyGold7931");
     lockdownList.add("iliketanks1998");
   }
-
-  private String targetVersion = "1.15.2";
-  private int targetProtocol = 578;
-  private String targetServer = "vanilla";
-
-  private String serverMotd = "&ajschlatt twitch subscriber server\n&ethinkin' about bees";
 
   public PlayerConnectionManager(ProxiedCow proxiedCow, DatabaseManager databaseManager) {
     super("Player Connection Manager", proxiedCow);
@@ -50,7 +47,7 @@ public class PlayerConnectionManager extends ProxyModule {
 
   @Override
   public void addCommands() {
-    addCommand(new LockdownCommand(proxiedCow, this));
+    addCommand(new LockdownCommand(this));
     addCommand(new StopCommand(proxiedCow));
     addCommand(new BungeeWhitelistCommand(this));
   }

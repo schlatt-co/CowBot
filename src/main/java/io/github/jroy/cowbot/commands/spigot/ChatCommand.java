@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ChatCommand implements CommandExecutor {
 
-  private ChatManager chatManager;
+  private final ChatManager chatManager;
 
   public ChatCommand(ChatManager chatManager) {
     this.chatManager = chatManager;

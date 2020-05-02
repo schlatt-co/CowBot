@@ -1,7 +1,6 @@
 package io.github.jroy.cowbot.commands.spigot.stonks;
 
 import dev.tycho.stonks.command.base.ModularCommandSub;
-import dev.tycho.stonks.command.base.autocompleters.CompanyNameAutocompleter;
 import dev.tycho.stonks.command.base.autocompleters.MemberCompanyNameAutocompleter;
 import dev.tycho.stonks.command.base.validators.CompanyValidator;
 import dev.tycho.stonks.model.core.Company;

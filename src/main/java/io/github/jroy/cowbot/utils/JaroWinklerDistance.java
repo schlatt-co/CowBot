@@ -62,7 +62,7 @@ public class JaroWinklerDistance {
    * distance.apply("PENNSYLVANIA", "PENNCISYLVNIA")    = 0.88
    * </pre>
    *
-   * @param left the first String, must not be null
+   * @param left  the first String, must not be null
    * @param right the second String, must not be null
    * @return result distance
    * @throws IllegalArgumentException if either String input {@code null}
@@ -88,7 +88,7 @@ public class JaroWinklerDistance {
   /**
    * This method returns the Jaro-Winkler string matches, transpositions, prefix, max array.
    *
-   * @param first the first string to be matched
+   * @param first  the first string to be matched
    * @param second the second string to be machted
    * @return mtp array containing: matches, transpositions, prefix, and max length
    */
@@ -145,7 +145,7 @@ public class JaroWinklerDistance {
         break;
       }
     }
-    return new int[] { matches, transpositions / 2, prefix, max.length() };
+    return new int[]{matches, transpositions / 2, prefix, max.length()};
   }
 
 }

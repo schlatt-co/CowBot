@@ -15,8 +15,8 @@ import java.util.Set;
 
 public class WebhookCommandSender implements ConsoleCommandSender {
 
-  private WebhookManager webhookManager;
-  private ConsoleCommandSender sender;
+  private final WebhookManager webhookManager;
+  private final ConsoleCommandSender sender;
 
   public WebhookCommandSender(WebhookManager webhookManager, ConsoleCommandSender consoleCommandSender) {
     this.webhookManager = webhookManager;

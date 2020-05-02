@@ -13,7 +13,7 @@ import java.time.Instant;
 
 public class LinkCommand extends CommandBase {
 
-  private DiscordManager discordManager;
+  private final DiscordManager discordManager;
 
   private boolean disableLinking = false;
 

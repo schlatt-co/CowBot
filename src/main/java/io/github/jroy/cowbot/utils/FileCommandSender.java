@@ -20,8 +20,8 @@ import java.util.Set;
 
 public class FileCommandSender implements ConsoleCommandSender {
 
-  private ConsoleCommandSender sender;
-  private Path path;
+  private final ConsoleCommandSender sender;
+  private final Path path;
 
   public FileCommandSender(ConsoleCommandSender consoleCommandSender, Path path) {
     this.sender = consoleCommandSender;

@@ -48,6 +48,15 @@ public abstract class CommandBase extends Command {
   }
 
   /**
+   * Gets the disabled state of the command.
+   *
+   * @return Disabled state.
+   */
+  public boolean isDisabled() {
+    return disabled;
+  }
+
+  /**
    * Sets the disabled state of a command.
    *
    * @param disabled Disabled state.
@@ -55,15 +64,6 @@ public abstract class CommandBase extends Command {
   @SuppressWarnings("WeakerAccess")
   public void setDisabled(boolean disabled) {
     this.disabled = disabled;
-  }
-
-  /**
-   * Gets the disabled state of the command.
-   *
-   * @return Disabled state.
-   */
-  public boolean isDisabled() {
-    return disabled;
   }
 
   @Override

@@ -13,7 +13,7 @@ public class ConsoleInterceptor extends AbstractAppender {
 
   private static final Pattern sanitizePattern = Pattern.compile("\\[m|\\[([0-9]{1,2}[;m]?){3}|\u001B+");
 
-  private WebhookManager webhookManager;
+  private final WebhookManager webhookManager;
 
   @SuppressWarnings("deprecation")
   public ConsoleInterceptor(WebhookManager webhookManager) {

@@ -15,10 +15,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class PluginMessageManager extends SpigotModule implements PluginMessageListener {
 
-  private CowBot cowBot;
-  private WebhookManager webhookManager;
-  private ChatManager chatManager;
-  private NewCuckManager newCuckManager;
+  private final CowBot cowBot;
+  private final WebhookManager webhookManager;
+  private final ChatManager chatManager;
+  private final NewCuckManager newCuckManager;
 
   public PluginMessageManager(CowBot cowBot, WebhookManager webhookManager, ChatManager chatManager, NewCuckManager newCuckManager) {
     super("Plugin Message Manager", cowBot);

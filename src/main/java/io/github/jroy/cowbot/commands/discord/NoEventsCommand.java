@@ -7,7 +7,7 @@ import io.github.jroy.cowbot.managers.proxy.discord.Roles;
 
 public class NoEventsCommand extends CommandBase {
 
-  private DiscordManager discordManager;
+  private final DiscordManager discordManager;
 
   public NoEventsCommand(DiscordManager discordManager) {
     super("noevents", "", "Removes you from event ping role.");

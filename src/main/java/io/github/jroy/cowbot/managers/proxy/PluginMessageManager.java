@@ -22,10 +22,10 @@ import java.sql.SQLException;
 
 public class PluginMessageManager extends ProxyModule {
 
-  private ProxiedCow proxiedCow;
-  private DiscordManager discordManager;
-  private DatabaseManager databaseManager;
-  private PlayerConnectionManager playerConnectionManager;
+  private final ProxiedCow proxiedCow;
+  private final DiscordManager discordManager;
+  private final DatabaseManager databaseManager;
+  private final PlayerConnectionManager playerConnectionManager;
 
   public PluginMessageManager(ProxiedCow proxiedCow, DiscordManager discordManager, DatabaseManager databaseManager, PlayerConnectionManager playerConnectionManager) {
     super("Plugin Message Manager", proxiedCow);
@@ -33,6 +33,18 @@ public class PluginMessageManager extends ProxyModule {
     this.discordManager = discordManager;
     this.databaseManager = databaseManager;
     this.playerConnectionManager = playerConnectionManager;
+  }
+
+  public static void sendMessage(ProxiedCow proxiedCow, String channel, String subchannel, String message, String server) {
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    DataOutputStream out = new DataOutputStream(stream);
+    try {
+      out.writeUTF(subchannel);
+      out.writeUTF(message);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    proxiedCow.getProxy().getServerInfo(server).sendData(channel, stream.toByteArray());
   }
 
   @Override
@@ -143,17 +155,5 @@ public class PluginMessageManager extends ProxyModule {
       return current;
     }
     return change;
-  }
-
-  public static void sendMessage(ProxiedCow proxiedCow, String channel, String subchannel, String message, String server) {
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    DataOutputStream out = new DataOutputStream(stream);
-    try {
-      out.writeUTF(subchannel);
-      out.writeUTF(message);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    proxiedCow.getProxy().getServerInfo(server).sendData(channel, stream.toByteArray());
   }
 }

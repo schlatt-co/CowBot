@@ -15,7 +15,7 @@ public enum Roles {
   TARKOV("673316710631079940"),
   DESTINY_2("673392168747925514");
 
-  private String roleId;
+  private final String roleId;
 
   Roles(String roleId) {
     this.roleId = roleId;

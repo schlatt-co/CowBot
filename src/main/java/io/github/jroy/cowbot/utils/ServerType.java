@@ -7,8 +7,8 @@ public enum ServerType {
   CREATIVE("creative", "creative"),
   UNKNOWN(null, null);
 
-  private String serverName;
-  private String worldName;
+  private final String serverName;
+  private final String worldName;
 
   ServerType(String serverName, String worldName) {
     this.serverName = serverName;

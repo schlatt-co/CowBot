@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class NameCommand extends CommandBase {
 
-  private DiscordManager discordManager;
+  private final DiscordManager discordManager;
 
   public NameCommand(DiscordManager discordManager) {
     super("mcname", "<user mention>", "Gets the mc name of a discord user.", true);

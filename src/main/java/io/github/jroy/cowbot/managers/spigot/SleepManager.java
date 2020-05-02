@@ -16,9 +16,9 @@ import java.util.List;
 
 public class SleepManager extends SpigotModule {
 
-  private CowBot cowBot;
+  private final CowBot cowBot;
 
-  private List<Player> sleeping = new ArrayList<>();
+  private final List<Player> sleeping = new ArrayList<>();
 
   public SleepManager(CowBot cowBot) {
     super("Sleep Manager", cowBot);

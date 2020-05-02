@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class StarMessages extends ListenerAdapter {
 
-  private Set<String> alreadyUsedMessages = new HashSet<>();
+  private final Set<String> alreadyUsedMessages = new HashSet<>();
 
   @Override
   public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent e) {
@@ -51,11 +51,34 @@ public class StarMessages extends ListenerAdapter {
     alreadyUsedMessages.add(message.getId());
   }
 
+  /**
+   * Tests for an image in target message.
+   *
+   * @param message The target message to be tested.
+   * @return If the message contains an image.
+   */
+  public boolean containsImage(Message message) {
+    if (message.getAttachments().stream().anyMatch(Message.Attachment::isImage)) {
+      return true;
+    }
+    return message.getEmbeds().stream().anyMatch(e -> e.getImage() != null || e.getVideoInfo() != null);
+  }
+
+  /**
+   * Gets the image url from a message.
+   *
+   * @param message The target message.
+   * @return The image url.
+   */
+  public String getImage(Message message) {
+    return message.getAttachments().get(0).getUrl();
+  }
+
   private class HandleStar implements Runnable {
 
     private static final int NUM_STARS_REQUIRED = 12;
-    private GuildMessageReactionAddEvent e;
-    private Message message;
+    private final GuildMessageReactionAddEvent e;
+    private final Message message;
 
     HandleStar(GuildMessageReactionAddEvent e, Message message) {
       this.e = e;
@@ -83,28 +106,5 @@ public class StarMessages extends ListenerAdapter {
       } catch (NullPointerException | IllegalStateException ignored) {
       }
     }
-  }
-
-  /**
-   * Tests for an image in target message.
-   *
-   * @param message The target message to be tested.
-   * @return If the message contains an image.
-   */
-  public boolean containsImage(Message message) {
-    if (message.getAttachments().stream().anyMatch(Message.Attachment::isImage)) {
-      return true;
-    }
-    return message.getEmbeds().stream().anyMatch(e -> e.getImage() != null || e.getVideoInfo() != null);
-  }
-
-  /**
-   * Gets the image url from a message.
-   *
-   * @param message The target message.
-   * @return The image url.
-   */
-  public String getImage(Message message) {
-    return message.getAttachments().get(0).getUrl();
   }
 }

@@ -12,9 +12,9 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class TrevorCommand extends Command {
 
-  private DatabaseManager databaseManager;
-  private DiscordManager discordManager;
-  private PlayerConnectionManager playerConnectionManager;
+  private final DatabaseManager databaseManager;
+  private final DiscordManager discordManager;
+  private final PlayerConnectionManager playerConnectionManager;
 
   public TrevorCommand(DatabaseManager databaseManager, DiscordManager discordManager, PlayerConnectionManager playerConnectionManager) {
     super("trevor");

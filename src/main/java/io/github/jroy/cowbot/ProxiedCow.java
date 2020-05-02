@@ -16,10 +16,8 @@ import java.util.List;
 @SuppressWarnings("FieldCanBeLocal")
 public class ProxiedCow extends Plugin implements Listener {
 
+  private final List<ProxyModule> loadedModules = new ArrayList<>();
   private Configuration configuration;
-
-  private List<ProxyModule> loadedModules = new ArrayList<>();
-
   private DiscordManager discordManager;
   private DatabaseManager databaseManager;
   private PlayerConnectionManager playerConnectionManager;

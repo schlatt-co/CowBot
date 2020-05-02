@@ -22,7 +22,7 @@ public class JoinDateCommand extends CommandBase {
 
   private static final Pattern MENTION_REGEX = Pattern.compile("<@!?(\\d+)>");
 
-  private HashMap<String, OffsetDateTime> joinDateCache = new HashMap<>();
+  private final HashMap<String, OffsetDateTime> joinDateCache = new HashMap<>();
 
   public JoinDateCommand() {
     super("joindate", "[<user mention>]", "What's your join date??");
@@ -93,10 +93,6 @@ public class JoinDateCommand extends CommandBase {
         distance = fullNameDistance;
       }
     }
-    if (closest == null) {
-      return def;
-    } else {
-      return closest;
-    }
+    return Objects.requireNonNullElse(closest, def);
   }
 }

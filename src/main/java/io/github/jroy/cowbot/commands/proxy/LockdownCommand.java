@@ -1,6 +1,5 @@
 package io.github.jroy.cowbot.commands.proxy;
 
-import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.managers.proxy.PlayerConnectionManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -8,12 +7,10 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class LockdownCommand extends Command {
 
-  private ProxiedCow cow;
-  private PlayerConnectionManager playerConnectionManager;
+  private final PlayerConnectionManager playerConnectionManager;
 
-  public LockdownCommand(ProxiedCow cow, PlayerConnectionManager playerConnectionManager) {
+  public LockdownCommand(PlayerConnectionManager playerConnectionManager) {
     super("lockdown");
-    this.cow = cow;
     this.playerConnectionManager = playerConnectionManager;
   }
 

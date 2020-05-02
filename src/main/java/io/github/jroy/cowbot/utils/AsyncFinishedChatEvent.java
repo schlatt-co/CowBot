@@ -19,6 +19,12 @@ public class AsyncFinishedChatEvent extends Event {
     this.message = message;
   }
 
+  @SuppressWarnings("unused")
+  @NotNull
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
+
   public String getPrefix() {
     return prefix;
   }
@@ -33,12 +39,6 @@ public class AsyncFinishedChatEvent extends Event {
 
   @Override
   public @NotNull HandlerList getHandlers() {
-    return handlers;
-  }
-
-  @SuppressWarnings("unused")
-  @NotNull
-  public static HandlerList getHandlerList() {
     return handlers;
   }
 }

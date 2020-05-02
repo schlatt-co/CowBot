@@ -10,8 +10,8 @@ import javax.script.ScriptEngineManager;
 
 public class EvalCommand extends CommandBase {
 
-  private ProxiedCow cow;
-  private DiscordManager discordManager;
+  private final ProxiedCow cow;
+  private final DiscordManager discordManager;
 
   public EvalCommand(ProxiedCow cow, DiscordManager discordManager) {
     super("eval", "<code>", "Evaluates Code");

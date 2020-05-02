@@ -75,7 +75,7 @@ public class NewCuckManager extends SpigotModule {
     if (material == Material.TNT || material == Material.WITHER_SKELETON_SKULL) {
       return true;
     }
-    Location loc= player.getLocation();
+    Location loc = player.getLocation();
     int bound = 2000;
     if (loc.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
       bound = 250;

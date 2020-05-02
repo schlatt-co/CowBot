@@ -24,7 +24,7 @@ import java.util.List;
 @SuppressWarnings("FieldCanBeLocal")
 public class CowBot extends JavaPlugin implements Listener {
 
-  private List<SpigotModule> loadedModules = new ArrayList<>();
+  private final List<SpigotModule> loadedModules = new ArrayList<>();
 
   private WebhookManager webhookManager;
   private ChatManager chatManager;

@@ -32,6 +32,6 @@ public class TicketManager extends ProxyModule {
         .complete();
     currentId++;
     channel.sendMessage("Created new ticket for " + member.getAsMention() + "! Their username is " + discordManager.getDatabaseManager().getUsernameFromDiscordId(member.getId())
-    + "\nPlease make sure to include as much information as possible to allow admins to assist as fast as possible.").queue();
+        + "\nPlease make sure to include as much information as possible to allow admins to assist as fast as possible.").queue();
   }
 }

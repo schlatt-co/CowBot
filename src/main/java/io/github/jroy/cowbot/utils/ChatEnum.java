@@ -13,8 +13,8 @@ public enum ChatEnum {
   MERCH(ChatColor.RED, 20),
   TWITCH(ChatColor.BLUE, 1);
 
-  private ChatColor chatColor;
-  private int power;
+  private final ChatColor chatColor;
+  private final int power;
 
   ChatEnum(ChatColor color, int power) {
     chatColor = color;

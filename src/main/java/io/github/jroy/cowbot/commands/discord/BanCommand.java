@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class BanCommand extends CommandBase {
 
-  private DiscordManager discordManager;
+  private final DiscordManager discordManager;
 
   public BanCommand(DiscordManager discordManager) {
     super("ban", "<id> <reason>", "Bans a user from linking their account.", true);
@@ -51,7 +51,7 @@ public class BanCommand extends CommandBase {
 
       try {
         discordManager.getDatabaseManager().banUser(e.getSplitArgs()[0], e.getArgs().replace(e.getSplitArgs()[0] + " ", ""));
-        Guild guild =  Objects.requireNonNull(e.getJDA().getGuildById(Constants.GUILD_ID));
+        Guild guild = Objects.requireNonNull(e.getJDA().getGuildById(Constants.GUILD_ID));
         Member member = guild.getMemberById(e.getSplitArgs()[0]);
         if (member != null && member.getRoles().stream().anyMatch(p -> p.getId().equals(Roles.MINECRAFT.getRoleId()))) {
           guild.removeRoleFromMember(member, Roles.MINECRAFT.getRole(guild)).queue();

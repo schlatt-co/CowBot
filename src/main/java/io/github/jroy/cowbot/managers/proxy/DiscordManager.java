@@ -74,12 +74,12 @@ public class DiscordManager extends ProxyModule implements EventListener {
     jda.shutdown();
   }
 
-  public void setDatabaseManager(DatabaseManager databaseManager) {
-    this.databaseManager = databaseManager;
-  }
-
   public DatabaseManager getDatabaseManager() {
     return databaseManager;
+  }
+
+  public void setDatabaseManager(DatabaseManager databaseManager) {
+    this.databaseManager = databaseManager;
   }
 
   @Override

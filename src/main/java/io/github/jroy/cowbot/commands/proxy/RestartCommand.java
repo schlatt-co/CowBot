@@ -9,7 +9,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class RestartCommand extends Command {
 
-  private ProxiedCow proxiedCow;
+  private final ProxiedCow proxiedCow;
 
   public RestartCommand(ProxiedCow proxiedCow) {
     super("grestart");

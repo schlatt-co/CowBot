@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("WeakerAccess")
 public class DatabaseManager extends ProxyModule {
 
-  private ProxiedCow proxiedCow;
-  private DiscordManager discordManager;
+  private final ProxiedCow proxiedCow;
+  private final DiscordManager discordManager;
 
   private PlayerConnectionManager playerConnectionManager;
 

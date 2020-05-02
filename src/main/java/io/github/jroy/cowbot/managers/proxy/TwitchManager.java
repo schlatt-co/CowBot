@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class TwitchManager extends ProxyModule implements EventListener {
 
   private final static String CLIENT_ID = "0dtry9dnzr9yuz29ywdccowvifeqvh";
-//  private final static String REDIRECT_URL = "http%3A%2F%2Flocalhost";
+  //  private final static String REDIRECT_URL = "http%3A%2F%2Flocalhost";
   private final static String REDIRECT_URL = "http%3A%2F%2Fmc.schlatt.co%2Findex";
   private final static Pattern idPattern = Pattern.compile(".+,\"_id\":\"(\\w+)\",.+");
 

@@ -7,7 +7,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class StopCommand extends Command {
 
-  private ProxiedCow cow;
+  private final ProxiedCow cow;
 
   public StopCommand(ProxiedCow cow) {
     super("quit");

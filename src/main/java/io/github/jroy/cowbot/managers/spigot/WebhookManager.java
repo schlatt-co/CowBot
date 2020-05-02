@@ -16,10 +16,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class WebhookManager extends SpigotModule {
 
-  private CowBot cowBot;
+  private final CowBot cowBot;
 
   private WebhookClient webhookClient;
-//  private WebhookClient consoleWebhookClient;
+  //  private WebhookClient consoleWebhookClient;
   private boolean closed = false;
 
   public WebhookManager(CowBot cowBot) {

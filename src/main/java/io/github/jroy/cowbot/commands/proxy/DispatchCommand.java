@@ -10,7 +10,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class DispatchCommand extends Command {
 
-  private ProxiedCow proxiedCow;
+  private final ProxiedCow proxiedCow;
 
   public DispatchCommand(ProxiedCow proxiedCow) {
     super("dispatch");
