@@ -91,7 +91,7 @@ public class WebhookManager extends SpigotModule {
 
   @EventHandler(priority = EventPriority.MONITOR)
   public void onChat(AsyncFinishedChatEvent event) {
-    sendWebhookMessage(event.getPrefix() + event.getDisplayName() + " >> " + event.getMessage());
+    sendWebhookMessage(event.getPrefix() + " " + event.getDisplayName() + " >> " + event.getMessage());
   }
 
 //  @EventHandler(priority = EventPriority.MONITOR)
