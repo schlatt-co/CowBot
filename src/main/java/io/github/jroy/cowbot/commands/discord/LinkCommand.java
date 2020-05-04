@@ -63,16 +63,17 @@ public class LinkCommand extends CommandBase {
         //noinspection ConstantConditions
         e.getGuild().getTextChannelById(Constants.SHOUT_CHANNEL_ID).sendMessage("Banned user (" + discordManager.getDatabaseManager().getBanReason(userId) + ") attempted to link: " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator()).queue();
         e.reply("Added " + e.getMember().getAsMention() + " to the whitelist with the username " + e.getSplitArgs()[0]);
-        PluginMessageManager.sendMessage(discordManager.getProxiedCow(), "trevor:main", "clear", e.getSplitArgs()[0], "vanilla");
       } catch (SQLException ex) {
         e.replyError("You are banned from the server but I honestly don't give two shits why.");
       }
       return;
     }
 
+    PluginMessageManager.sendMessage(discordManager.getProxiedCow(), "trevor:main", "clear", e.getSplitArgs()[0], "vanilla");
     if (discordManager.getDatabaseManager().isLinked(userId)) {
       try {
         String pastName = discordManager.getDatabaseManager().getUsernameFromDiscordId(userId);
+        PluginMessageManager.sendMessage(discordManager.getProxiedCow(), "trevor:main", "clear", pastName, "vanilla");
         discordManager.getDatabaseManager().updateUser(userId, e.getSplitArgs()[0]);
         e.reply("Updated " + e.getMember().getAsMention() + "'s current Minecraft name to " + e.getSplitArgs()[0]);
         if (ProxyServer.getInstance().getPlayer(pastName) != null) {
