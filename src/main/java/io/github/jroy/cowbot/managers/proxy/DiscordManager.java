@@ -58,7 +58,8 @@ public class DiscordManager extends ProxyModule implements EventListener {
               new JoinDateCommand(),
               new TicketCommand(new TicketManager(plugin, this)),
               new NoEventsCommand(this),
-              new PingCommand()
+              new PingCommand(),
+              new ClearCacheCommand(this)
           ).build(), this, new StarMessages())
           .build().awaitReady();
       log("Logged into JDA!");

@@ -2,6 +2,7 @@ package io.github.jroy.cowbot.commands.discord.base;
 
 import com.jagrosh.jdautilities.command.CommandClient;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 /**
@@ -38,5 +39,14 @@ public class CommandEvent extends com.jagrosh.jdautilities.command.CommandEvent 
    */
   public String[] getSplitArgs() {
     return getArgs().split(" ");
+  }
+  
+  public boolean hasRole(String roleId) {
+    for (Role role : getMember().getRoles()) {
+      if (role.getId().equals(roleId)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
