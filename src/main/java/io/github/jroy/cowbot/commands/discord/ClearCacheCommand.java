@@ -16,7 +16,7 @@ public class ClearCacheCommand extends CommandBase {
 
   @Override
   protected void executeCommand(CommandEvent e) {
-    if (e.hasRole("583031536639541248") || e.hasRole("594362773266366475")) {
+    if (!e.hasRole("583031536639541248") || !e.hasRole("594362773266366475")) {
       e.replyError("No permission!");
       return;
     }
