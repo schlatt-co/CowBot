@@ -27,16 +27,17 @@ public class PlayerConnectionManager extends ProxyModule {
   private final DatabaseManager databaseManager;
   private final List<String> lockdownList = new ArrayList<>();
   private final HashSet<String> whitelistList = new HashSet<>();
-  private final String targetVersion = "1.15.2";
-  private final int targetProtocol = 578;
+  private final String targetVersion = "1.16";
+  private final int targetProtocol = 735;
   private boolean whitelist = false;
   private boolean lockdown = false;
   private String targetServer = "vanilla";
-  private String serverMotd = "&ajschlatt twitch subscriber server\n&ethinkin' about bees";
+  private String serverMotd = "&ajschlatt twitch subscriber server\n&5thinkin' about nether";
 
   {
     lockdownList.add("WheezyGold7931");
     lockdownList.add("iliketanks1998");
+    lockdownList.add("Tsarcasm");
   }
 
   public PlayerConnectionManager(ProxiedCow proxiedCow, DatabaseManager databaseManager) {

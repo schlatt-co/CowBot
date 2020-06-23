@@ -76,9 +76,9 @@ public class NewCuckManager extends SpigotModule {
       return true;
     }
     Location loc = player.getLocation();
-    int bound = 2000;
+    int bound = 1000;
     if (loc.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
-      bound = 250;
+      bound = 150;
     }
 
     return !(Math.abs(loc.getX()) > bound) && !(Math.abs(loc.getZ()) > bound);
