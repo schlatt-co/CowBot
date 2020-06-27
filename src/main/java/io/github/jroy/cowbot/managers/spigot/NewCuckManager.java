@@ -30,6 +30,10 @@ public class NewCuckManager extends SpigotModule {
     authorizedUsers.add(name);
   }
 
+  public void removeAuthorizedUser(String name) {
+    authorizedUsers.remove(name);
+  }
+
   @SuppressWarnings("UnstableApiUsage")
   @EventHandler(priority = EventPriority.MONITOR)
   public void onPlayerJoin(PlayerJoinEvent event) {
@@ -43,7 +47,7 @@ public class NewCuckManager extends SpigotModule {
 
   @EventHandler(priority = EventPriority.MONITOR)
   public void onPlayerQuit(PlayerQuitEvent event) {
-    authorizedUsers.remove(event.getPlayer().getName());
+    removeAuthorizedUser(event.getPlayer().getName());
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)

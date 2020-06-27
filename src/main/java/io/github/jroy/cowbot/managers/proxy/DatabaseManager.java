@@ -2,6 +2,7 @@ package io.github.jroy.cowbot.managers.proxy;
 
 import io.github.jroy.cowbot.ProxiedCow;
 import io.github.jroy.cowbot.commands.proxy.TrevorCommand;
+import io.github.jroy.cowbot.commands.proxy.TrustCommand;
 import io.github.jroy.cowbot.managers.base.ProxyModule;
 import io.github.jroy.cowbot.utils.Constants;
 import net.dv8tion.jda.api.entities.Member;
@@ -43,6 +44,7 @@ public class DatabaseManager extends ProxyModule {
       connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans( id integer PRIMARY KEY AUTOINCREMENT, discordid text NOT NULL, reason text NOT NULL);");
       connection.createStatement().execute("CREATE TABLE IF NOT EXISTS twitch( id integer PRIMARY KEY AUTOINCREMENT, twitchid text NOT NULL, uuid text NOT NULL);");
       connection.createStatement().execute("CREATE TABLE IF NOT EXISTS freeload( id integer PRIMARY KEY AUTOINCREMENT, uuid text NOT NULL, discordid text NOT NULL);");
+      connection.createStatement().execute("CREATE TABLE IF NOT EXISTS trusted( id integer PRIMARY KEY AUTOINCREMENT, uuid text NOT NULL);");
       log("Database tables initialized!");
       proxiedCow.getProxy().getScheduler().schedule(proxiedCow, () -> {
         try {
@@ -101,6 +103,7 @@ public class DatabaseManager extends ProxyModule {
   @Override
   public void addCommands() {
     addCommand(new TrevorCommand(this, discordManager, playerConnectionManager));
+    addCommand(new TrustCommand(proxiedCow, this));
   }
 
   public void addFreeloader(String discordid, UUID uuid) throws SQLException {
@@ -250,5 +253,27 @@ public class DatabaseManager extends ProxyModule {
     ResultSet set = statement.executeQuery();
     set.next();
     return set.getString("reason");
+  }
+
+  public boolean isTrusted(UUID uuid) {
+    try {
+      PreparedStatement statement = connection.prepareStatement("SELECT id FROM trusted WHERE uuid = ?");
+      statement.setString(1, uuid.toString());
+      return statement.executeQuery().next();
+    } catch (SQLException ignored) {
+    }
+    return false;
+  }
+
+  public void addTrusted(UUID uuid) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("INSERT INTO trusted(uuid) VALUES(?)");
+    statement.setString(1, uuid.toString());
+    statement.executeUpdate();
+  }
+
+  public void deleteTrusted(UUID uuid) throws SQLException {
+    PreparedStatement statement = connection.prepareStatement("DELETE FROM trusted WHERE uuid = ?");
+    statement.setString(1, uuid.toString());
+    statement.executeUpdate();
   }
 }
