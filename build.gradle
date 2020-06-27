@@ -25,7 +25,7 @@ dependencies {
     compile 'com.jagrosh:jda-utilities:3.0.2'
     compile 'com.squareup.okhttp3:okhttp:4.3.1'
     compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
-    compileOnly "com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT"
+    compileOnly "com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT"
     compileOnly "net.md-5:bungeecord-api:1.15-SNAPSHOT"
     compileOnly "com.github.schlatt-co:Tagger:82ad15854a"
     compileOnly "com.github.schlatt-co:PluginLibrary:c65436d5b6"
