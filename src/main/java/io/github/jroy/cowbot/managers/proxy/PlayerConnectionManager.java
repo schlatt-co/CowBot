@@ -27,8 +27,8 @@ public class PlayerConnectionManager extends ProxyModule {
   private final DatabaseManager databaseManager;
   private final List<String> lockdownList = new ArrayList<>();
   private final HashSet<String> whitelistList = new HashSet<>();
-  private final String targetVersion = "1.16";
-  private final int targetProtocol = 735;
+  private final String targetVersion = "1.16.1";
+  private final int targetProtocol = 736;
   private boolean whitelist = false;
   private boolean lockdown = false;
   private String targetServer = "vanilla";
