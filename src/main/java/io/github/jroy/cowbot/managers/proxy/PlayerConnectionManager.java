@@ -65,6 +65,10 @@ public class PlayerConnectionManager extends ProxyModule {
       if (whitelist) {
         event.setCancelReason(new TextComponent(("You are not whitelisted!\nGive Schlatt Fucking Money\nThen do \"!link " + event.getConnection().getName() + "\" in the #mc channel on the discord server")));
         event.setCancelled(true);
+        return;
+      }
+      if (databaseManager.isTrusted(event.getConnection().getUniqueId())) {
+        PluginMessageManager.sendMessage(proxiedCow, "trevor:main", "rauth", event.getConnection().getName(), targetServer);
       }
       return;
     }
