@@ -38,7 +38,7 @@ public class TrustCommand extends Command {
 
     boolean isTrusted = databaseManager.isTrusted(player.getUniqueId());
     try {
-      if (isTrusted) {
+      if (!isTrusted) {
         databaseManager.addTrusted(player.getUniqueId());
         PluginMessageManager.sendMessage(proxiedCow, "trevor:main", "rauth", player.getName(), "vanilla");
         sender.sendMessage(new ComponentBuilder("Added to trusted!").color(ChatColor.GREEN).create());

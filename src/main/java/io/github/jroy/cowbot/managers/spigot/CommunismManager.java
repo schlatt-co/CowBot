@@ -24,9 +24,9 @@ public class CommunismManager extends SpigotModule {
 
   public final World world = Bukkit.getWorld("world");
   public final HashMap<UUID, Boolean> players = new HashMap<>();
-  private final Location boxSpawnLocation = new Location(world, 16, 54, -3, -90, 0);
-  private final Location boxCornerOne = new Location(world, 6, 66, 7);
-  private final Location boxCornerTwo = new Location(world, 26, 51, -13);
+  private final Location boxSpawnLocation = new Location(world, 24, 6, -139, 90, 0);
+  private final Location boxCornerOne = new Location(world, 14, 14, -152);
+  private final Location boxCornerTwo = new Location(world, 42, 3, -129);
 
   public CommunismManager(CowBot plugin) {
     super("Communism Manager", plugin);
