@@ -6,6 +6,7 @@ import io.github.jroy.cowbot.CowBot;
 import io.github.jroy.cowbot.commands.spigot.ChatCommand;
 import io.github.jroy.cowbot.commands.spigot.DirtCommand;
 import io.github.jroy.cowbot.commands.spigot.JoinDateCommand;
+import io.github.jroy.cowbot.commands.spigot.RollbackCommand;
 import io.github.jroy.cowbot.managers.base.SpigotModule;
 import io.github.jroy.cowbot.utils.AsyncFinishedChatEvent;
 import io.github.jroy.cowbot.utils.ChatEnum;
@@ -15,18 +16,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ChatManager extends SpigotModule {
 
   private final CowBot cowBot;
 
   private final Map<UUID, String> prefixes = new HashMap<>();
-  Map<String, ChatEnum> chatEnumCache = new HashMap<>();
+  protected final Map<String, ChatEnum> chatEnumCache = new HashMap<>();
+  private final ConcurrentLinkedQueue<UUID> rollbackQueue = new ConcurrentLinkedQueue<>();
 
   private boolean silence = false;
 
@@ -40,6 +44,7 @@ public class ChatManager extends SpigotModule {
     addCommand("chat", new ChatCommand(this));
     addCommand("joindate", new JoinDateCommand());
     addCommand("dirt", new DirtCommand());
+    addCommand("rollback", new RollbackCommand(this));
   }
 
   @EventHandler
@@ -102,6 +107,21 @@ public class ChatManager extends SpigotModule {
         event.getPlayer().sendPluginMessage(cowBot, "trevor:main", out.toByteArray());
       }, 30);
     }
+  }
+
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onConnect(AsyncPlayerPreLoginEvent event) {
+    if (rollbackQueue.contains(event.getUniqueId())) {
+      event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "A rollback is currently being processed, please try logging in again later");
+    }
+  }
+
+  public void addRollbackQueue(UUID uuid) {
+    rollbackQueue.add(uuid);
+  }
+
+  public void removeRollbackQueue(UUID uuid) {
+    rollbackQueue.remove(uuid);
   }
 
   public boolean isSilence() {

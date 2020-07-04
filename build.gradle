@@ -24,6 +24,7 @@ dependencies {
     compile "io.papermc:paperlib:1.0.2"
     compile 'com.jagrosh:jda-utilities:3.0.2'
     compile 'com.squareup.okhttp3:okhttp:4.3.1'
+    compile 'commons-io:commons-io:2.7'
     compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
     compileOnly "com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT"
     compileOnly "net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT"

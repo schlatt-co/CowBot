@@ -24,3 +24,6 @@ commands:
   fetchbaltop:
     description: Fetches baltop
     usage: /fetchbaltop
+  rollback:
+    description: Rollsback an inventory
+    usage: /rollback <url>
